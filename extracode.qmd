@@ -1,0 +1,163 @@
+# Extra code
+
+## Import sub-section of a vector data layer
+
+``` python
+gs.run_command(
+    "v.in.ogr",
+    input="ne_10m_admin_0_countries.shp",
+    output="national_boundaries",
+    where=(
+        "(SUBREGION =  'Southern Europe' OR "
+        "SUBREGION =  'Western Europe' OR "
+        "SUBREGION =  'Eastern Europe') AND "
+        "SOVEREIGNT !=  'Russia'",
+    ),
+)
+```
+
+### European continent {#sec-europeancontinent}
+
+Download the layer with the continental boundaries[@shepherdContinentPolygons2020] from [figshare](https://doi.org/10.6084/m9.figshare.12555170.v3) (licenced [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)) and unzip it to your working directory. Next, import the [Europe.shp]{.style-data} shapefile in GRASS GIS using [v.in.ogr](https://grass.osgeo.org/grass-stable/manuals/v.in.ogr.html).
+
+::: {.panel-tabset group="interface"}
+
+## {{< fa solid terminal >}}
+
+``` bash
+v.in.ogr input=Europe.shp output=europe
+```
+
+## {{< fa brands python >}} 
+
+``` python
+gs.run_command("v.in.ogr", input="Europe.shp", output="europe")
+```
+
+## {{< fa regular window-restore >}}
+
+Open the [v.in.ogr]{.style-function} dialog ([menu: File &rarr; import vector data &rarr; Import of common vector formats]{.style-menu}), and fill in [input = Europe.shp]{.style-parameter} and [output = europe]{.style-parameter}.
+
+:::
+
+The almond-eyed Ringlet only occurs on the mainland, so let's remove the other areas. To do so, we first need to convert the multi-part polygon into a single-part polygon. We do this using the [v.multi2singlepart](https://grass.osgeo.org/grass-stable/manuals/addons/v.multi2singlepart.html). 
+
+::: {.panel-tabset group="interface"}
+
+## {{< fa solid terminal >}}
+
+``` bash
+# Install the addon
+g.extension extension=v.multi2singlepart
+v.multi2singlepart input=europe output=tmp
+
+# Compute the area per polgyon
+v.to.db map=tmp option=area columns=polarea
+
+```
+## {{< fa brands python >}} 
+
+``` python
+# Install the addon and split the layer
+gs.run_command("g.extension", extension="v.multi2singlepart")
+gs.run_command("v.multi2singlepart", input="europe", output="tmp")
+
+# Compute the area per polgyon
+gs.run_command("v.to.db", map="tmp", option="area", columns="polarea")
+
+```
+## {{< fa regular window-restore >}}
+
+The GUI allows for an approach without code. See the next [{{< fa regular window-restore >}}]{.paneltabcolor} for a video showing the steps.
+
+:::
+
+Now we can select the polygon representing the mainland. This will be the polygon with the largest surface area. First we use [v.to.db](https://grass.osgeo.org/grass-stable/manuals/v.in.db.html) to calculate the surface area of each polygon and write these values to a new column. Then, we select the largest polygon using the [v.extract](https://grass.osgeo.org/grass-stable/manuals/v.extract.html) function. See [here](https://www.sqlitetutorial.net/sqlite-max/) for an explanation of the SQL syntax used. The last step is to clean up by removing the temporary layer with [g.remove](https://grass.osgeo.org/grass-stable/manuals/g.remove.html).
+
+::: {.panel-tabset group="interface"}
+
+## {{< fa solid terminal >}}
+
+``` bash
+# Extract the mainland polygon (largest polygon)
+v.extract input=tmp \
+  where='polarea = (SELECT MAX(polarea) FROM tmp)' \
+  output=europe_mainland
+
+# Remove temporary layer
+g.remove -f type=vector name=tmp
+
+```
+## {{< fa brands python >}} 
+
+``` python
+# Select the mainland (largest polygon)
+sqlstat = "polarea = (SELECT MAX(polarea) FROM tmp)"
+gs.run_command(
+    "v.extract",
+    input="tmp",
+    where=sqlstat,
+    output="europe_mainland",
+)
+
+# Remove temporary layer
+gs.run_command("g.remove", flags="f", type="vector", name="tmp")
+
+```
+## {{< fa regular window-restore >}}
+
+{{< video "https://ecodiv.earth/share/sdm_in_grassgis/select_polygons.mp4" >}}
+
+:::
+
+
+
+### National boundaries {#sec-nationalboundaries}
+
+We'll use the 1:10m scale data from [Natural Earth](https://www.naturalearthdata.com/), a public domain map dataset available at various scales. Download the shapefile from [Admin 0 - countries](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/) and unzip the data. Next, import the data.
+
+::: {.panel-tabset group="interface_tp"}
+
+## {{< fa solid terminal >}}
+
+``` bash
+v.in.ogr \
+  input=ne_10m_admin_0_countries.shp \
+  output=tmp
+```
+
+## {{< fa brands python >}} 
+
+``` python
+gs.run_command(
+    "v.in.ogr",
+    input="ne_10m_admin_0_countries.shp",
+    output="tmp",
+)
+
+```
+:::
+
+Clip the layer to the boudnaries of the European mainland using [v.clip](https://grass.osgeo.org/grass-stable/manuals/v.clip.html) and remove the temporary data.
+
+::: {.panel-tabset group="interface_tp"}
+
+## {{< fa solid terminal >}}
+
+``` bash
+v.clip input=tmp clip=europe_mainland output=countries
+g.remove -f type=vector name=tmp
+```
+
+## {{< fa brands python >}} 
+
+``` python
+gs.run_command(
+    "v.clip",
+    input="tmp",
+    clip="europe_mainland",
+    output="countries",
+)
+gs.run_command("g.remove", flags="f", type="vector", name="tmp")
+```
+:::

@@ -1,0 +1,26 @@
+# Sample data {#sec-sampledata}
+
+This tutorial guides you through all the steps of species distribution modeling, starting from creating a GRASS GIS database, downloading and preparing the input data, building the models, and finally using these models to predict the potential distribution of the Almond-eyed Ringlet (_Erebia albergana_) butterfly.
+
+If you are mainly interested in learning about the Maxent modules in GRASS GIS, you can skip @sec-creatingadatabase - [-@sec-speciesdata] and jump directly to @sec-creatinginputdata. Download the sample data set, which includes a project named [SDM]{.style-data} and several mapset with data layers. These are the same you would otherwise have created in aforementioned sections.
+
+There are two versions of the sample data. The first version includes raster layers with a resolution of 2.5 arc minutes (approximately 4 km at the equator). The second version has a higher resolution of 30 arc seconds (approximately 900 meters at the equator). Choose the version you prefer, download it, and unzip it into an existing GRASS database or an empty directory. If you unzip it into an empty directory, that directory will automatically be converted into a GRASS database, which is simply a directory containing one or more projects.
+
+
+
+Other climate data:
+
+- https://sites.ualberta.ca/~ahamann/data/climateeu.html
+- https://gis.stackexchange.com/questions/82186/are-there-better-climate-data-than-worldclim-for-europe
+- https://www.ccafs-climate.org/statistical_downscaling_climgen/
+- https://rmets.onlinelibrary.wiley.com/doi/full/10.1002/gdj3.110
+
+Models:
+
+- https://besjournals-onlinelibrary-wiley-com.has.idm.oclc.org/doi/full/10.1111/2041-210X.13360
+- https://www-sciencedirect-com.has.idm.oclc.org/science/article/pii/S0048969717336458
+- https://esd.copernicus.org/articles/14/457/2023/
+- https://cds.climate.copernicus.eu/cdsapp#!/dataset/projections-cmip6?tab=overview
+
+
+
