@@ -242,6 +242,7 @@ section#footnotes > hr {
 .footnotes .style-menu,
 .footnotes .style-parameter,
 .footnotes .style-apps,
+.footnotes .style-file,
 .footnotes code
 {
   color: $gray-500 !important;
@@ -299,6 +300,10 @@ section#footnotes {
   font-size: 0.9rem;
 }
 .style-output {
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+.style-file {
   font-family: monospace;
   font-size: 0.9rem;
 }
@@ -612,6 +617,7 @@ figure > figcaption.quarto-float-caption-bottom {
 .code-annotation-tip-content .style-parameter,
 .code-annotation-tip-content .style-function,
 .code-annotation-tip-content .style-data,
+.code-annotation-tip-content .style-file,
 .code-annotation-tip-content .style-menu {
   font-size: 0.92rem !important;
 }

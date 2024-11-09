@@ -2,9 +2,9 @@
 
 A species distribution model trained on one set of environmental variables can be projected onto future climate scenarios to forecast potential shifts in habitat suitability over time. Similarly, models based on a species' native distribution can help predict its potential range in new areas outside its current habitat. This approach is valuable for assessing the potential risk of species becoming invasive in new regions.
 
-In this section, we’ll use the model developed in @sec-4trainthemodel to project the future potential distribution of the Almond-eyed Ringlet (*Erebia albergana*) for the period 2081-2100. This projection will use the Shared Socio-economic Pathway (SSP) 585 climate scenario from the *EC-Earth3-Veg* general circulation model.
+In this section, we’ll use the model developed in @sec-4trainthemodel to project the future potential distribution of the Almond-eyed Ringlet (*Erebia albergana*) for the period 2081-2100. This projection will use the SSP585 climate scenario from the *EC-Earth3-Veg* general circulation model.
 
-## Predicting
+## Creating a future distribution map
 
 We already downloaded the climate layers for the above-mentioned SSP and GCM in @sec-obtainfutureclimatelayers, and saved them in the mapset [climate_EC_Earth3_Veg]{.style-db}. Let's first make sure we have access to this mapset from the current mapset. As you might remember, we can use the [g.mapsets](https://grass.osgeo.org/grass-stable/manuals/g.mapsets.html) module for that.
 
@@ -31,9 +31,11 @@ gs.run_command(
 In the menu, go to [Settings → GRASS working environment → Mapset access]{.style-menu} and select the mapsets [climate_EC_Earth3_Veg]{.style-db}.
 :::
 
-We can now use the [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html) to apply the previously created Maxent model to this set of climate raster data. The minimum input requirements are a [lambdas]{.style-output} file, which has the extension *.lambdas*, describing a Maxent model, and the name of the raster layers for the predictor variables described in the lambdas file. The [lambdas]{.style-output} file was one of the outputs from [r.maxent.predict]{.style-function} and can be found in the output folder [model_01]{.style-output}. And we just exported the required input raster layers to the folder [future_climate01]{.style-db} in our working directory. Note, if
+We can now use the [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html) to apply the previously created Maxent model to this set of climate raster data. The minimum input requirements are the names of the input raster layers and a [lambdas]{.style-output} file and the name of the raster layers for the predictor variables described in the lambdas file. The [lambdas]{.style-output} file was one of the outputs from [r.maxent.train]{.style-function} and can be found in the output folder [model_01]{.style-output}. It has the extension *.lambdas* and describes the Maxent model.
 
-For convenience, r.maxent.train creates a file maxent_explanatory_variable_names.csv, which you can check for the names of the predictor variables. If these are different from the input raster layers, you can provide the variable names using the variables parameter. Alternatively, you can provide a CSV file with the names of the explanatory variables (first column) and the names of the corresponding raster layers (second column).
+The names of the raster layers need to be the same as the variable names used to create the Maxent model. If you are not sure, you can check the file [maxent_explanatory_variable_names.csv]{.style-file} in folder with the model out. This file is automatically created by the [r.maxent.train]{.style-function} module and can be found in the [model_01]{.style-output} folder. If the raster names are not the same as the variables used to create the Maxent model, the [variables]{.style-parameter} parameter can be used to provide the right variable names[^5_model_prediction-1].
+
+[^5_model_prediction-1]: Alternatively, the [alias_file]{.style-parameter} parameter can be used to provide a CSV file with the names of the explanatory variables (first column) and the names of the corresponding raster layers (second column).
 
 ::: {#exm-CZnP5gebFx .hiddendiv}
 :::
@@ -42,40 +44,155 @@ For convenience, r.maxent.train creates a file maxent_explanatory_variable_names
 ## {{< fa solid terminal >}}
 
 ``` bash
-# Create a new folder in the working directory
-mkdir future_climate01
+# Make sure you are working in the working directory
+cd path_to_working_directory
 
-# Export the Maxent input data
-v.maxent.swd \
-  evp_maps=bio.1,bio.2,bio.4,bio.8,bio.9,bio.13,bio.14,bio.15 \
-  alias_names=bio_1,bio_2,bio_4,bio_8,bio_9,bio_13,bio_14,bio_15 \
-  export_rasters=future_climate01
+# Create the future potential distribution map
+r.maxent.predict \
+  lambda=model_01/Erebia_albergana_obs.lambdas \
+  rasters=bio.1,bio.13,bio.14,bio.15,bio.19,bio.2,bio.4,bio.8,bio.9 \
+  variables=bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9 \ # <1>
+  output=E_albergana_futprob
+```
+
+1.  The names of the future bioclim layers differ from the variables, so we need to provided the variable names. Be careful, they need to be given in the same order as the corresponding raster layers.
+
+## {{< fa brands python >}}
+
+``` python
+# Make sure you are working in the working directory
+os.chdir("/home/paulo/Desktop")
+
+# Create the future potential distribution map
+gs.run_command(
+    "r.maxent.predict",
+    lambdafile="model_01/Erebia_albergana_obs.lambdas",
+    rasters="bio.1,bio.13,bio.14,bio.15,bio.19,bio.2,bio.4,bio.8,bio.9",
+    variables="bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9", # <1>
+    output="E_albergana_futprob",
+)
+```
+
+1.  The names of the future bioclim layers differ from the variables, so we need to provided the variable names. Be careful, they need to be given in the same order as the corresponding raster layers.
+
+## {{< fa regular window-restore >}}
+
+Open the [r.maxent.predict]{.style-function} dialog and run it with the following parameter settings:
+
+| Parameter | Value |
+|----|----|
+| lambdafile | model_01/Erebia_albergana_obs.lambdas |
+| rasters | bio.1,bio.13,bio.14,bio.15,bio.19,bio.2,bio.4,bio.8,bio.9 |
+| variables [^5_model_prediction-2] | bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9 |
+| output | E_albergana_futprob |
+
+: {tbl-colwidths="\[50,50\]"}
+:::
+
+[^5_model_prediction-2]: The names of the future bioclim layers differ from the variables, so we need to provided the variable names. Be careful, they need to be given in the same order as the corresponding raster layers.
+
+## Current vs future distribution
+
+There are several ways to compare the predicted current and future distributions of our species. For a visual comparison, it’s essential that both maps use the same color table. To achieve this, we can use the [r.colors](https://grass.osgeo.org/grass-stable/manuals/r.colors.html) module to match the color table of the future probability distribution map with that of the current climate distribution layer ([E_albergana_probability]{.style-data}). This ensures that any differences we see are due to changes in distribution, not color scale variations.
+
+::: {#exm-jsOr4IpXRP .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+r.colors map=E_albergana_futprob raster=E_albergana_probability
 ```
 
 ## {{< fa brands python >}}
 
 ``` python
-# Create a new folder in the working directory
-os.mkdir("future_climate01")
-
-# Export the Maxent input data
-gs.run_command(
-    "v.maxent.swd",
-    evp_maps="bio.1,bio.2,bio.4,bio.8,bio.9,bio.13,bio.14,bio.15",
-    alias_names="bio_1,bio_2,bio_4,bio_8,bio_9,bio_13,bio_14,bio_15",
-    export_rasters="dataset01/envdat",
-)
+gs.run_command("r.colors", map="E_albergana_futprob", raster="E_albergana_probability")
 ```
 
 ## {{< fa regular window-restore >}}
 
-Create the folder [future_climate01]{.style-db} using your favorite file browser. Next, open the [v.maxent.swd]{.style-function} dialog and run it with the following parameter settings:
+Open the [r.colors]{.style-function} dialog and run it with the following parameter settings:
 
-| Parameter      | Value                                              |
-|----------------|----------------------------------------------------|
-| evp_maps       | bio.1,bio.2,bio.4,bio.8,bio.9,bio.13,bio.14,bio.15 |
-| alias_names    | bio_1,bio_2,bio_4,bio_8,bio_9,bio_13,bio_14,bio_15 |
-| export_rasters | dataset01/envdat                                   |
+| Parameter | Value                   |
+|-----------|-------------------------|
+| map       | E_albergana_futprob     |
+| raster    | E_albergana_probability |
 
 : {tbl-colwidths="\[50,50\]"}
 :::
+
+Examining the resulting map reveals that by 2081, the potential distribution area of the Almond-eyed Ringlet is projected to decrease significantly under SSP585 (@fig-futdistr_01). In the Alps, its range is expected to shift to higher altitudes, while in other areas, the species may dissapear entirely.
+
+::: {.panel-tabset .exercise}
+## Future climate conditions
+
+![The raster layer [E_albergana_futprob]{.style-data} with the predicted probability of occurrences of *Erebia_albergana* in 2081-2100 under the SSP585 climate scenario, based on model_01.](images/E_albergana_futprob.png){#fig-futdistr_01}
+
+## Current climate conditions
+
+![The raster layer [E_albergana_probability]{.style-data} with the predicted probability of occurrences of Erebia_albergana, based on model_01.](images/E_albergana_probability.png){#fig-probdist_model_01b}
+:::
+
+To better highlight areas where the species is likely to disappear, we can create a change map by calculating the differences in habitat suitability scores between current and future distributions.
+
+::: {#exm-VjtxwilsRu .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+# Calculate the change map
+r.mapcalc expression="E_alb_diff = E_albergana_futprob - E_albergana_probability"
+
+# Assign a color table that emphasize differences
+r.colors map=E_alb_diff color=differences
+```
+
+## {{< fa brands python >}}
+
+``` python
+# Calculate the change map
+gs.run_command(
+    "r.mapcalc", expression="E_alb_diff = E_albergana_futprob - E_albergana_probabilit"
+)
+
+# Assign a color table that emphasize differences
+gs.run_command("r.colors", map="E_alb_diff", color="differences")
+```
+
+## {{< fa regular window-restore >}}
+
+Open the [raster map calculator]{.style-function} from the [raster]{.style-menu} and run it with the following expression.
+
+![Use the raster map calculator to calculate the differences in habitat suitability scores between current and future distributions.](images/rastercalculator_changemap01.png){#fig-rastmapchangemap}
+
+Open the [r.colors]{.style-function} module, and run it with the following parameters.
+
+| Parameter | Value       |
+|-----------|-------------|
+| map       | E_alb_diff  |
+| color     | differences |
+
+: {tbl-colwidths="\[50,50\]"}
+:::
+
+Open the change map tab above to view the resulting map (@fig-changemap01). This map reinforces our earlier observations: in most areas, climate conditions are predicted to become less suitable, while at higher elevations in the Alps, climate conditions may become more favorable[^5_model_prediction-3]
+
+[^5_model_prediction-3]: These maps should be interpreted with caution, as they reflect only projected changes in climate conditions and do not account for other potentially important factors.
+
+::: {.panel-tabset .exercise}
+## Change map
+
+![The change map with negative values (blue) representing where climate conditions are predicted to become (less) suitable for the species, and positive values represening areas where climate conditions are predicted to become more suitable (red). Te inset map shows the region where the species may shift towards higher elevations.](images/change_map_01.png){#fig-changemap01}
+:::
+
+The change map is a good way to highlight changes, but it doesn't tell you where conditions are, and will remain unsuitable, and where conditions are and will remain suitable.
+
+DIffernce map presence-absence.
+
+<br><br>
+
+## Footnotes {.unlisted .unnumbered}

@@ -244,7 +244,7 @@ The [Erebia_albergana_obs.html]{.style-output} file in the output folder provide
 ::: {.panel-tabset .exercise}
 ## E_albergana_probability
 
-![The raster layer [E_albergana_probability]{.style-data} with the predicted probability of occurrences of *Erebia_albergana*, based on model_01.](images/Erebia_albergana_probability_distribution_model_01.png){#fig-probdist_model_01}
+![The raster layer [E_albergana_probability]{.style-data} with the predicted probability of occurrences of *Erebia_albergana*, based on model_01.](images/E_albergana_probability.png){#fig-probdist_model_01}
 
 The map in @fig-probdist_model_01 shows the predicted probability of presence of *Erebia_albergana* within the bounds of the study area. As expected, probability scores are high in most areas where the species has been observed. However, there are additional areas where predicted probability scores are also high. We will not attempt to explain these differences here, as that analysis is beyond the scope of this tutorial, but it is clear that these results warrant further investigation.
 
