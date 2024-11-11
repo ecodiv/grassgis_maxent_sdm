@@ -136,14 +136,6 @@ $grid-margin-width: 300px !default;
 
 // -------------  Sidebar ------------------------------------------------------
 
-/*
-#quarto-sidebar:before {
-    content: url(images/logo.png);
-    margin-bottom: 0rem;
-    margin-top: 1rem;
-}
-*/
-
 .sidebar-menu-container {
   margin-top: 0px;
 }
@@ -157,7 +149,6 @@ $grid-margin-width: 300px !default;
 
 .sidebar-item {
   line-height: 1.2rem !important;
-  color: $gray-600;
 }
 
 .sidebar nav[role="doc-toc"] ul > li > a, .sidebar nav[role="doc-toc"] ul > li > ul > li > a  {
@@ -168,6 +159,25 @@ $grid-margin-width: 300px !default;
   border-left: 1px solid $gray-700;
   color: $ecodivgreen !important;
 }
+
+div.sidebar-item-container , div.sidebar-item-container .show > .nav-link, div.sidebar-item-container .sidebar-link > code {
+  color: $gray-600;
+}
+
+.sidebar-item .chapter-number {
+  color: $gray-600;
+}
+
+div.sidebar-item-container .active, div.sidebar-item-container .show > .nav-link, div.sidebar-item-container .sidebar-link > code {
+  color: $ecodivblue;
+  font-weight: 600;
+}
+
+.sidebar-item .active .chapter-number {
+  color: $ecodivblue;
+  font-weight: 600;
+}
+
 .sidebar nav[role="doc-toc"] ul > li > a:hover, .sidebar nav[role="doc-toc"] ul > li > ul > li > a:hover {
   color: $ecodivblue !important;
 }
@@ -756,3 +766,18 @@ Create links to code steps
   font-size: 1em;
 }
 
+.hidefootnotes, .footnotes {
+  display: none;
+}
+
+/* Mobile-friendly adjustments */
+@media (max-width: 768px) {
+
+  .hiddendiv, .hiddendiv p {
+    display: block; /* Ensures the content is visible */
+  }
+
+  .hidefootnotes, .footnotes {
+    display: block; /* Makes footnotes visible on mobile */
+  }
+}

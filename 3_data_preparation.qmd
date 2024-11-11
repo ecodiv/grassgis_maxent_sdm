@@ -14,7 +14,7 @@ There are several ways to deal with oversampling, focusing on the presence point
 :::
 
 ::: {.g-col-md-6 .g-col-12}
-![Examles of different potential sources of bias in the species occurrence data for *Erebia albergana*. On the right side of the map, the points are conspicuously clustered along a road, which may indicate sampling bias. On the left, the points form a grid-like pattern, suggesting that the coordinates were recorded with limited decimal precision.](images/examplesofbias.png){#fig-examplesofbias width="500"}
+![Examples of different potential sources of bias in the species occurrence data for *Erebia alberganus*. On the right side of the map, the points are conspicuously clustered along a road, which may indicate sampling bias. On the left, the points form a grid-like pattern, suggesting that the coordinates were recorded with limited decimal precision.](images/examplesofbias.png){#fig-examplesofbias width="500"}
 :::
 :::::
 
@@ -47,7 +47,7 @@ In the menu, select [Settings → Addon extensions → Install extension from ad
 ![Use the search bar to look for [r.vect.stats]{.style-function} and hit [Enter]{.style-menu}](images/g_extension_install_rvectstats.png){#fig-installrvectstats fig-align="left" width="80%"}
 :::
 
-We want to create the layer in the [Erebia_albergana]{.style-db} mapset, so we need to switch to that mapset first.
+We want to create the layer in the [Erebia_alberganus]{.style-db} mapset, so we need to switch to that mapset first.
 
 ::: {#exm-3Tw6fEB0hg .hiddendiv}
 :::
@@ -70,7 +70,7 @@ gs.run_command("g.mapset", mapset="species_data")
 ![To change the mapset, right click on the name of the mapset in the [Data]{.style-menu} panel. In the context menu, select [Switch mapset]{.style-menu}.](images/switchmapset.png){#fig-switchmapset fig-align="left"}
 :::
 
-The extent and resolution of the resulting raster is determined by the bounding box of the mapset. So we set the region's extent to match the extent of the occurrence point layer. We also set the region's resolution to match that of the bioclimate layers, which is 0.008333 arc degrees.
+The extent and resolution of the resulting raster is determined by the bounding box of the mapset. So we set the region's extent to match the extent of the occurrence point layer. We also set the region's resolution to match that of the bioclim layers, which is 0.008333 arc degrees.
 
 ::: {#exm-DzyEuYlZum .hiddendiv}
 :::
@@ -79,7 +79,7 @@ The extent and resolution of the resulting raster is determined by the bounding 
 ## {{< fa solid terminal >}}
 
 ``` bash
-g.region -a res=0.008333 vector=Erebia_albergana_obs # <1>
+g.region -a res=0.008333 vector=Erebia_alberganus_obs # <1>
 ```
 
 1.  Setting the -a flag means that the function will adjust the boundaries of the extent if necessary to ensure that the region is perfectly aligned with the resolution.
@@ -91,7 +91,7 @@ gs.run_command(
     "g.region",
     flags="a",  # <1>
     res=0.008333,
-    vector="Erebia_albergana_obs",
+    vector="Erebia_alberganus_obs",
 )
 ```
 
@@ -101,11 +101,11 @@ gs.run_command(
 
 To change the region settings, open the [g.region]{.style-function} dialog, and fill in the following parameters:
 
-| Parameter                      | Value                |
-|--------------------------------|----------------------|
-| res                            | 0.008333             |
-| vector                         | Erebia_albergana_obs |
-| Align region to resolution (a) | ✅                   |
+| Parameter                      | Value                 |
+|--------------------------------|-----------------------|
+| res                            | 0.008333              |
+| vector                         | Erebia_alberganus_obs |
+| Align region to resolution (a) | ✅                    |
 
 : {tbl-colwidths="\[40,60\]"}
 
@@ -121,7 +121,7 @@ We can now run the [r.vect.stats]{.style-function} module. With the [method]{.st
 ## {{< fa solid terminal >}}
 
 ``` bash
-r.vect.stats input=Erebia_albergana_obs output=pointdensities method=n
+r.vect.stats input=Erebia_alberganus_obs output=pointdensities method=n
 ```
 
 ## {{< fa brands python >}}
@@ -129,7 +129,7 @@ r.vect.stats input=Erebia_albergana_obs output=pointdensities method=n
 ``` python
 gs.run_command(
     "r.vect.stats",
-    input="Erebia_albergana_obs",
+    input="Erebia_alberganus_obs",
     output="pointdensities",
     method="n",
 )
@@ -139,16 +139,16 @@ gs.run_command(
 
 To calculate the point densities per grid cell, open the [r.vect.stats]{.style-function} dialog, and use the following parameter settings.
 
-| Parameter | Value                |
-|-----------|----------------------|
-| input     | Erebia_albergana_obs |
-| output    | pointdensities       |
-| method    | n                    |
+| Parameter | Value                 |
+|-----------|-----------------------|
+| input     | Erebia_alberganus_obs |
+| output    | pointdensities        |
+| method    | n                     |
 
 : {tbl-colwidths="\[40,60\]"}
 :::
 
-After completing these steps, we have a raster layer ([pointdensities]{.style-data}) with the number of occurrences per cell. Remember that the extent and resolution of the raster cell is based on the extent of the point data and the resolution of the bioclimate layers (@exm-DzyEuYlZum). In the next step, we compute some statistics. To exclude cells with 0 (zero) occurrences, we convert them to NULL using the [r.null](https://grass.osgeo.org/grass-stable/manuals/r.null.html) function. This ensures that only the cells where the species was observed (non-zero values) will be considered in subsequent steps.
+After completing these steps, we have a raster layer ([pointdensities]{.style-data}) with the number of occurrences per cell. Remember that the extent and resolution of the raster cell is based on the extent of the point data and the resolution of the bioclim layers (@exm-DzyEuYlZum). In the next step, we compute some statistics. To exclude cells with 0 (zero) occurrences, we convert them to NULL using the [r.null](https://grass.osgeo.org/grass-stable/manuals/r.null.html) function. This ensures that only the cells where the species was observed (non-zero values) will be considered in subsequent steps.
 
 ::: {#exm-J7MoS70p6m .hiddendiv}
 :::
@@ -178,7 +178,7 @@ Open the [r.null]{.style-function} dialog, and use the following parameter setti
 : {tbl-colwidths="\[40,60\]"}
 :::
 
-We use [r.univar](https://grass.osgeo.org/grass-stable/manuals/r.univar.html) to compute the range and median of number of observations per gridd cell and the [r.boxplot](https://grass.osgeo.org/grass-stable/manuals/addons/r.boxplot.html) addon to visualize the distribution of point densities and to identify possible outliers.
+We use [r.univar](https://grass.osgeo.org/grass-stable/manuals/r.univar.html) to compute the range and median of number of observations per grid cell and the [r.boxplot](https://grass.osgeo.org/grass-stable/manuals/addons/r.boxplot.html) addon to visualize the distribution of point densities and to identify possible outliers.
 
 ::: {#exm-WtuDMbpLQo .hiddendiv}
 :::
@@ -279,9 +279,7 @@ An important consideration is the area that has been accessible to the species o
 
 <!----------------------------------------------------------------------------->
 
-We'll use all land areas within the area of interest (aoi) that we defined in @sec-climatedata. To keep organized, we'll create a new mapset [aoi_01]{.style-db} to keep the dataset belonging to this particular *aoi*. We'll the [g.mapset](https://grass.osgeo.org/grass-stable/manuals/g.mapset.html) module.
-
-Next, we then use the [g.region](https://grass.osgeo.org/grass-stable/manuals/g.region.html) module to set the computational region style parameter, based on the region file we created earlier (@exm-V0FK3TyzcN). We use the [r.mask](https://grass.osgeo.org/grass-stable/manuals/r.mask.html) module with the [vector]{.style-parameter} parameter to further restrict our study area to land areas. And finally, to avoid having to append the name of that mapset to a layers name, each time we need a layer from a different mapset, we give access to the other relevant mapsets using the [g.mapsets](https://grass.osgeo.org/grass-stable/manuals/g.mapsets.html) command [^3_data_preparation-2].
+We'll create background points within the boundaries of the area of interest (aoi) that we defined in @sec-climatedata. To store the vector layer with background points for this particular *aoi* in a separate mapset, we first use the [g.mapset](https://grass.osgeo.org/grass-stable/manuals/g.mapset.html) module to create a new mapset [dataset01]{.style-db}. Next, we use the [g.region](https://grass.osgeo.org/grass-stable/manuals/g.region.html) module to set the computational region, based on the region file we created earlier (@exm-V0FK3TyzcN), and the [r.mask](https://grass.osgeo.org/grass-stable/manuals/r.mask.html) module with the [vector]{.style-parameter} parameter to further restrict our study area to land areas. Finally, to avoid having to append the name of that mapset to a layers name, each time we need a layer from a different mapset, we give access to the other relevant mapsets using the [g.mapsets](https://grass.osgeo.org/grass-stable/manuals/g.mapsets.html) command [^3_data_preparation-2].
 
 [^3_data_preparation-2]: To state the obvious, be careful when using the same layer names across different mapsets.
 
@@ -293,7 +291,7 @@ Next, we then use the [g.region](https://grass.osgeo.org/grass-stable/manuals/g.
 
 ``` bash
 # Create a new mapset
-g.mapset -c mapset=aoi_01
+g.mapset -c mapset=dataset01
 
 # Define the region
 g.region region=aoi@climate_current
@@ -302,14 +300,14 @@ g.region region=aoi@climate_current
 r.mask vector=countries@PERMANENT
 
 # Give access to layers in other mapsets
-g.mapsets mapset=climate_current,Erebia_albergana operation=add
+g.mapsets mapset=climate_current,Erebia_alberganus operation=add
 ```
 
 ## {{< fa brands python >}}
 
 ``` python
 # Create a new mapset and make it the active mapset
-gs.run_command("g.mapset", flags="c", mapset="aoi_01")
+gs.run_command("g.mapset", flags="c", mapset="dataset01")
 
 # Set the region to match the region settings in the aoi region file
 gs.run_command("g.region", region="aoi@climate_current")
@@ -319,7 +317,7 @@ gs.run_command("r.mask", vector="countries@PERMANENT")
 
 # Give access to layers in other mapsets
 gs.run_command(
-    "g.mapsets", mapset=["climate_current", "Erebia_albergana"], operation="add"
+    "g.mapsets", mapset=["climate_current", "Erebia_alberganus"], operation="add"
 )
 ```
 
@@ -327,10 +325,10 @@ gs.run_command(
 
 (A) Type in [g.mapset]{.style-function} in the console to open the dialog, and use the following parameter settings.
 
-| Parameter                             | Value  |
-|---------------------------------------|--------|
-| Name of mapset (mapset)               | aoi_01 |
-| Create mapset if it doesn't exist (c) | ✅     |
+| Parameter                             | Value     |
+|---------------------------------------|-----------|
+| Name of mapset (mapset)               | dataset01 |
+| Create mapset if it doesn't exist (c) | ✅        |
 
 : {tbl-colwidths="\[40,60\]"}
 
@@ -358,10 +356,10 @@ gs.run_command(
 
 (D) Give access to layers in the other mapsets.
 
-In the menu, go to [Settings → GRASS working environment → Mapset access]{.style-menu} and select the mapsets [climate_current]{.style-db} and [Erebia_albergana]{.style-db}.
+In the menu, go to [Settings → GRASS working environment → Mapset access]{.style-menu} and select the mapsets [climate_current]{.style-db} and [Erebia_alberganus]{.style-db}.
 :::
 
-We have now a new raster layer named [MASK]{.style-data} in the mapset [aoi_01]{.style-db}. We can use [r.info](https://grass.osgeo.org/grass-stable/manuals/r.info.html) to check that it has the same extent and resolution as the computational region ([@fig-studyareas]). The raster cells falling outside the MASK are not included in operations like raster algebra, statistics, or interpolation.
+We have now a new raster layer named [MASK]{.style-data} in the mapset [dataset01]{.style-db}. We can use [r.info](https://grass.osgeo.org/grass-stable/manuals/r.info.html) to check that it has the same extent and resolution as the computational region ([@fig-studyareas]). The raster cells falling outside the MASK are not included in operations like raster algebra, statistics, or interpolation.
 
 ![Red outline: the bounds of the computational region. Green: the MASK, which covers the study area.](images/studyarea.png){#fig-studyareas fig-align="left"}
 
@@ -435,7 +433,7 @@ Open the [r.random]{.style-function}, and use the following parameter settings.
 
 Multicollinearity occurs when two or more explanatory variables are highly correlated. This can make it difficult to determine the individual effect of each variable on the species distribution, and redundant variables may add noise to the model without improving its predictive power. Maxent, a commonly used SDM tool, is relatively insensitive to multicollinearity because it selects the most informative variables during model training. Yet, excluding highly redundant variables might still help to get a more parsimonious, robust and interpretable model. And on a practical note, it will reduce the time it takes to train the model.
 
-![The bioclim 6 and bioclim 11 variables are highly correlated (r=0.98). This begs the question how useful it is to use both as predictor variables in the model. You can explore the relation between any two variables yourself using the bivariate scatterplot tool. Click on the ![](images/layer-raster-analyze.png) in the toolbar of the map display.](images/bio6_bio11_scatterplot.png){#fig-bio6_bio11_scatterplot fig-align="left"}
+![The bioclim 6 and bioclim 11 variables are highly correlated (r=0.98). This begs the question of how useful it is to use both as predictor variables in the model. You can explore the relation between any two variables yourself using the bivariate scatterplot tool. Click on the ![](images/layer-raster-analyze.png) in the toolbar of the map display.](images/bio6_bio11_scatterplot.png){#fig-bio6_bio11_scatterplot fig-align="left"}
 
 The variance inflation factor (VIF) is a commonly used method to test for collinearity between predictor variables [@graham2003]. In GRASS GIS, the VIF can be calculated for a set of variables using the add-on [r.vif](https://grass.osgeo.org/grass-stable/manuals/addons/r.vif.html). This addon also allows you to select a subset of variables using a stepwise variable selection procedure. In this procedure, the VIF is computed repeatedly. Each time, the variable with the highest VIF is removed until the highest VIF values are less than a user-defined threshold [@craney2002].
 
@@ -514,9 +512,9 @@ mkdir dataset01
 mkdir dataset01/envdat
 
 # Export the Maxent input data
-v.maxent.swd -t species=Erebia_albergana_obs \                             # <1>
+v.maxent.swd -t species=Erebia_alberganus_obs \                             # <1>
   bgp=background_points \                                          # <2> 
-  evp_maps=bio_1,bio_2,bio_4,bio_8,bio_9,bio_13,bio_14,bio_15 \   # <3>
+  evp_maps=bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9 \   # <3>
   species_output=dataset01/species.swd \                          # <4>
   bgr_output=dataset01/background_points.swd \                           # <5>
   export_rasters=dataset01/envdat                                 # <6>
@@ -539,9 +537,9 @@ os.makedirs("dataset01/envdat", exist_ok=True)                      # <1>
 gs.run_command(
     "v.maxent.swd",
     flags="t",
-    species="Erebia_albergana_obs",                                          # <2>
+    species="Erebia_alberganus_obs",                                          # <2>
     bgp="background_points",                                         # <3>
-    evp_maps="bio_1,bio_2,bio_4,bio_8,bio_9,bio_13,bio_14,bio_15",  # <4>
+    evp_maps="bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9",  # <4>
     species_output="dataset01/species.swd",                          # <5>
     bgr_output="dataset01/background_points.swd",                           # <6>
     export_rasters="dataset01/envdat",                              # <7>
@@ -562,7 +560,7 @@ Create the folder [dataset01]{.style-db} and sub-folder [envdat]{.style-db} usin
 
 | Parameter | Value |
 |----|----|
-| species [^3_data_preparation-3] | Erebia_albergana_obs |
+| species [^3_data_preparation-3] | Erebia_alberganus_obs |
 | bgp [^3_data_preparation-4] | background_points |
 | evp_maps [^3_data_preparation-5] | bio_1,bio_2,bio_4,bio_8,bio_9,bio_13,bio_14,bio_15 |
 | species_output [^3_data_preparation-6] | dataset01/species.swd |
@@ -598,8 +596,8 @@ The Python code blocks below combines all steps from this chapter. It mostly is 
 # Define input variables
 working_directory = "replace-with-path-to-working-directory"
 species_mapset = "species_data"
-species_vector = "Erebia_albergana_obs"
-aoi_mapset = "aoi_01"
+species_vector = "Erebia_alberganus_obs"
+aoi_mapset = "dataset01"
 resolution = 0.008333
 
 # Define output variables
@@ -643,8 +641,8 @@ gs.run_command("r.boxplot", flags="o", input=density_output)
 # Define input variables
 working_directory = "replace-with-path-to-working-directory"
 species_mapset = "species_data"
-species_vector = "Erebia_albergana_obs"
-aoi_mapset = "aoi_01"
+species_vector = "Erebia_alberganus_obs"
+aoi_mapset = "dataset01"
 climate_mapset = "climate_current"
 country_vector = "countries"
 selected_layers_pattern = "bio*"
@@ -655,7 +653,7 @@ vif_max = 10
 nbgp = 10000
 
 # Define output variables
-swd_species_output = "dataset01/Erebia_albergana_obs.swd"
+swd_species_output = "dataset01/Erebia_alberganus_obs.swd"
 swd_background_output = "dataset01/background_points.swd"
 swd_export_rasters_dir = "dataset01/envdat"
 
@@ -675,7 +673,7 @@ gs.run_command("g.mapset", flags="c", mapset=aoi_mapset)
 gs.run_command("g.mapsets", mapset=[climate_mapset, species_mapset], operation="add")
 
 # Set the region to match the area of interest and apply a mask for analysis
-gs.run_command("g.region", region=f"{aoi_mapset}@{climate_mapset}")
+gs.run_command("g.region", region=f"aoi@{climate_mapset}")
 gs.run_command("r.mask", vector=country_vector)
 
 # Identify relevant climate layers using VIF (Variance Inflation Factor)
@@ -709,4 +707,4 @@ gs.run_command(
 
 <br><br>
 
-## Footnotes {.unlisted .unnumbered}
+## Footnotes {.unlisted .unnumbered .hidefootnotes}

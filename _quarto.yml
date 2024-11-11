@@ -15,8 +15,8 @@ project:
 book:
   title: "Species distribution modelling"
   subtitle: "Using Maxent in GRASS GIS"
-  date: "08-08-2024"
-  original-date: "08-08-2024"
+  date: "11-11-2024"
+  original-date: "11-1-2024"
   author:
     - name: Paulo van Breugel
       url: https://ecodiv.earth/about.html
@@ -116,6 +116,8 @@ format:
       tbl-prefix: Table
       exr-title: Q
       exr-prefix: Q
+      exm-title: Step
+      exm-prefix: step
       appendix-title: ""
       appendix-delim: ". "
     smooth-scroll: true

@@ -4,7 +4,7 @@
 
 This tutorial introduces a GRASS GIS toolset for species distribution modelling. You will learn how to use it in combination with other core modules and add-ons to acquire and import data (section [2](#sec-data)), prepare data (section [3](#sec-dataprep)), train, validate and evaluate distribution models (section [4](#sec-modeltraining)), and use these models to predict the future potential distribution of the almond-eyed ringlet butterfly (section [5](#sec-modelprediction)). In subsequent sections, which will be available in the coming weeks, we’ll dive deeper into the options, choices, and parameter settings to validate and fine-tune the model.
 
-![The four main steps in species distribution modeling and the corresponding GRASS GIS addon. The rationale for having seperate addons for each step is to encourage and help the user to carefully consider the assumptions and considerations at each stage of the modelling process. The tutorial follows the same structure.](images/modelling_workflow.png){#fig-modelling_workflow fig-align="left"}
+![The four main steps in species distribution modeling and the corresponding GRASS GIS addon. The rationale for having separate addons for each step is to encourage and help the user to carefully consider the assumptions and considerations at each stage of the modelling process. The tutorial follows the same structure.](images/modelling_workflow.png){#fig-modelling_workflow fig-align="left"}
 
 The examples in this tutorial show you how to run functions from the command line, using Python and, and using the GUI dialogs. There will not (always) be an explanation of the different settings and parameters. Instead, each time a function is used, a link is provided to the corresponding help page. These help pages are quite good, and you are encouraged to read them to fully understand the choices made in the tutorial.
 
@@ -26,9 +26,9 @@ The examples in this tutorial show you how to run modules / functions using:
 -   [{{< fa brands python >}}]{.paneltabcolor}     Python code
 -   [{{< fa regular window-restore >}}]{.paneltabcolor}     GUI dialogs
 
-Throughout the text, you'll find cross-references with hyperlinks to e.g., figures, literature references and footnotes. Instead of clicking the hyperlink, you can also hoover over the link with your mouse. This will open the corresponding figure, reference or footnote in a floating Window. Try for example @fig-erebiaalbergana.
+Throughout the text, you'll find cross-references with hyperlinks to e.g., figures, literature references and footnotes. Instead of clicking the hyperlink, you can also hoover over the link with your mouse. This will open the corresponding figure, reference or footnote in a floating Window. Try for example @fig-erebiaalberganus.
 
-Some code are enriched with explanatory notes. You can read these notes by clicking on the number next to the code. See for example:
+Some code is enriched with explanatory notes. You can read these notes by clicking on the number next to the code. See for example:
 
 ``` python
 print("this is an example") # <1>
@@ -49,7 +49,7 @@ Window users will find that there are two main flavors on the [download page](ht
 
 ### GRASS addons
 
-The three main modules used in this tutorial are [v.maxent.swd](https://grass.osgeo.org/grass-stable/manuals/addons/v.maxent.swd.html), [r.maxent.train](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.train.html) and [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html). Install these addons usint the [g.extension](https://grass.osgeo.org/grass-stable/manuals/g.extension.html) module.
+The three main modules used in this tutorial are [v.maxent.swd](https://grass.osgeo.org/grass-stable/manuals/addons/v.maxent.swd.html), [r.maxent.train](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.train.html) and [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html). Install these addons with the [g.extension](https://grass.osgeo.org/grass-stable/manuals/g.extension.html) module.
 
 ::: {#exm-Cb1zDqdZuC .hiddendiv}
 :::
@@ -81,9 +81,7 @@ gs.run_command("g.extension", extension="r.maxent.predict")
 Repeat the same for the other two addons.
 :::
 
-Installed modules can be run by typing their name in the Console or terminal. They are also available from the [Tools]{.style-menu} panel under [Addons]{.style-menu}. If you don't see them after installing them, you may have to restart GRASS first.
-
-You will install and use a few other addons later on in the tutorial. See @sec-functions for an overview of all addons used in this tutorial.
+Installed modules can be run by typing their name in the Console or terminal. They are also available from the [Tools]{.style-menu} panel under [Addons]{.style-menu}. If you don't see them after installing them, you may have to restart GRASS first. You will install and use a few other addons later on in the tutorial.
 
 ### Maxent {#sec-maxentsoftware}
 

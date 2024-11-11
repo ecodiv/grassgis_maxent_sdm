@@ -1,0 +1,2083 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.56">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Paulo van Breugel">
+
+<title>Ecodiv.earth | sdm in grass gis – Species distribution modelling</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./4_model_training.html" rel="next">
+<link href="./2_obtaining_data.html" rel="prev">
+<link href="./images/favicon.ico" rel="icon">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<meta property="og:title" content="Ecodiv.earth | sdm in grass gis">
+<meta property="og:description" content="">
+<meta property="og:site_name" content="Species distribution modelling">
+<meta name="twitter:title" content="Ecodiv.earth | sdm in grass gis">
+<meta name="twitter:description" content="">
+<meta name="twitter:site" content="@ecodiv">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <img src="./images/logo.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Species distribution modelling</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://ecodiv.earth"> <i class="bi bi-home" role="img">
+</i> 
+<span class="menu-text">Ecodiv.earth</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools tools-wide">
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
+              <i class="bi bi-facebook pe-1"></i>
+            Facebook
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
+              <i class="bi bi-linkedin pe-1"></i>
+            LinkedIn
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./3_data_preparation.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Prepare the data</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./images/logo_SDM2.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./1_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2_obtaining_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Acquire the data</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3_data_preparation.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Prepare the data</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./4_model_training.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Model training</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./5_model_prediction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Model prediction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./A1_grassbasics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Working in GRASS GIS</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./A3_sampledata.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Sample data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./A4_scriptmap.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Scripting a map</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-specoc" id="toc-sec-specoc" class="nav-link active" data-scroll-target="#sec-specoc"><span class="header-section-number">3.1</span> Species occurrences</a>
+  <ul class="collapse">
+  <li><a href="#point-densities" id="toc-point-densities" class="nav-link" data-scroll-target="#point-densities"><span class="header-section-number">3.1.1</span> Point densities</a></li>
+  <li><a href="#spatially-thinning" id="toc-spatially-thinning" class="nav-link" data-scroll-target="#spatially-thinning"><span class="header-section-number">3.1.2</span> Spatially thinning</a></li>
+  </ul></li>
+  <li><a href="#sec-studyarea" id="toc-sec-studyarea" class="nav-link" data-scroll-target="#sec-studyarea"><span class="header-section-number">3.2</span> Background points</a>
+  <ul class="collapse">
+  <li><a href="#study-area" id="toc-study-area" class="nav-link" data-scroll-target="#study-area"><span class="header-section-number">3.2.1</span> Study area</a></li>
+  <li><a href="#background-points" id="toc-background-points" class="nav-link" data-scroll-target="#background-points"><span class="header-section-number">3.2.2</span> Background points</a></li>
+  </ul></li>
+  <li><a href="#sec-multicollinearity" id="toc-sec-multicollinearity" class="nav-link" data-scroll-target="#sec-multicollinearity"><span class="header-section-number">3.3</span> Multicollinearity</a></li>
+  <li><a href="#sec-maxentswd" id="toc-sec-maxentswd" class="nav-link" data-scroll-target="#sec-maxentswd"><span class="header-section-number">3.4</span> Export data</a></li>
+  <li><a href="#code-summary" id="toc-code-summary" class="nav-link" data-scroll-target="#code-summary"><span class="header-section-number">3.5</span> Code summary</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-dataprep" class="quarto-section-identifier"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Prepare the data</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Species distribution models (SDMs) rely on two main types of data; location data, which shows where the species is found, and environmental data, which describes the conditions in those areas. However, working with such data can present challenges, such as bias, multicollinearity (overlap between predictor variables), changes in collinearity between training and testing datasets, and the presence of unfamiliar environmental conditions. In this chapter we’ll go into a few simple strategies to address some of these challenges. These are not exhaustive solutions, and you are encouraged to explore and test different approaches to tackle the different assumptions and potential caveats <span class="citation" data-cites="jarnevich2015">[<a href="references.html#ref-jarnevich2015" role="doc-biblioref">1</a>]</span>.</p>
+<section id="sec-specoc" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="sec-specoc"><span class="header-section-number">3.1</span> Species occurrences</h2>
+<div class="grid">
+<div class="g-col-md-6 g-col-12">
+<p>One fundamental assumption of SDMs is that the entire area of interest has been systematically or randomly sampled <span class="citation" data-cites="phillips2009a kramerSampling2013">[<a href="references.html#ref-phillips2009a" role="doc-biblioref">2</a>, <a href="references.html#ref-kramerSampling2013" role="doc-biblioref">3</a>]</span>. In practice, species occurrence datasets are often biased due to uneven sampling across the study area. For example, some areas may be more accessible (<a href="#fig-examplesofbias" class="quarto-xref">Figure&nbsp;<span>3.1</span></a>) or more popular with visitors, resulting in more data from those locations.</p>
+<p>Another source of bias comes from intensive monitoring in certain areas, resulting in repeated observations in the same space. If you check the attribute table, you’ll see that there are repeated observations by the same observers at certain locations within a few months or years.</p>
+<p>There are several ways to deal with oversampling, focusing on the presence points (this paragraph) or the background points (next paragraph) <span class="citation" data-cites="kramerSampling2013 fourcade2014">[<a href="references.html#ref-kramerSampling2013" role="doc-biblioref">3</a>, <a href="references.html#ref-fourcade2014" role="doc-biblioref">4</a>]</span>.</p>
+</div>
+<div class="g-col-md-6 g-col-12">
+<div id="fig-examplesofbias" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-examplesofbias-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="images/examplesofbias.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;3.1: Examples of different potential sources of bias in the species occurrence data for Erebia alberganus. On the right side of the map, the points are conspicuously clustered along a road, which may indicate sampling bias. On the left, the points form a grid-like pattern, suggesting that the coordinates were recorded with limited decimal precision."><img src="images/examplesofbias.png" class="img-fluid figure-img" width="500"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-examplesofbias-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.1: Examples of different potential sources of bias in the species occurrence data for <em>Erebia alberganus</em>. On the right side of the map, the points are conspicuously clustered along a road, which may indicate sampling bias. On the left, the points form a grid-like pattern, suggesting that the coordinates were recorded with limited decimal precision.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Undersampling, on the other hand, is more difficult to address, especially when significant portions of a species’ range are not adequately sampled. Although it does not resolve the issue, comparing GBIF occurrence data with other sources, such as Red List range maps (<a href="2_obtaining_data.html#fig-rangemapoccurrences" class="quarto-xref">Figure&nbsp;<span>2.5</span></a>), can provide useful insights into the extent of potential undersampling.</p>
+<section id="point-densities" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="point-densities"><span class="header-section-number">3.1.1</span> Point densities</h3>
+<p>Before proceeding, let’s check whether our GBIF occurrence dataset shows any signs of bias by analyzing how the density of occurrences varies across the study area. We can do this by counting the number of observations within each grid cell. To accomplish this, we will use the <a href="https://grass.osgeo.org/grass-stable/manuals/addons/r.vect.stats.html">r.vect.stats</a> module, which allows us to perform statistical analysis on raster-vector combinations. Since this is an addon, we will need to install it first.</p>
+<div id="exm-upfOO5Bwjm" class="hiddendiv theorem example">
+<p><span class="theorem-title"><strong>Step 3.1</strong></span> &nbsp;</p>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="interface">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page"><i class="fa-solid fa-terminal" aria-label="terminal"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false"><i class="fa-brands fa-python" aria-label="python"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false"><i class="fa-regular fa-window-restore" aria-label="window-restore"></i></a></li></ul>
+<div class="tab-content" data-group="interface">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="ex">g.extension</span> extension=r.vect.stats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a>gs.run_command(<span class="st">"g.extension"</span>, extension<span class="op">=</span><span class="st">"r.vect.stats"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p>In the menu, select <span class="style-menu">Settings → Addon extensions → Install extension from addons [g.extension]</span>. This opens a new window (see below).</p>
+<div id="fig-installrvectstats" class="quarto-float quarto-figure quarto-figure-left anchored" data-fig-align="left">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-installrvectstats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="images/g_extension_install_rvectstats.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;3.2: Use the search bar to look for r.vect.stats and hit Enter"><img src="images/g_extension_install_rvectstats.png" class="img-fluid quarto-figure quarto-figure-left figure-img" style="width:80.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-installrvectstats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.2: Use the search bar to look for <span class="style-function">r.vect.stats</span> and hit <span class="style-menu">Enter</span>
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>We want to create the layer in the <span class="style-db">Erebia_alberganus</span> mapset, so we need to switch to that mapset first.</p>
+<div id="exm-3Tw6fEB0hg" class="hiddendiv theorem example">
+<p><span class="theorem-title"><strong>Step 3.2</strong></span> &nbsp;</p>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="interface">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true"><i class="fa-solid fa-terminal" aria-label="terminal"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false"><i class="fa-brands fa-python" aria-label="python"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false"><i class="fa-regular fa-window-restore" aria-label="window-restore"></i></a></li></ul>
+<div class="tab-content" data-group="interface">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1"></a><span class="ex">g.mapset</span> mapset=species_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a>gs.run_command(<span class="st">"g.mapset"</span>, mapset<span class="op">=</span><span class="st">"species_data"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div id="fig-switchmapset" class="quarto-float quarto-figure quarto-figure-left anchored" data-fig-align="left">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-switchmapset-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="images/switchmapset.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3.3: To change the mapset, right click on the name of the mapset in the Data panel. In the context menu, select Switch mapset."><img src="images/switchmapset.png" class="img-fluid quarto-figure quarto-figure-left figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-switchmapset-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.3: To change the mapset, right click on the name of the mapset in the <span class="style-menu">Data</span> panel. In the context menu, select <span class="style-menu">Switch mapset</span>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>The extent and resolution of the resulting raster is determined by the bounding box of the mapset. So we set the region’s extent to match the extent of the occurrence point layer. We also set the region’s resolution to match that of the bioclim layers, which is 0.008333 arc degrees.</p>
+<div id="exm-DzyEuYlZum" class="hiddendiv theorem example">
+<p><span class="theorem-title"><strong>Step 3.3</strong></span> &nbsp;</p>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="interface">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true"><i class="fa-solid fa-terminal" aria-label="terminal"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false"><i class="fa-brands fa-python" aria-label="python"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false"><i class="fa-regular fa-window-restore" aria-label="window-restore"></i></a></li></ul>
+<div class="tab-content" data-group="interface">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div class="sourceCode" id="annotated-cell-5"><pre class="sourceCode numberSource bash code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode bash"><button class="code-annotation-anchor" data-target-cell="annotated-cell-5" data-target-annotation="1">1</button><span id="annotated-cell-5-1" class="code-annotation-target"><a href="#annotated-cell-5-1"></a><span class="ex">g.region</span> <span class="at">-a</span> res=0.008333 vector=Erebia_alberganus_obs</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-5" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-5" data-code-lines="1" data-code-annotation="1">Setting the -a flag means that the function will adjust the boundaries of the extent if necessary to ensure that the region is perfectly aligned with the resolution.</span>
+</dd>
+</dl>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div class="sourceCode" id="annotated-cell-6"><pre class="sourceCode numberSource python code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-6-1"><a href="#annotated-cell-6-1"></a>gs.run_command(</span>
+<span id="annotated-cell-6-2"><a href="#annotated-cell-6-2"></a>    <span class="st">"g.region"</span>,</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-6" data-target-annotation="1">1</button><span id="annotated-cell-6-3" class="code-annotation-target"><a href="#annotated-cell-6-3"></a>    flags<span class="op">=</span><span class="st">"a"</span>,</span>
+<span id="annotated-cell-6-4"><a href="#annotated-cell-6-4"></a>    res<span class="op">=</span><span class="fl">0.008333</span>,</span>
+<span id="annotated-cell-6-5"><a href="#annotated-cell-6-5"></a>    vector<span class="op">=</span><span class="st">"Erebia_alberganus_obs"</span>,</span>
+<span id="annotated-cell-6-6"><a href="#annotated-cell-6-6"></a>)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-6" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-6" data-code-lines="3" data-code-annotation="1">Setting the -a flag means that the function will adjust the boundaries of the extent if necessary to ensure that the region is perfectly aligned with the resolution.</span>
+</dd>
+</dl>
+</div>
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<p>To change the region settings, open the <span class="style-function">g.region</span> dialog, and fill in the following parameters:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 60%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>res</td>
+<td>0.008333</td>
+</tr>
+<tr class="even">
+<td>vector</td>
+<td>Erebia_alberganus_obs</td>
+</tr>
+<tr class="odd">
+<td>Align region to resolution (a)</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p><br>Note that we use <span class="style-parameter">-a</span> flag to tell <span class="style-function">g.region</span> to ensure that the region is perfectly aligned with the resolution. To this end, the <span class="style-function">g.region</span> function will adjust the region’s bound, if needed.</p>
+</div>
+</div>
+</div>
+<p>We can now run the <span class="style-function">r.vect.stats</span> module. With the <span class="style-parameter">method</span> parameter, we can tell the module what statistic to compute based on vector points over a raster grid. We use <span class="style-parameter">method=n</span> to calculate the number of points per grid cell. The <span class="style-parameter">n</span> stands for count.</p>
+<div id="exm-Xj32c2jubU" class="hiddendiv theorem example">
+<p><span class="theorem-title"><strong>Step 3.4</strong></span> &nbsp;</p>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="interface">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true"><i class="fa-solid fa-terminal" aria-label="terminal"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false"><i class="fa-brands fa-python" aria-label="python"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false"><i class="fa-regular fa-window-restore" aria-label="window-restore"></i></a></li></ul>
+<div class="tab-content" data-group="interface">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1"></a><span class="ex">r.vect.stats</span> input=Erebia_alberganus_obs output=pointdensities method=n</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a>gs.run_command(</span>
+<span id="cb6-2"><a href="#cb6-2"></a>    <span class="st">"r.vect.stats"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3"></a>    <span class="bu">input</span><span class="op">=</span><span class="st">"Erebia_alberganus_obs"</span>,</span>
+<span id="cb6-4"><a href="#cb6-4"></a>    output<span class="op">=</span><span class="st">"pointdensities"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5"></a>    method<span class="op">=</span><span class="st">"n"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
+<p>To calculate the point densities per grid cell, open the <span class="style-function">r.vect.stats</span> dialog, and use the following parameter settings.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 60%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>input</td>
+<td>Erebia_alberganus_obs</td>
+</tr>
+<tr class="even">
+<td>output</td>
+<td>pointdensities</td>
+</tr>
+<tr class="odd">
+<td>method</td>
+<td>n</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>After completing these steps, we have a raster layer (<span class="style-data">pointdensities</span>) with the number of occurrences per cell. Remember that the extent and resolution of the raster cell is based on the extent of the point data and the resolution of the bioclim layers (<a href="#exm-DzyEuYlZum" class="quarto-xref">step&nbsp;<span>3.3</span></a>). In the next step, we compute some statistics. To exclude cells with 0 (zero) occurrences, we convert them to NULL using the <a href="https://grass.osgeo.org/grass-stable/manuals/r.null.html">r.null</a> function. This ensures that only the cells where the species was observed (non-zero values) will be considered in subsequent steps.</p>
+<div id="exm-J7MoS70p6m" class="hiddendiv theorem example">
+<p><span class="theorem-title"><strong>Step 3.5</strong></span> &nbsp;</p>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="interface">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true"><i class="fa-solid fa-terminal" aria-label="terminal"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false"><i class="fa-brands fa-python" aria-label="python"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false"><i class="fa-regular fa-window-restore" aria-label="window-restore"></i></a></li></ul>
+<div class="tab-content" data-group="interface">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1"></a><span class="ex">r.null</span> map=pointdensities setnull=0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a>gs.run_command(<span class="st">"r.null"</span>, <span class="bu">map</span><span class="op">=</span><span class="st">"pointdensities"</span>, setnull<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
+<p>Open the <span class="style-function">r.null</span> dialog, and use the following parameter settings.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 60%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>map</td>
+<td>pointdensities</td>
+</tr>
+<tr class="even">
+<td>setnull</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>We use <a href="https://grass.osgeo.org/grass-stable/manuals/r.univar.html">r.univar</a> to compute the range and median of number of observations per grid cell and the <a href="https://grass.osgeo.org/grass-stable/manuals/addons/r.boxplot.html">r.boxplot</a> addon to visualize the distribution of point densities and to identify possible outliers.</p>
+<div id="exm-WtuDMbpLQo" class="hiddendiv theorem example">
+<p><span class="theorem-title"><strong>Step 3.6</strong></span> &nbsp;</p>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="interface">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true"><i class="fa-solid fa-terminal" aria-label="terminal"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false"><i class="fa-brands fa-python" aria-label="python"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false"><i class="fa-regular fa-window-restore" aria-label="window-restore"></i></a></li></ul>
+<div class="tab-content" data-group="interface">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<div class="sourceCode" id="annotated-cell-11"><pre class="sourceCode numberSource bash code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode bash"><span id="annotated-cell-11-1"><a href="#annotated-cell-11-1"></a><span class="co"># Compute raster statistics</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-11" data-target-annotation="1">1</button><span id="annotated-cell-11-2" class="code-annotation-target"><a href="#annotated-cell-11-2"></a><span class="ex">r.univar</span> <span class="at">-e</span> map=pointdensities</span>
+<span id="annotated-cell-11-3"><a href="#annotated-cell-11-3"></a></span>
+<span id="annotated-cell-11-4"><a href="#annotated-cell-11-4"></a><span class="co"># Install and run r.boxplot</span></span>
+<span id="annotated-cell-11-5"><a href="#annotated-cell-11-5"></a><span class="ex">g.extension</span> extension=r.boxplot</span>
+<span id="annotated-cell-11-6"><a href="#annotated-cell-11-6"></a><span class="ex">r.boxplot</span> <span class="at">-o</span> <span class="at">-h</span> input=pointdensities</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-11" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-11" data-code-lines="2" data-code-annotation="1">The <span class="style-parameter">-e</span> flag tells <span class="style-function">r.univar</span> to calculate extended statistics, like the median.</span>
+</dd>
+</dl>
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div class="sourceCode" id="annotated-cell-12"><pre class="sourceCode numberSource python code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-12-1"><a href="#annotated-cell-12-1"></a><span class="co"># Compute raster statistics</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-12" data-target-annotation="1">1</button><span id="annotated-cell-12-2" class="code-annotation-target"><a href="#annotated-cell-12-2"></a>gs.run_command(<span class="st">"r.univar"</span>, flags<span class="op">=</span><span class="st">"e"</span>, <span class="bu">map</span><span class="op">=</span><span class="st">"pointdensities"</span>)</span>
+<span id="annotated-cell-12-3"><a href="#annotated-cell-12-3"></a></span>
+<span id="annotated-cell-12-4"><a href="#annotated-cell-12-4"></a><span class="co"># Install and run r.boxplot</span></span>
+<span id="annotated-cell-12-5"><a href="#annotated-cell-12-5"></a>gs.run_command(<span class="st">"g.extension"</span>, extension<span class="op">=</span><span class="st">"r.boxplot"</span>)</span>
+<span id="annotated-cell-12-6"><a href="#annotated-cell-12-6"></a>gs.run_command(<span class="st">"r.boxplot"</span>, flags<span class="op">=</span><span class="st">"o"</span>, <span class="bu">input</span><span class="op">=</span><span class="st">"pointdensities"</span>)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-12" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-12" data-code-lines="2" data-code-annotation="1">The <span class="style-parameter">-e</span> flag tells <span class="style-function">r.univar</span> to calculate extended statistics, like the median.</span>
+</dd>
+</dl>
+</div>
+<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
+<p>Open the <span class="style-function">r.univar</span> dialog, and use the following parameter settings. The <span class="style-parameter">-e</span> flag tells <span class="style-function">r.univar</span> to calculate extended statistics, like the median.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 60%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>map</td>
+<td>pointdensities</td>
+</tr>
+<tr class="even">
+<td>Calculate extended statistics (e)</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p><br>Install the <span class="style-function">r.boxplot</span> and run it with the following parameter settings.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 60%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Input</td>
+<td>pointdensities</td>
+</tr>
+<tr class="even">
+<td>Include outliers (o)</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p><br>Note that the <span class="style-function">r.boxplot</span> offers various options to format the plot.</p>
+</div>
+</div>
+</div>
+<p>The results of <span class="style-function">r.univar</span> show that the number of observations per raster cell range from 1 to 240, with a median of 1, and an average of 4.7. These results and the boxplot in <a href="#fig-pointdensitiesboxplot" class="quarto-xref">Figure&nbsp;<span>3.4</span></a> show that even though within the majority of non-NULL raster cells there is only one observation, there are also raster cells with many more observations, up to 240 point observations.</p>
+<div id="fig-pointdensitiesboxplot" class="quarto-float quarto-figure quarto-figure-left anchored" data-fig-align="left">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pointdensitiesboxplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="images/pointdensityboxplot.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;3.4: The boxplot shows the range, quartiles, outliers of the point densities."><img src="images/pointdensityboxplot.png" class="img-fluid quarto-figure quarto-figure-left figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pointdensitiesboxplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.4: The boxplot shows the range, quartiles, outliers of the point densities.
+</figcaption>
+</figure>
+</div>
+<p>If we look at the attribute table, we’ll see that where there are many observations, they often span several years and often involve the same observer. This suggests that certain areas have been surveyed more extensively than others, potentially leading to uneven sampling effort across the species’ range.</p>
+</section>
+<section id="spatially-thinning" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="spatially-thinning"><span class="header-section-number">3.1.2</span> Spatially thinning</h3>
+<p>As mentioned earlier, we wanted to check whether our GBIF occurrence dataset shows any signs of bias. The results suggest that bias may be present. A simple way to reduce the risk of spatial autocorrelation caused by oversampling is through spatial thinning or sub-sampling the data <span class="citation" data-cites="beck2014a">[<a href="references.html#ref-beck2014a" role="doc-biblioref">5</a>]</span>. This method involves removing observation points from the training dataset to ensure a specified minimum distance between points or to limit the maximum density of points at each location.</p>
+<p>There are different approaches to spatially thin a point layers. One way is to convert the vector point layer with occurrences to a raster layer using <a href="https://grass.osgeo.org/grass-stable/manuals/v.to.rast.html">v.to.rast</a>. Next, the raster layer is converted back to a vector point layer using <a href="https://grass.osgeo.org/grass-stable/manuals/r.to.vect.html">r.to.vect</a>. The result is a point layer with a point in the center of each raster cell with occurrences, as illustrated in <a href="#fig-spatialthinning" class="quarto-xref">Figure&nbsp;<span>3.5</span></a>. The density and number of points in the output layer depend on the region’s resolution. This means that we can vary the point density by changing the region’s resolution first <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<div id="fig-spatialthinning" class="quarto-float quarto-figure quarto-figure-left anchored" data-fig-align="left">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-spatialthinning-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="images/spatialthinning.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;3.5: Reduce number of sample points to a maximum of 1 point per raster cell."><img src="images/spatialthinning.png" class="img-fluid quarto-figure quarto-figure-left figure-img" width="450"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-spatialthinning-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.5: Reduce number of sample points to a maximum of 1 point per raster cell.
+</figcaption>
+</figure>
+</div>
+<p>For this tutorial, we’ll use the thinning option in the module <a href="https://grass.osgeo.org/grass-stable/manuals/addons/v.maxent.swd.html">v.maxent.swd</a>. The module follows the same approach as described above. We’ll use this module later in this tutorial (<a href="#sec-maxentswd" class="quarto-xref"><span>Section 3.4</span></a>) to prepare the input data for the Maxent analysis, so at this point, we don’t need to do anything.</p>
+</section>
+</section>
+<section id="sec-studyarea" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="sec-studyarea"><span class="header-section-number">3.2</span> Background points</h2>
+<p>Maxent uses <em>background</em> points to characterize the environmental conditions of the study area. This is done by first selecting a large number of locations within the study area (green dots in <a href="#fig-conceptbackgroundpoints" class="quarto-xref">Figure&nbsp;<span>3.6</span></a>). The environmental conditions for these locations are then determined. These values represent the “environmental space” of the study area. Maxent compares these with the environmental conditions under which the species was observed (grey dots in <a href="#fig-conceptbackgroundpoints" class="quarto-xref">Figure&nbsp;<span>3.6</span></a>).</p>
+<div id="fig-conceptbackgroundpoints" class="quarto-float quarto-figure quarto-figure-left anchored" data-fig-align="left">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-conceptbackgroundpoints-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="images/study_vs_species-domain.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;3.6: Left: A study area with species observations marked by dark gray dots and randomly selected background points marked in green. Right: Scatter and density plots depict how rainfall and temperature are distributed across both the background points (green) and species observations (dark gray). The species prefers areas with higher rainfall, while there is no apparent preference for temperature."><img src="images/study_vs_species-domain.png" class="img-fluid quarto-figure quarto-figure-left figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-conceptbackgroundpoints-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.6: Left: A study area with species observations marked by dark gray dots and randomly selected background points marked in green. Right: Scatter and density plots depict how rainfall and temperature are distributed across both the background points (green) and species observations (dark gray). The species prefers areas with higher rainfall, while there is no apparent preference for temperature.
+</figcaption>
+</figure>
+</div>
+<section id="study-area" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="study-area"><span class="header-section-number">3.2.1</span> Study area</h3>
+<p>One of the decisions we need to make is about the boundaries of our study area. We can draw a bounding box or use more complex shapes representing specific boundaries.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Importance of the size and shape of the study area
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>An important decision in species distribution modeling is the size and shape of the study area <span class="citation" data-cites="acevedo2012">[<a href="references.html#ref-acevedo2012" role="doc-biblioref">6</a>]</span>. The environmental gradients will be larger in a larger study area. If the study area is very large, the background points may capture environmental conditions that are mostly far outside the possible range of suitable conditions. This can lead to an underestimation of the influence of variables operating at smaller spatial scales. It also artificially inflates performance metrics (such as AUC) by making the prediction of unsuitable areas appear easier than it is.</p>
+<p>On the other hand, if the study area is largely limited to the areas where the species is observed, the model is likely to discriminate between presence and background points based on subtle differences that may not be ecologically meaningful. And if the study area does not include all areas where the species occurs, important environmental gradients may be missed, potentially underestimating the full range of suitable conditions for the species.</p>
+<p>The size of the study area can also affect how well model evaluation metrics (e.g., AUC) reflect true model performance. In a large study area with many unsuitable environments, the model may appear to perform well because the contrast between suitable and unsuitable areas is greater. In smaller areas with less contrast, the predictive power of the model may be harder to detect.</p>
+<p>An important consideration is the area that has been accessible to the species of interest over relevant time periods. This is the ideal area for model development, testing and comparison <span class="citation" data-cites="barveCrucialRoleAccessible2011">[<a href="references.html#ref-barveCrucialRoleAccessible2011" role="doc-biblioref">7</a>]</span>. In general, this will not be easy to determine as it will depend on, for example, time, type of environment, and presence of barriers.</p>
+<hr>
+<p><strong>How to</strong>: Depending on how we want to select the background points, we can delimit our study area using the computational region, a MASK or using polygons. See below.</p>
+</div>
+</div>
+</div>
+<!----------------------------------------------------------------------------->
+<p>We’ll create background points within the boundaries of the area of interest (aoi) that we defined in <a href="2_obtaining_data.html#sec-climatedata" class="quarto-xref"><span>Section 2.4</span></a>. To store the vector layer with background points for this particular <em>aoi</em> in a separate mapset, we first use the <a href="https://grass.osgeo.org/grass-stable/manuals/g.mapset.html">g.mapset</a> module to create a new mapset <span class="style-db">dataset01</span>. Next, we use the <a href="https://grass.osgeo.org/grass-stable/manuals/g.region.html">g.region</a> module to set the computational region, based on the region file we created earlier (<a href="2_obtaining_data.html#exm-V0FK3TyzcN" class="quarto-xref">step&nbsp;<span>2.21</span></a>), and the <a href="https://grass.osgeo.org/grass-stable/manuals/r.mask.html">r.mask</a> module with the <span class="style-parameter">vector</span> parameter to further restrict our study area to land areas. Finally, to avoid having to append the name of that mapset to a layers name, each time we need a layer from a different mapset, we give access to the other relevant mapsets using the <a href="https://grass.osgeo.org/grass-stable/manuals/g.mapsets.html">g.mapsets</a> command <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>.</p>
+<div id="exm-3XFvGCjQ7i" class="hiddendiv theorem example">
+<p><span class="theorem-title"><strong>Step 3.7</strong></span> &nbsp;</p>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="interface">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true"><i class="fa-solid fa-terminal" aria-label="terminal"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false"><i class="fa-brands fa-python" aria-label="python"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-3" role="tab" aria-controls="tabset-7-3" aria-selected="false"><i class="fa-regular fa-window-restore" aria-label="window-restore"></i></a></li></ul>
+<div class="tab-content" data-group="interface">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># Create a new mapset</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="ex">g.mapset</span> <span class="at">-c</span> mapset=dataset01</span>
+<span id="cb9-3"><a href="#cb9-3"></a></span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="co"># Define the region</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="ex">g.region</span> region=aoi@climate_current</span>
+<span id="cb9-6"><a href="#cb9-6"></a></span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="co"># Create a MASK</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="ex">r.mask</span> vector=countries@PERMANENT</span>
+<span id="cb9-9"><a href="#cb9-9"></a></span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="co"># Give access to layers in other mapsets</span></span>
+<span id="cb9-11"><a href="#cb9-11"></a><span class="ex">g.mapsets</span> mapset=climate_current,Erebia_alberganus operation=add</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># Create a new mapset and make it the active mapset</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>gs.run_command(<span class="st">"g.mapset"</span>, flags<span class="op">=</span><span class="st">"c"</span>, mapset<span class="op">=</span><span class="st">"dataset01"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3"></a></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="co"># Set the region to match the region settings in the aoi region file</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>gs.run_command(<span class="st">"g.region"</span>, region<span class="op">=</span><span class="st">"aoi@climate_current"</span>)</span>
+<span id="cb10-6"><a href="#cb10-6"></a></span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="co"># Create a MASK</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a>gs.run_command(<span class="st">"r.mask"</span>, vector<span class="op">=</span><span class="st">"countries@PERMANENT"</span>)</span>
+<span id="cb10-9"><a href="#cb10-9"></a></span>
+<span id="cb10-10"><a href="#cb10-10"></a><span class="co"># Give access to layers in other mapsets</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a>gs.run_command(</span>
+<span id="cb10-12"><a href="#cb10-12"></a>    <span class="st">"g.mapsets"</span>, mapset<span class="op">=</span>[<span class="st">"climate_current"</span>, <span class="st">"Erebia_alberganus"</span>], operation<span class="op">=</span><span class="st">"add"</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
+<ol type="A">
+<li>Type in <span class="style-function">g.mapset</span> in the console to open the dialog, and use the following parameter settings.</li>
+</ol>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 60%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Name of mapset (mapset)</td>
+<td>dataset01</td>
+</tr>
+<tr class="even">
+<td>Create mapset if it doesn’t exist (c)</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<ol start="2" type="A">
+<li>Next, run the <span class="style-function">g.region</span> module with the following settings:</li>
+</ol>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 60%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>region</td>
+<td>aoi@climate_current</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<ol start="3" type="A">
+<li>Create a MASK of the European land areas using <span class="style-function">r.mask</span>:</li>
+</ol>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 60%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>vector</td>
+<td>countries@PERMANENT</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<ol start="4" type="A">
+<li>Give access to layers in the other mapsets.</li>
+</ol>
+<p>In the menu, go to <span class="style-menu">Settings → GRASS working environment → Mapset access</span> and select the mapsets <span class="style-db">climate_current</span> and <span class="style-db">Erebia_alberganus</span>.</p>
+</div>
+</div>
+</div>
+<p>We have now a new raster layer named <span class="style-data">MASK</span> in the mapset <span class="style-db">dataset01</span>. We can use <a href="https://grass.osgeo.org/grass-stable/manuals/r.info.html">r.info</a> to check that it has the same extent and resolution as the computational region (<a href="#fig-studyareas" class="quarto-xref">Figure&nbsp;<span>3.7</span></a>). The raster cells falling outside the MASK are not included in operations like raster algebra, statistics, or interpolation.</p>
+<div id="fig-studyareas" class="quarto-float quarto-figure quarto-figure-left anchored" data-fig-align="left">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-studyareas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="images/studyarea.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Figure&nbsp;3.7: Red outline: the bounds of the computational region. Green: the MASK, which covers the study area."><img src="images/studyarea.png" class="img-fluid quarto-figure quarto-figure-left figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-studyareas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.7: Red outline: the bounds of the computational region. Green: the MASK, which covers the study area.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="background-points" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="background-points"><span class="header-section-number">3.2.2</span> Background points</h3>
+<p>Now that we have defined the study area, we need to create a vector layer with background points. These will be used to characterize environmental conditions across the study area. The model will compare them with the conditions where the species is present.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Background vs pseudo-absence points
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Background points are used to characterize the environmental conditions in the study area. They differ from absence points, which explicitly indicate locations where the species was surveyed but not found <span class="citation" data-cites="elith2009 phillips2009a">[<a href="references.html#ref-phillips2009a" role="doc-biblioref">2</a>, e.g. <a href="references.html#ref-elith2009" role="doc-biblioref">8</a>]</span>. Together with presence data, they can be used to estimate the conditions under which a species is more likely to occur than on average. Background points are commonly selected at random across the study area. However, alternative methods may yield better results <span class="citation" data-cites="phillipsSampleSelectionBias2009 wardPresenceOnlyDataEM2009 phillipsModelingSpeciesDistributions2008">[<a href="references.html#ref-phillipsSampleSelectionBias2009" role="doc-biblioref">9</a>–<a href="references.html#ref-phillipsModelingSpeciesDistributions2008" role="doc-biblioref">11</a>]</span>.</p>
+<p>A closely related but different concept is that of <em>pseudo-absences</em> <span class="citation" data-cites="barbet-massin2012">[<a href="references.html#ref-barbet-massin2012" role="doc-biblioref">12</a>]</span>. Pseudo-absence are locations where the species is assumed to be absent, even though no actual survey data confirms this. They are often generated randomly or based on specific criteria to contrast them with presence data (e.g., environmental dissimilarity to presence points). For example, one may select at random sample points throughout the region, excluding areas within a certain distance from presence points. Or sample points may be selected at places unlikely to be suitable for the species.</p>
+<p>The advantage of background points over pseudo-absence points is that it requires fewer assumptions and therefore is less prone to bias. And methods such as Maxent can explicitly deal with the overlap between presence and background points <span class="citation" data-cites="phillipsOpeningBlackBox2017a">[<a href="references.html#ref-phillipsOpeningBlackBox2017a" role="doc-biblioref">13</a>]</span>. We will therefore use background points.</p>
+</div>
+</div>
+</div>
+<p>There are different ways to create background points. To get a complete representation of the study area, we can convert the <span class="style-data">MASK</span> layer to a vector point layer using the <a href="https://grass.osgeo.org/grass-stable/manuals/r.to.vect.html">r.to.vect</a> module. However, in our example, this will create a very large point layer with over 7 million locations, which could significantly slow down the modeling process and may well exceed Maxent’s capacity to handle such a large dataset. Instead, we create a point layer with randomly selected sample points to represent the environmental conditions in the selected study area.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Creating sample background points
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>There are several ways to create background points. One option is to use the <a href="https://grass.osgeo.org/grass-stable/manuals/addons/v.maxent.swd.html">v.maxent.swd</a> module, which we will use later in this tutorial to prepare the input data for the Maxent model. This module includes an option to generate random background points within the region’s bounds and MASK.</p>
+<p>For more flexibility, we can create random points in a separate step using for example:</p>
+<ul>
+<li><p>The <a href="https://grass.osgeo.org/grass-stable/manuals/r.random.html">r.random</a> module creates a vector or raster point layer with randomly selected point locations within the current computational region bounds. If there is a <span class="style-data">MASK</span>, points will only be generated within the masked area.</p></li>
+<li><p>The <a href="https://grass.osgeo.org/grass-stable/manuals/v.random.html">v.random</a> module randomly generates vector points within the current region. If an <span class="style-parameter">restrict</span> vector map is specified with one or more areas (polygons), the location of random points is confined to those areas. By default, the requested number of points are distributed across all areas, but by using the <span class="style-parameter">-a</span> flag, the requested number of points is generated for each individual area, thus allowing for stratified sampling (see examples in the manual page).</p></li>
+<li><p>If you want the random points to be at least a certain distance apart, you can use the <a href="https://grass.osgeo.org/grass-stable/manuals/r.random.cells.html">r.random.cells</a> module. It generates a random set of raster cells that are at least a certain distance apart. Again, if a MASK is present, random cells will not be generated in masked areas.</p></li>
+<li><p>With the <a href="https://grass.osgeo.org/grass-stable/manuals/addons/r.random.weight.html">r.random.weight</a> module, you can vary the point density across the region, based on the values of a bias layer. This makes it possible to correct for the effect of sampling bias by creating a background point layer with the same bias as the presence locations <span class="citation" data-cites="phillips2009a moua2020 beck2014a">[<a href="references.html#ref-phillips2009a" role="doc-biblioref">2</a>, <a href="references.html#ref-beck2014a" role="doc-biblioref">5</a>, <a href="references.html#ref-moua2020" role="doc-biblioref">14</a>]</span>.</p></li>
+</ul>
+</div>
+</div>
+</div>
+<p>We’ll use the <a href="https://grass.osgeo.org/grass-stable/manuals/r.random.html">r.random</a> function to generate a point layer <span class="style-data">background_points</span> with random points within the region’s bounds and MASK. The main choice we have to make is the number of sample points. The number of sample points often used is on the order of 10,000, which is what we will use. Note, however, that for larger, more heterogeneous areas, you may need more background points to ensure that all important environmental conditions are well represented <span class="citation" data-cites="whitford2024">[<a href="references.html#ref-whitford2024" role="doc-biblioref">15</a>]</span>.</p>
+<div id="exm-25nmhfEEDF" class="hiddendiv theorem example">
+<p><span class="theorem-title"><strong>Step 3.8</strong></span> &nbsp;</p>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="interface">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true"><i class="fa-solid fa-terminal" aria-label="terminal"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false"><i class="fa-brands fa-python" aria-label="python"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-3" role="tab" aria-controls="tabset-8-3" aria-selected="false"><i class="fa-regular fa-window-restore" aria-label="window-restore"></i></a></li></ul>
+<div class="tab-content" data-group="interface">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1"></a><span class="ex">r.random</span> input=MASK npoints=10000 vector=background_points seed=5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a>gs.run_command(</span>
+<span id="cb12-2"><a href="#cb12-2"></a>    <span class="st">"r.random"</span>, <span class="bu">input</span><span class="op">=</span><span class="st">"MASK"</span>, npoints<span class="op">=</span><span class="dv">10000</span>, vector<span class="op">=</span><span class="st">"background_points"</span>, seed<span class="op">=</span><span class="dv">5</span></span>
+<span id="cb12-3"><a href="#cb12-3"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-8-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-3-tab">
+<p>Open the <span class="style-function">r.random</span>, and use the following parameter settings.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 60%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>input</td>
+<td>MASK</td>
+</tr>
+<tr class="even">
+<td>npoints</td>
+<td>10000</td>
+</tr>
+<tr class="odd">
+<td>vector</td>
+<td>background_points</td>
+</tr>
+<tr class="even">
+<td>seed</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-multicollinearity" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="sec-multicollinearity"><span class="header-section-number">3.3</span> Multicollinearity</h2>
+<p>Multicollinearity occurs when two or more explanatory variables are highly correlated. This can make it difficult to determine the individual effect of each variable on the species distribution, and redundant variables may add noise to the model without improving its predictive power. Maxent, a commonly used SDM tool, is relatively insensitive to multicollinearity because it selects the most informative variables during model training. Yet, excluding highly redundant variables might still help to get a more parsimonious, robust and interpretable model. And on a practical note, it will reduce the time it takes to train the model.</p>
+<div id="fig-bio6_bio11_scatterplot" class="quarto-float quarto-figure quarto-figure-left anchored" data-fig-align="left">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-bio6_bio11_scatterplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="images/bio6_bio11_scatterplot.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Figure&nbsp;3.8: The bioclim 6 and bioclim 11 variables are highly correlated (r=0.98). This begs the question of how useful it is to use both as predictor variables in the model. You can explore the relation between any two variables yourself using the bivariate scatterplot tool. Click on the  in the toolbar of the map display."><img src="images/bio6_bio11_scatterplot.png" class="img-fluid quarto-figure quarto-figure-left figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bio6_bio11_scatterplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.8: The bioclim 6 and bioclim 11 variables are highly correlated (r=0.98). This begs the question of how useful it is to use both as predictor variables in the model. You can explore the relation between any two variables yourself using the bivariate scatterplot tool. Click on the <a href="images/layer-raster-analyze.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Figure&nbsp;3.8: The bioclim 6 and bioclim 11 variables are highly correlated (r=0.98). This begs the question of how useful it is to use both as predictor variables in the model. You can explore the relation between any two variables yourself using the bivariate scatterplot tool. Click on the  in the toolbar of the map display."><img src="images/layer-raster-analyze.png" class="img-fluid figure-img"></a> in the toolbar of the map display.
+</figcaption>
+</figure>
+</div>
+<p>The variance inflation factor (VIF) is a commonly used method to test for collinearity between predictor variables <span class="citation" data-cites="graham2003">[<a href="references.html#ref-graham2003" role="doc-biblioref">16</a>]</span>. In GRASS GIS, the VIF can be calculated for a set of variables using the add-on <a href="https://grass.osgeo.org/grass-stable/manuals/addons/r.vif.html">r.vif</a>. This addon also allows you to select a subset of variables using a stepwise variable selection procedure. In this procedure, the VIF is computed repeatedly. Each time, the variable with the highest VIF is removed until the highest VIF values are less than a user-defined threshold <span class="citation" data-cites="craney2002">[<a href="references.html#ref-craney2002" role="doc-biblioref">17</a>]</span>.</p>
+<p>We’ll use the stepwise VIF procedure to select the minimum set of bioclimatic variables with a VIF &lt; 10. We use <span class="style-parameter">n=100,000</span> so that the VIF is performed based on the values of 100,000 random locations. This speeds up the calculation and avoids memory problems.</p>
+<div id="exm-udfds5Bwdr" class="hiddendiv theorem example">
+<p><span class="theorem-title"><strong>Step 3.9</strong></span> &nbsp;</p>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="interface">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true"><i class="fa-solid fa-terminal" aria-label="terminal"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false"><i class="fa-brands fa-python" aria-label="python"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-3" role="tab" aria-controls="tabset-9-3" aria-selected="false"><i class="fa-regular fa-window-restore" aria-label="window-restore"></i></a></li></ul>
+<div class="tab-content" data-group="interface">
+<div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
+<div class="sourceCode" id="annotated-cell-17"><pre class="sourceCode numberSource bash code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode bash"><span id="annotated-cell-17-1"><a href="#annotated-cell-17-1"></a><span class="co"># Install the r.vif addon</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-17" data-target-annotation="1">1</button><span id="annotated-cell-17-2" class="code-annotation-target"><a href="#annotated-cell-17-2"></a><span class="ex">g.extension</span> extension=r.vif</span>
+<span id="annotated-cell-17-3"><a href="#annotated-cell-17-3"></a></span>
+<span id="annotated-cell-17-4"><a href="#annotated-cell-17-4"></a><span class="co"># Select the input variable</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-17" data-target-annotation="2">2</button><span id="annotated-cell-17-5" class="code-annotation-target"><a href="#annotated-cell-17-5"></a><span class="va">layers</span><span class="op">=</span><span class="kw">`</span><span class="ex">g.list</span> <span class="at">-m</span> type=raster pattern=bio<span class="pp">*</span> sep=<span class="st">","</span> mapset=climate_current<span class="kw">`</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-17" data-target-annotation="3">3</button><span id="annotated-cell-17-6" class="code-annotation-target"><a href="#annotated-cell-17-6"></a><span class="ex">r.vif</span> maps=<span class="va">$layers</span> seed=5 n=100000 maxvif=10</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-17" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-17" data-code-lines="2" data-code-annotation="1">Installs the r.vif add-on in GRASS GIS if it is not already installed.</span>
+</dd>
+<dt data-target-cell="annotated-cell-17" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-17" data-code-lines="5" data-code-annotation="2">This line creates a comma separated list of raster layers in the mapset ‘climate_current’ whose names start with ‘bio’. The resulting list is stored in the variable ‘layers’. With the <em>-m</em> flag, the mapset is included in the layers names.</span>
+</dd>
+<dt data-target-cell="annotated-cell-17" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-17" data-code-lines="6" data-code-annotation="3"><strong>maps=$layers</strong>: Uses the list of raster layers stored in the ‘layers’ variable as input for the VIF analysis. You can, alternatively, skip the previous line, and type in the names of each of the layers.</span>
+</dd>
+</dl>
+</div>
+<div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
+<div class="sourceCode" id="annotated-cell-18"><pre class="sourceCode numberSource python code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-18-1"><a href="#annotated-cell-18-1"></a><span class="co"># Install the r.vif addon</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-18" data-target-annotation="1">1</button><span id="annotated-cell-18-2" class="code-annotation-target"><a href="#annotated-cell-18-2"></a>gs.run_command(<span class="st">"g.extension"</span>, extension<span class="op">=</span><span class="st">"r.vif"</span>)</span>
+<span id="annotated-cell-18-3"><a href="#annotated-cell-18-3"></a></span>
+<span id="annotated-cell-18-4"><a href="#annotated-cell-18-4"></a><span class="co"># Select the input variable</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-18" data-target-annotation="2">2</button><span id="annotated-cell-18-5" class="code-annotation-target"><a href="#annotated-cell-18-5"></a>layers <span class="op">=</span> gs.list_strings(pattern<span class="op">=</span><span class="st">"bio*"</span>, mapset<span class="op">=</span><span class="st">"climate_current"</span>, <span class="bu">type</span><span class="op">=</span><span class="st">"raster"</span>)</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-18" data-target-annotation="3">3</button><span id="annotated-cell-18-6" class="code-annotation-target"><a href="#annotated-cell-18-6"></a>gs.run_command(<span class="st">"r.vif"</span>, maps<span class="op">=</span>layers, seed<span class="op">=</span><span class="dv">5</span>, n<span class="op">=</span><span class="dv">100000</span>, maxvif<span class="op">=</span><span class="dv">10</span>)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-18" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-18" data-code-lines="2" data-code-annotation="1">Installs the r.vif add-on in GRASS GIS if it is not already installed.</span>
+</dd>
+<dt data-target-cell="annotated-cell-18" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-18" data-code-lines="5" data-code-annotation="2">The <span class="style-function">list_strings</span> module provides a convenient wrapper to the <span class="style-function">g.list</span>. The parameters are the same as for the <span class="style-function">g.list</span>.</span>
+</dd>
+<dt data-target-cell="annotated-cell-18" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-18" data-code-lines="6" data-code-annotation="3">The <span class="style-parameter">seed</span> parameter ensures that the random processes are reproducible. You can set any number.</span>
+</dd>
+</dl>
+</div>
+<div id="tabset-9-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-3-tab">
+<p>In the menu, go to <span class="style-menu">settings → addon extensions → install extensions from addons</span>, search for <span class="style-function">r.vif</span> and install it.</p>
+<p>Now, we run the <span class="style-function">r.vif</span>. Make sure to fill in the names of all 19 bioclim variables under the <span class="style-parameter">maps</span> parameter.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>maps</td>
+<td>bio_1,bio_2,bio_3 … bio_17,bio_18,bio_19</td>
+</tr>
+<tr class="even">
+<td>n</td>
+<td>100000</td>
+</tr>
+<tr class="odd">
+<td>maxvif</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>The selected bioclimatic variables in my case are <span class="style-data">bio_1</span>, <span class="style-data">bio_2</span>, <span class="style-data">bio_4</span>, <span class="style-data">bio_8</span>, <span class="style-data">bio_9</span>, <span class="style-data">bio_13</span>, <span class="style-data">bio_14</span>, <span class="style-data">bio_15</span> and <span class="style-data">bio_19</span>. Note that there is a (small) change that your result will show a different combination of variables. This is because the VIF was calculated based on the values of 100,000 randomly selected point locations. Be sure to write down the names of the variables. We’ll need them later.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>The VIF algorithm offers a data-driven method for selecting variables. However, it’s important to also consider ecological significance when making selections. For instance, if a species is sensitive to temperatures during the coldest quarter, this variable should be kept regardless of its VIF score. The <span class="style-function">r.vif</span> module includes a <span class="style-parameter">retain</span> parameter that allows you to specify one or more variables to retain during the stepwise selection process. If a retained variable has the highest VIF, the variable with the next highest VIF will be removed instead.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-maxentswd" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="sec-maxentswd"><span class="header-section-number">3.4</span> Export data</h2>
+<p>The last step before we, finally, can start with the actual modelling, is to prepare and export the input dataset for the Maxent model. We’ll use the module <a href="https://grass.osgeo.org/grass-stable/manuals/addons/v.maxent.swd.html">v.maxent.swd</a> for this. The module exports the different layers in the right format for Maxent. The presence and background point layers are exported as so-called <span class="style-data">swd</span> files. Raster layers are exported as <span class="style-data">ascii</span> files.</p>
+<p>First step is to create a new folder in your working directory. Let’s call it <span class="style-db">dataset01</span>. And in that folder, we create a sub-folder called <span class="style-db">envdat</span>. We’ll export the <span class="style-data">swd</span> files to the first folder, and the <span class="style-data">ascii</span> raster files to the second folder using <span class="style-function">v.maxent.swd</span>. Note, this make take some time, so be patient.</p>
+<div id="exm-ddddddwdr" class="hiddendiv theorem example">
+<p><span class="theorem-title"><strong>Step 3.10</strong></span> &nbsp;</p>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="interface">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true"><i class="fa-solid fa-terminal" aria-label="terminal"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false"><i class="fa-brands fa-python" aria-label="python"></i></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-3" role="tab" aria-controls="tabset-10-3" aria-selected="false"><i class="fa-regular fa-window-restore" aria-label="window-restore"></i></a></li></ul>
+<div class="tab-content" data-group="interface">
+<div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
+<div class="sourceCode" id="annotated-cell-19"><pre class="sourceCode numberSource bash code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode bash"><span id="annotated-cell-19-1"><a href="#annotated-cell-19-1"></a><span class="co"># Create a new folder in the working directory</span></span>
+<span id="annotated-cell-19-2"><a href="#annotated-cell-19-2"></a><span class="fu">mkdir</span> dataset01</span>
+<span id="annotated-cell-19-3"><a href="#annotated-cell-19-3"></a><span class="fu">mkdir</span> dataset01/envdat</span>
+<span id="annotated-cell-19-4"><a href="#annotated-cell-19-4"></a></span>
+<span id="annotated-cell-19-5"><a href="#annotated-cell-19-5"></a><span class="co"># Export the Maxent input data</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-19" data-target-annotation="1">1</button><span id="annotated-cell-19-6" class="code-annotation-target"><a href="#annotated-cell-19-6"></a><span class="ex">v.maxent.swd</span> <span class="at">-t</span> species=Erebia_alberganus_obs <span class="dt">\</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-19" data-target-annotation="2">2</button><span id="annotated-cell-19-7" class="code-annotation-target"><a href="#annotated-cell-19-7"></a>  bgp=background_points <span class="dt">\</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-19" data-target-annotation="3">3</button><span id="annotated-cell-19-8" class="code-annotation-target"><a href="#annotated-cell-19-8"></a>  evp_maps=bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9 <span class="dt">\</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-19" data-target-annotation="4">4</button><span id="annotated-cell-19-9" class="code-annotation-target"><a href="#annotated-cell-19-9"></a>  species_output=dataset01/species.swd <span class="dt">\</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-19" data-target-annotation="5">5</button><span id="annotated-cell-19-10" class="code-annotation-target"><a href="#annotated-cell-19-10"></a>  bgr_output=dataset01/background_points.swd <span class="dt">\</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-19" data-target-annotation="6">6</button><span id="annotated-cell-19-11" class="code-annotation-target"><a href="#annotated-cell-19-11"></a>  export_rasters=dataset01/envdat</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-19" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-19" data-code-lines="6" data-code-annotation="1"><span class="style-parameter">species</span>: point layer with occurrences</span>
+</dd>
+<dt data-target-cell="annotated-cell-19" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-19" data-code-lines="7" data-code-annotation="2"><span class="style-parameter">bgp</span>: point layer with background points. If you don’t have one, you can use the <span class="style-parameter">nbgp</span> to generate a user-defined number of background points, respecting the computational region and MASK.</span>
+</dd>
+<dt data-target-cell="annotated-cell-19" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-19" data-code-lines="8" data-code-annotation="3">The environmental raster layers that you want to include in your model as explanatory variables. Importantly, these should be continuous variables. Use the <span class="style-parameter">evp_cat</span> for categorical variables (e.g., land use map).</span>
+</dd>
+<dt data-target-cell="annotated-cell-19" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-cell="annotated-cell-19" data-code-lines="9" data-code-annotation="4">The location and file name of the <span class="style-data">species swd</span> file. Note that if you save the file in a sub-folder of your working directory, you can use the relative path.</span>
+</dd>
+<dt data-target-cell="annotated-cell-19" data-target-annotation="5">5</dt>
+<dd>
+<span data-code-cell="annotated-cell-19" data-code-lines="10" data-code-annotation="5">The location and file name of the <span class="style-data">background swd</span> file. Note that if you save the file in a sub-folder of your working directory, you can use the relative path.</span>
+</dd>
+<dt data-target-cell="annotated-cell-19" data-target-annotation="6">6</dt>
+<dd>
+<span data-code-cell="annotated-cell-19" data-code-lines="11" data-code-annotation="6">The location of the <span class="style-data">environmental raster layers</span>. Note that if you save them to a sub-folder of your working directory, you can use the relative path.</span>
+</dd>
+</dl>
+</div>
+<div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
+<div class="sourceCode" id="annotated-cell-20"><pre class="sourceCode numberSource python code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-20-1"><a href="#annotated-cell-20-1"></a><span class="co"># Create a new folder in the working directory</span></span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-20" data-target-annotation="1">1</button><span id="annotated-cell-20-2" class="code-annotation-target"><a href="#annotated-cell-20-2"></a>os.makedirs(<span class="st">"dataset01/envdat"</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="annotated-cell-20-3"><a href="#annotated-cell-20-3"></a></span>
+<span id="annotated-cell-20-4"><a href="#annotated-cell-20-4"></a><span class="co"># Export the Maxent input data</span></span>
+<span id="annotated-cell-20-5"><a href="#annotated-cell-20-5"></a>gs.run_command(</span>
+<span id="annotated-cell-20-6"><a href="#annotated-cell-20-6"></a>    <span class="st">"v.maxent.swd"</span>,</span>
+<span id="annotated-cell-20-7"><a href="#annotated-cell-20-7"></a>    flags<span class="op">=</span><span class="st">"t"</span>,</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-20" data-target-annotation="2">2</button><span id="annotated-cell-20-8" class="code-annotation-target"><a href="#annotated-cell-20-8"></a>    species<span class="op">=</span><span class="st">"Erebia_alberganus_obs"</span>,</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-20" data-target-annotation="3">3</button><span id="annotated-cell-20-9" class="code-annotation-target"><a href="#annotated-cell-20-9"></a>    bgp<span class="op">=</span><span class="st">"background_points"</span>,</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-20" data-target-annotation="4">4</button><span id="annotated-cell-20-10" class="code-annotation-target"><a href="#annotated-cell-20-10"></a>    evp_maps<span class="op">=</span><span class="st">"bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9"</span>,</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-20" data-target-annotation="5">5</button><span id="annotated-cell-20-11" class="code-annotation-target"><a href="#annotated-cell-20-11"></a>    species_output<span class="op">=</span><span class="st">"dataset01/species.swd"</span>,</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-20" data-target-annotation="6">6</button><span id="annotated-cell-20-12" class="code-annotation-target"><a href="#annotated-cell-20-12"></a>    bgr_output<span class="op">=</span><span class="st">"dataset01/background_points.swd"</span>,</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-20" data-target-annotation="7">7</button><span id="annotated-cell-20-13" class="code-annotation-target"><a href="#annotated-cell-20-13"></a>    export_rasters<span class="op">=</span><span class="st">"dataset01/envdat"</span>,</span>
+<span id="annotated-cell-20-14"><a href="#annotated-cell-20-14"></a>)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-20" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-20" data-code-lines="2" data-code-annotation="1">The <a href="https://www.geeksforgeeks.org/python-os-makedirs-method/">os.makedirs</a> creates directories recursively.</span>
+</dd>
+<dt data-target-cell="annotated-cell-20" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-20" data-code-lines="8" data-code-annotation="2"><span class="style-parameter">species</span>: point layer with occurrences</span>
+</dd>
+<dt data-target-cell="annotated-cell-20" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-20" data-code-lines="9" data-code-annotation="3"><span class="style-parameter">bgp</span>: point layer with background points. If you don’t have one, you can use the <span class="style-parameter">nbgp</span> to generate a user-defined number of background points, respecting the computational region and MASK.</span>
+</dd>
+<dt data-target-cell="annotated-cell-20" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-cell="annotated-cell-20" data-code-lines="10" data-code-annotation="4">The environmental raster layers that you want to include in your model as explanatory variables. Importantly, these should be continuous variables. Use the <span class="style-parameter">evp_cat</span> for categorical variables (e.g., land use map).</span>
+</dd>
+<dt data-target-cell="annotated-cell-20" data-target-annotation="5">5</dt>
+<dd>
+<span data-code-cell="annotated-cell-20" data-code-lines="11" data-code-annotation="5">The location and file name of the <span class="style-data">species swd</span> file. Note that if you save the file in a sub-folder of your working directory, you can use the relative path.</span>
+</dd>
+<dt data-target-cell="annotated-cell-20" data-target-annotation="6">6</dt>
+<dd>
+<span data-code-cell="annotated-cell-20" data-code-lines="12" data-code-annotation="6">The location and file name of the <span class="style-data">backgroundpoints swd</span> file. Note that if you save the file in a sub-folder of your working directory, you can use the relative path.</span>
+</dd>
+<dt data-target-cell="annotated-cell-20" data-target-annotation="7">7</dt>
+<dd>
+<span data-code-cell="annotated-cell-20" data-code-lines="13" data-code-annotation="7">The location of the <span class="style-data">environmental raster layers</span>. Note that if you save them to a sub-folder of your working directory, you can use the relative path.</span>
+</dd>
+</dl>
+</div>
+<div id="tabset-10-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-3-tab">
+<p>Create the folder <span class="style-db">dataset01</span> and sub-folder <span class="style-db">envdat</span> using your favorite file browser. Next, open the <span class="style-function">v.maxent.swd</span> dialog and run it with the following parameter settings:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>species <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></td>
+<td>Erebia_alberganus_obs</td>
+</tr>
+<tr class="even">
+<td>bgp <a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></td>
+<td>background_points</td>
+</tr>
+<tr class="odd">
+<td>evp_maps <a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></td>
+<td>bio_1,bio_2,bio_4,bio_8,bio_9,bio_13,bio_14,bio_15</td>
+</tr>
+<tr class="even">
+<td>species_output <a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></td>
+<td>dataset01/species.swd</td>
+</tr>
+<tr class="odd">
+<td>bgr_output <a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a></td>
+<td>dataset01/background_points.swd</td>
+</tr>
+<tr class="even">
+<td>export_rasters <a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a></td>
+<td>dataset01/envdat</td>
+</tr>
+<tr class="odd">
+<td>Thin species and background points (t) <a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a></td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="code-summary" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="code-summary"><span class="header-section-number">3.5</span> Code summary</h2>
+<p>The Python code blocks below combines all steps from this chapter. It mostly is a copy-paste of the code on this page, but note that <a href="#exm-udfds5Bwdr" class="quarto-xref">step&nbsp;<span>3.9</span></a> and <a href="#exm-ddddddwdr" class="quarto-xref">step&nbsp;<span>3.10</span></a> are combined, so the whole code can be ran without intermediate user input. And instead of creating a random background point layer in a separate step (<a href="#exm-25nmhfEEDF" class="quarto-xref">step&nbsp;<span>3.8</span></a>), we let the <span class="style-function">v.maxent.swd</span> do this for us by setting the <span class="style-parameter">nbgp</span> parameter. Input and output layer names are now defined as variables at the beginning, allowing users to easily customize them.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true"><i class="fa-brands fa-python" aria-label="python"></i> Examine the data</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-11-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-2" role="tab" aria-controls="tabset-11-2" aria-selected="false"><i class="fa-brands fa-python" aria-label="python"></i> Create maxent input data</a></li></ul>
+<div class="tab-content">
+<div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># Define input variables</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>working_directory <span class="op">=</span> <span class="st">"replace-with-path-to-working-directory"</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a>species_mapset <span class="op">=</span> <span class="st">"species_data"</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a>species_vector <span class="op">=</span> <span class="st">"Erebia_alberganus_obs"</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a>aoi_mapset <span class="op">=</span> <span class="st">"dataset01"</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>resolution <span class="op">=</span> <span class="fl">0.008333</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a></span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="co"># Define output variables</span></span>
+<span id="cb13-9"><a href="#cb13-9"></a>density_output <span class="op">=</span> <span class="st">"pointdensities"</span></span>
+<span id="cb13-10"><a href="#cb13-10"></a></span>
+<span id="cb13-11"><a href="#cb13-11"></a><span class="co"># Import necessary libraries</span></span>
+<span id="cb13-12"><a href="#cb13-12"></a><span class="im">import</span> grass.script <span class="im">as</span> gs</span>
+<span id="cb13-13"><a href="#cb13-13"></a><span class="im">import</span> os</span>
+<span id="cb13-14"><a href="#cb13-14"></a></span>
+<span id="cb13-15"><a href="#cb13-15"></a><span class="co"># Set the working directory</span></span>
+<span id="cb13-16"><a href="#cb13-16"></a>os.chdir(working_directory)</span>
+<span id="cb13-17"><a href="#cb13-17"></a></span>
+<span id="cb13-18"><a href="#cb13-18"></a><span class="co"># Switch to the mapset containing species data</span></span>
+<span id="cb13-19"><a href="#cb13-19"></a>gs.run_command(<span class="st">"g.mapset"</span>, mapset<span class="op">=</span>species_mapset)</span>
+<span id="cb13-20"><a href="#cb13-20"></a></span>
+<span id="cb13-21"><a href="#cb13-21"></a><span class="co"># Set the region to match the extent and resolution of the species observations</span></span>
+<span id="cb13-22"><a href="#cb13-22"></a>gs.run_command(</span>
+<span id="cb13-23"><a href="#cb13-23"></a>    <span class="st">"g.region"</span>,</span>
+<span id="cb13-24"><a href="#cb13-24"></a>    flags<span class="op">=</span><span class="st">"a"</span>,</span>
+<span id="cb13-25"><a href="#cb13-25"></a>    res<span class="op">=</span>resolution,</span>
+<span id="cb13-26"><a href="#cb13-26"></a>    vector<span class="op">=</span>species_vector,</span>
+<span id="cb13-27"><a href="#cb13-27"></a>)</span>
+<span id="cb13-28"><a href="#cb13-28"></a></span>
+<span id="cb13-29"><a href="#cb13-29"></a><span class="co"># Generate a density map from the species vector data</span></span>
+<span id="cb13-30"><a href="#cb13-30"></a>gs.run_command(</span>
+<span id="cb13-31"><a href="#cb13-31"></a>    <span class="st">"r.vect.stats"</span>,</span>
+<span id="cb13-32"><a href="#cb13-32"></a>    <span class="bu">input</span><span class="op">=</span>species_vector,</span>
+<span id="cb13-33"><a href="#cb13-33"></a>    output<span class="op">=</span>density_output,</span>
+<span id="cb13-34"><a href="#cb13-34"></a>    method<span class="op">=</span><span class="st">"n"</span>,  <span class="co"># Count points in each cell</span></span>
+<span id="cb13-35"><a href="#cb13-35"></a>)</span>
+<span id="cb13-36"><a href="#cb13-36"></a>gs.run_command(<span class="st">"r.null"</span>, <span class="bu">map</span><span class="op">=</span>density_output, setnull<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb13-37"><a href="#cb13-37"></a></span>
+<span id="cb13-38"><a href="#cb13-38"></a><span class="co"># Calculate statistics and create a boxplot</span></span>
+<span id="cb13-39"><a href="#cb13-39"></a>gs.run_command(<span class="st">"r.univar"</span>, flags<span class="op">=</span><span class="st">"e"</span>, <span class="bu">map</span><span class="op">=</span>density_output) </span>
+<span id="cb13-40"><a href="#cb13-40"></a>gs.run_command(<span class="st">"r.boxplot"</span>, flags<span class="op">=</span><span class="st">"o"</span>, <span class="bu">input</span><span class="op">=</span>density_output) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-11-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-11-2-tab">
+<div class="sourceCode" id="annotated-cell-22"><pre class="sourceCode numberSource python code-annotation-code number-lines code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-22-1"><a href="#annotated-cell-22-1"></a><span class="co"># Define input variables</span></span>
+<span id="annotated-cell-22-2"><a href="#annotated-cell-22-2"></a>working_directory <span class="op">=</span> <span class="st">"replace-with-path-to-working-directory"</span></span>
+<span id="annotated-cell-22-3"><a href="#annotated-cell-22-3"></a>species_mapset <span class="op">=</span> <span class="st">"species_data"</span></span>
+<span id="annotated-cell-22-4"><a href="#annotated-cell-22-4"></a>species_vector <span class="op">=</span> <span class="st">"Erebia_alberganus_obs"</span></span>
+<span id="annotated-cell-22-5"><a href="#annotated-cell-22-5"></a>aoi_mapset <span class="op">=</span> <span class="st">"dataset01"</span></span>
+<span id="annotated-cell-22-6"><a href="#annotated-cell-22-6"></a>climate_mapset <span class="op">=</span> <span class="st">"climate_current"</span></span>
+<span id="annotated-cell-22-7"><a href="#annotated-cell-22-7"></a>country_vector <span class="op">=</span> <span class="st">"countries"</span></span>
+<span id="annotated-cell-22-8"><a href="#annotated-cell-22-8"></a>selected_layers_pattern <span class="op">=</span> <span class="st">"bio*"</span></span>
+<span id="annotated-cell-22-9"><a href="#annotated-cell-22-9"></a>resolution <span class="op">=</span> <span class="fl">0.008333</span></span>
+<span id="annotated-cell-22-10"><a href="#annotated-cell-22-10"></a>vif_seed <span class="op">=</span> <span class="dv">5</span></span>
+<span id="annotated-cell-22-11"><a href="#annotated-cell-22-11"></a>vif_n <span class="op">=</span> <span class="dv">100000</span></span>
+<span id="annotated-cell-22-12"><a href="#annotated-cell-22-12"></a>vif_max <span class="op">=</span> <span class="dv">10</span></span>
+<span id="annotated-cell-22-13"><a href="#annotated-cell-22-13"></a>nbgp <span class="op">=</span> <span class="dv">10000</span></span>
+<span id="annotated-cell-22-14"><a href="#annotated-cell-22-14"></a></span>
+<span id="annotated-cell-22-15"><a href="#annotated-cell-22-15"></a><span class="co"># Define output variables</span></span>
+<span id="annotated-cell-22-16"><a href="#annotated-cell-22-16"></a>swd_species_output <span class="op">=</span> <span class="st">"dataset01/Erebia_alberganus_obs.swd"</span></span>
+<span id="annotated-cell-22-17"><a href="#annotated-cell-22-17"></a>swd_background_output <span class="op">=</span> <span class="st">"dataset01/background_points.swd"</span></span>
+<span id="annotated-cell-22-18"><a href="#annotated-cell-22-18"></a>swd_export_rasters_dir <span class="op">=</span> <span class="st">"dataset01/envdat"</span></span>
+<span id="annotated-cell-22-19"><a href="#annotated-cell-22-19"></a></span>
+<span id="annotated-cell-22-20"><a href="#annotated-cell-22-20"></a><span class="co"># Import necessary libraries</span></span>
+<span id="annotated-cell-22-21"><a href="#annotated-cell-22-21"></a><span class="im">import</span> grass.script <span class="im">as</span> gs</span>
+<span id="annotated-cell-22-22"><a href="#annotated-cell-22-22"></a><span class="im">import</span> os</span>
+<span id="annotated-cell-22-23"><a href="#annotated-cell-22-23"></a></span>
+<span id="annotated-cell-22-24"><a href="#annotated-cell-22-24"></a><span class="co"># Set the working directory</span></span>
+<span id="annotated-cell-22-25"><a href="#annotated-cell-22-25"></a>os.chdir(working_directory)</span>
+<span id="annotated-cell-22-26"><a href="#annotated-cell-22-26"></a></span>
+<span id="annotated-cell-22-27"><a href="#annotated-cell-22-27"></a><span class="co"># Create a directory for exporting environmental data</span></span>
+<span id="annotated-cell-22-28"><a href="#annotated-cell-22-28"></a>os.makedirs(swd_export_rasters_dir, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="annotated-cell-22-29"><a href="#annotated-cell-22-29"></a></span>
+<span id="annotated-cell-22-30"><a href="#annotated-cell-22-30"></a><span class="co"># Create a new mapset for further analysis</span></span>
+<span id="annotated-cell-22-31"><a href="#annotated-cell-22-31"></a><span class="co"># and add access to necessary mapsets</span></span>
+<span id="annotated-cell-22-32"><a href="#annotated-cell-22-32"></a>gs.run_command(<span class="st">"g.mapset"</span>, flags<span class="op">=</span><span class="st">"c"</span>, mapset<span class="op">=</span>aoi_mapset)</span>
+<span id="annotated-cell-22-33"><a href="#annotated-cell-22-33"></a>gs.run_command(<span class="st">"g.mapsets"</span>, mapset<span class="op">=</span>[climate_mapset, species_mapset], operation<span class="op">=</span><span class="st">"add"</span>)</span>
+<span id="annotated-cell-22-34"><a href="#annotated-cell-22-34"></a></span>
+<span id="annotated-cell-22-35"><a href="#annotated-cell-22-35"></a><span class="co"># Set the region to match the area of interest and apply a mask for analysis</span></span>
+<span id="annotated-cell-22-36"><a href="#annotated-cell-22-36"></a>gs.run_command(<span class="st">"g.region"</span>, region<span class="op">=</span><span class="ss">f"aoi@</span><span class="sc">{</span>climate_mapset<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="annotated-cell-22-37"><a href="#annotated-cell-22-37"></a>gs.run_command(<span class="st">"r.mask"</span>, vector<span class="op">=</span>country_vector)</span>
+<span id="annotated-cell-22-38"><a href="#annotated-cell-22-38"></a></span>
+<span id="annotated-cell-22-39"><a href="#annotated-cell-22-39"></a><span class="co"># Identify relevant climate layers using VIF (Variance Inflation Factor)</span></span>
+<span id="annotated-cell-22-40"><a href="#annotated-cell-22-40"></a><span class="co"># to reduce multicollinearity</span></span>
+<span id="annotated-cell-22-41"><a href="#annotated-cell-22-41"></a>layers <span class="op">=</span> gs.list_strings(</span>
+<span id="annotated-cell-22-42"><a href="#annotated-cell-22-42"></a>    pattern<span class="op">=</span>selected_layers_pattern,</span>
+<span id="annotated-cell-22-43"><a href="#annotated-cell-22-43"></a>    mapset<span class="op">=</span>climate_mapset,</span>
+<span id="annotated-cell-22-44"><a href="#annotated-cell-22-44"></a>    <span class="bu">type</span><span class="op">=</span><span class="st">"raster"</span>,</span>
+<span id="annotated-cell-22-45"><a href="#annotated-cell-22-45"></a>)</span>
+<span id="annotated-cell-22-46"><a href="#annotated-cell-22-46"></a>selected_layers <span class="op">=</span> gs.read_command(</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-22" data-target-annotation="1">1</button><span id="annotated-cell-22-47" class="code-annotation-target"><a href="#annotated-cell-22-47"></a>    <span class="st">"r.vif"</span>, flags<span class="op">=</span><span class="st">"v"</span>, maps<span class="op">=</span>layers, seed<span class="op">=</span>vif_seed, n<span class="op">=</span>vif_n, maxvif<span class="op">=</span>vif_max</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-22" data-target-annotation="2">2</button><span id="annotated-cell-22-48" class="code-annotation-target"><a href="#annotated-cell-22-48"></a>).strip()</span>
+<span id="annotated-cell-22-49"><a href="#annotated-cell-22-49"></a></span>
+<span id="annotated-cell-22-50"><a href="#annotated-cell-22-50"></a><span class="co"># Export data for Maxent input, including species presence and background data</span></span>
+<span id="annotated-cell-22-51"><a href="#annotated-cell-22-51"></a>gs.run_command(</span>
+<span id="annotated-cell-22-52"><a href="#annotated-cell-22-52"></a>    <span class="st">"v.maxent.swd"</span>,</span>
+<span id="annotated-cell-22-53"><a href="#annotated-cell-22-53"></a>    flags<span class="op">=</span><span class="st">"t"</span>,</span>
+<span id="annotated-cell-22-54"><a href="#annotated-cell-22-54"></a>    species<span class="op">=</span>species_vector,</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-22" data-target-annotation="3">3</button><span id="annotated-cell-22-55" class="code-annotation-target"><a href="#annotated-cell-22-55"></a>    nbgp<span class="op">=</span>nbgp,</span>
+<span id="annotated-cell-22-56"><a href="#annotated-cell-22-56"></a>    evp_maps<span class="op">=</span>selected_layers,</span>
+<span id="annotated-cell-22-57"><a href="#annotated-cell-22-57"></a>    species_output<span class="op">=</span>swd_species_output,</span>
+<span id="annotated-cell-22-58"><a href="#annotated-cell-22-58"></a>    bgr_output<span class="op">=</span>swd_background_output,</span>
+<span id="annotated-cell-22-59"><a href="#annotated-cell-22-59"></a>    export_rasters<span class="op">=</span>swd_export_rasters_dir,</span>
+<span id="annotated-cell-22-60"><a href="#annotated-cell-22-60"></a>)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-hidden code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-22" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-22" data-code-lines="47" data-code-annotation="1">The <span class="style-parameter">-v</span> results in an list of the finally selected layers.</span>
+</dd>
+<dt data-target-cell="annotated-cell-22" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-22" data-code-lines="48" data-code-annotation="2">The output of the <span class="style-function">r.vif</span> function call is a string that ends with a newline character. The <span class="style-function">.strip()</span> function removes that new line character.</span>
+</dd>
+<dt data-target-cell="annotated-cell-22" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-22" data-code-lines="55" data-code-annotation="3">Instead of creating a random background point layer and using this as input, we use the <span class="style-parameter">nbgp</span>, so the module will create the set of background points within the region’s bounds and MASK.</span>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<p><br><br></p>
+</section>
+<section id="footnotes" class="level2 unlisted unnumbered">
+<h2 class="unlisted unnumbered anchored" data-anchor-id="footnotes">Footnotes</h2>
+
+
+<div id="refs" class="references csl-bib-body" role="list" style="display: none">
+<div id="ref-jarnevich2015" class="csl-entry" role="listitem">
+<div class="csl-left-margin">1. </div><div class="csl-right-inline">Jarnevich CS, Stohlgren TJ, Kumar S, Morisette JT, Holcombe TR (2015) Caveats for correlative species distribution modeling. Ecological Informatics 29:6–15. <a href="https://doi.org/10.1016/j.ecoinf.2015.06.007">https://doi.org/10.1016/j.ecoinf.2015.06.007</a></div>
+</div>
+<div id="ref-phillips2009a" class="csl-entry" role="listitem">
+<div class="csl-left-margin">2. </div><div class="csl-right-inline">Phillips SJ, Dudík M, Elith J, et al (2009) Sample selection bias and presence-only distribution models: Implications for background and pseudo-absence data. Ecological Applications 19(1):181–197. <a href="https://doi.org/10.1890/07-2153.1">https://doi.org/10.1890/07-2153.1</a></div>
+</div>
+<div id="ref-kramerSampling2013" class="csl-entry" role="listitem">
+<div class="csl-left-margin">3. </div><div class="csl-right-inline">Kramer-Schadt S, Niedballa J, Pilgrim JD, et al (2013) The importance of correcting for sampling bias in <span>MaxEnt</span> species distribution models. Diversity and Distributions 19(11):1366–1379. <a href="https://doi.org/10.1111/ddi.12096">https://doi.org/10.1111/ddi.12096</a></div>
+</div>
+<div id="ref-fourcade2014" class="csl-entry" role="listitem">
+<div class="csl-left-margin">4. </div><div class="csl-right-inline">Fourcade Y, Engler JO, Rödder D, Secondi J (2014) Mapping <span>Species Distributions</span> with <span>MAXENT Using</span> a <span>Geographically Biased Sample</span> of <span>Presence Data</span>: <span>A Performance Assessment</span> of <span>Methods</span> for <span>Correcting Sampling Bias</span>. PLOS ONE 9(5):e97122. <a href="https://doi.org/10.1371/journal.pone.0097122">https://doi.org/10.1371/journal.pone.0097122</a></div>
+</div>
+<div id="ref-beck2014a" class="csl-entry" role="listitem">
+<div class="csl-left-margin">5. </div><div class="csl-right-inline">Beck J, Böller M, Erhardt A, Schwanghart W (2014) Spatial bias in the <span>GBIF</span> database and its effect on modeling species’ geographic distributions. Ecological Informatics 19:10–15. <a href="https://doi.org/10.1016/j.ecoinf.2013.11.002">https://doi.org/10.1016/j.ecoinf.2013.11.002</a></div>
+</div>
+<div id="ref-acevedo2012" class="csl-entry" role="listitem">
+<div class="csl-left-margin">6. </div><div class="csl-right-inline">Acevedo P, Jiménez-Valverde A, Lobo JM, Real R (2012) Delimiting the geographical background in species distribution modelling. Journal of Biogeography 39(8):1383–1390. <a href="https://doi.org/10.1111/j.1365-2699.2012.02713.x">https://doi.org/10.1111/j.1365-2699.2012.02713.x</a></div>
+</div>
+<div id="ref-barveCrucialRoleAccessible2011" class="csl-entry" role="listitem">
+<div class="csl-left-margin">7. </div><div class="csl-right-inline">Barve N, Barve V, Jiménez-Valverde A, et al (2011) The crucial role of the accessible area in ecological niche modeling and species distribution modeling. Ecological Modelling 222(11):1810–1819. <a href="https://doi.org/10.1016/j.ecolmodel.2011.02.011">https://doi.org/10.1016/j.ecolmodel.2011.02.011</a></div>
+</div>
+<div id="ref-elith2009" class="csl-entry" role="listitem">
+<div class="csl-left-margin">8. </div><div class="csl-right-inline">Elith J, Leathwick JR (2009) Species <span>Distribution Models</span>: <span>Ecological Explanation</span> and <span>Prediction Across Space</span> and <span>Time</span>. Annual Review of Ecology, Evolution, and Systematics 40(1):677–697. <a href="https://doi.org/10.1146/annurev.ecolsys.110308.120159">https://doi.org/10.1146/annurev.ecolsys.110308.120159</a></div>
+</div>
+<div id="ref-phillipsSampleSelectionBias2009" class="csl-entry" role="listitem">
+<div class="csl-left-margin">9. </div><div class="csl-right-inline">Phillips SJ, Dudík M, Elith J, et al (2009) Sample selection bias and presence-only distribution models: Implications for background and pseudo-absence data. Ecological Applications 19(1):181–197. <a href="https://doi.org/10.1890/07-2153.1">https://doi.org/10.1890/07-2153.1</a></div>
+</div>
+<div id="ref-wardPresenceOnlyDataEM2009" class="csl-entry" role="listitem">
+<div class="csl-left-margin">10. </div><div class="csl-right-inline">Ward G, Hastie T, Barry S, Elith J, Leathwick JR (2009) Presence-<span>Only Data</span> and the <span>EM Algorithm</span>. Biometrics 65(2):554–563. <a href="https://doi.org/10.1111/j.1541-0420.2008.01116.x">https://doi.org/10.1111/j.1541-0420.2008.01116.x</a></div>
+</div>
+<div id="ref-phillipsModelingSpeciesDistributions2008" class="csl-entry" role="listitem">
+<div class="csl-left-margin">11. </div><div class="csl-right-inline">Phillips SJ, Dudik M (2008) Modeling of species distributions with <span>Maxent</span>: New extensions and a comprehensive evaluation. Ecography 31(2):161–175</div>
+</div>
+<div id="ref-barbet-massin2012" class="csl-entry" role="listitem">
+<div class="csl-left-margin">12. </div><div class="csl-right-inline">Barbet-Massin M, Jiguet F, Albert CH, Thuiller W (2012) Selecting pseudo-absences for species distribution models: How, where and how many?: <span>How</span> to use pseudo-absences in niche modelling? Methods in Ecology and Evolution 3(2):327–338. <a href="https://doi.org/10.1111/j.2041-210X.2011.00172.x">https://doi.org/10.1111/j.2041-210X.2011.00172.x</a></div>
+</div>
+<div id="ref-phillipsOpeningBlackBox2017a" class="csl-entry" role="listitem">
+<div class="csl-left-margin">13. </div><div class="csl-right-inline">Phillips SJ, Anderson RP, Dudík M, Schapire RE, Blair ME (2017) Opening the black box: An open-source release of <span>Maxent</span>. Ecography 40(7):887–893. <a href="https://doi.org/10.1111/ecog.03049">https://doi.org/10.1111/ecog.03049</a></div>
+</div>
+<div id="ref-moua2020" class="csl-entry" role="listitem">
+<div class="csl-left-margin">14. </div><div class="csl-right-inline">Moua Y, Roux E, Seyler F, Briolant S (2020) Correcting the effect of sampling bias in species distribution modeling – <span>A</span> new method in the case of a low number of presence data. Ecological Informatics 57:101086. <a href="https://doi.org/10.1016/j.ecoinf.2020.101086">https://doi.org/10.1016/j.ecoinf.2020.101086</a></div>
+</div>
+<div id="ref-whitford2024" class="csl-entry" role="listitem">
+<div class="csl-left-margin">15. </div><div class="csl-right-inline">Whitford AM, Shipley BR, McGuire JL (2024) The influence of the number and distribution of background points in presence-background species distribution models. Ecological Modelling 488:110604. <a href="https://doi.org/10.1016/j.ecolmodel.2023.110604">https://doi.org/10.1016/j.ecolmodel.2023.110604</a></div>
+</div>
+<div id="ref-graham2003" class="csl-entry" role="listitem">
+<div class="csl-left-margin">16. </div><div class="csl-right-inline">Graham MH (2003) Confronting multicollinearity in ecological multiple regression. Ecology 84(11):2809–2815. <a href="https://doi.org/10.1890/02-3114">https://doi.org/10.1890/02-3114</a></div>
+</div>
+<div id="ref-craney2002" class="csl-entry" role="listitem">
+<div class="csl-left-margin">17. </div><div class="csl-right-inline">Craney TA, Surles JG (2002) Model-<span>Dependent Variance Inflation Factor Cutoff Values</span>. Quality Engineering 14(3):391–403. <a href="https://doi.org/10.1081/QEN-120001878">https://doi.org/10.1081/QEN-120001878</a></div>
+</div>
+<div id="ref-vanswaay2010" class="csl-entry" role="listitem">
+<div class="csl-left-margin">18. </div><div class="csl-right-inline">van Swaay C, Wynhoff I, Verovnik R, et al (2010) Erebia albergana. <span>The IUCN Red List</span> of <span>Threatened Species</span> 2010. IUCN Red List of Threatened Species. <a href="https://doi.org/10.2305/IUCN.UK.2010-1.RLTS.T173278A6984115.en">https://doi.org/10.2305/IUCN.UK.2010-1.RLTS.T173278A6984115.en</a></div>
+</div>
+</div>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>For other options to spatially thin a point layer, check out the module <a href="https://grass.osgeo.org/grass-stable/manuals/v.decimate.html">v.decimate</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>To state the obvious, be careful when using the same layer names across different mapsets.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><span class="style-parameter">species</span>: point layer with occurrences<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p><span class="style-parameter">bgp</span>: point layer with background points. If you don’t have one, you can use the <span class="style-parameter">nbgp</span> to generate a user-defined number of background points, respecting the computational region and MASK.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p><span class="style-parameter">evp_maps</span>: The environmental raster layers that you want to include in your model as explanatory variables. Importantly, these should be continuous variables. Use the <span class="style-parameter">evp_cat</span> for categorical variables (e.g., land use map).<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>species_output]{.style-parameter}: The location and file name of the <span class="style-data">species swd</span> file. Note that if you save the file in a sub-folder of your working directory, you can use the relative path.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p><span class="style-parameter">bgr_output</span>: The location and file name of the <span class="style-data">backgroundpoints swd</span> file. Note that if you save the file in a sub-folder of your working directory, you can use the relative path.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p><span class="style-parameter">export_rasters</span>: The location of the <span class="style-data">environmental raster layers</span>. Note that if you save them to a sub-folder of your working directory, you can use the relative path.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn9"><p><span class="style-parameter">-t</span>: Select this flag if you want to limit the species and background points to maximum one point per raster cell.<a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/ecodiv\.earth\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
+          }
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          trigger: 'click',
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          positionFixed: true,
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./2_obtaining_data.html" class="pagination-link" aria-label="Acquire the data">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Acquire the data</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./4_model_training.html" class="pagination-link" aria-label="Model training">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Model training</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> by Ecodiv.earth, 2024.</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","closeEffect":"zoom","openEffect":"zoom","loop":false,"selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

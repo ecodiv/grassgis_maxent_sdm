@@ -609,3 +609,57 @@ gs.run_command(
     label_step=0.1,
 )
 ```
+
+## Code for @fig-change_map_02 {#sec-change_map_02 .unnumbered}
+
+``` python
+# Import libraries
+import grass.script as gs
+import os
+
+os.chdir("/home/paulo/Desktop")
+
+# Variable
+variable = "E_alberganus_presabschange"
+name = "E_alberganus_presabschange"
+
+# Set region
+gs.run_command("g.region", raster=variable)
+
+# Output settings
+width_image = 1200
+title = "-"
+
+# Get width/height ratio of image
+region_settings = gs.region()
+height = float(region_settings["n"]) - float(region_settings["s"])
+width = float(region_settings["e"]) - float(region_settings["w"])
+height_image = width_image / (width / height)
+
+# Set environmental variables
+os.environ["GRASS_RENDER_IMMEDIATE"] = "cairo"
+os.environ["GRASS_RENDER_HEIGHT"] = str(height_image)
+os.environ["GRASS_RENDER_WIDTH"] = str(width_image)
+os.environ["GRASS_RENDER_BACKGROUNDCOLOR"] = "#e7f7fe"
+os.environ["GRASS_RENDER_FILE_READ"] = "TRUE"
+os.environ["GRASS_FONT"] = "DejaVuSansCondensed"
+
+outputfile = f"{name}.png"
+os.remove(outputfile)
+os.environ["GRASS_RENDER_FILE"] = outputfile
+
+# Render image
+gs.run_command(
+    "d.rast",
+    map=variable,
+)
+
+gs.run_command(
+    "d.legend",
+    flags="bt",
+    raster=variable,
+    font="Arial:Regular",
+    fontsize=16,
+    at=[75, 94, 80, 84],
+)
+```

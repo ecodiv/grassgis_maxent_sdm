@@ -1,26 +1,40 @@
 # Sample data {#sec-sampledata}
 
-This tutorial guides you through all the steps of species distribution modeling, starting from creating a GRASS GIS database, downloading and preparing the input data, building the models, and finally using these models to predict the potential distribution of the Almond-eyed Ringlet (_Erebia albergana_) butterfly.
+<br>
 
-If you are mainly interested in learning about the Maxent modules in GRASS GIS, you can skip @sec-creatingadatabase - [-@sec-speciesdata] and jump directly to @sec-creatinginputdata. Download the sample data set, which includes a project named [SDM]{.style-data} and several mapset with data layers. These are the same you would otherwise have created in aforementioned sections.
+### Data in this tutorial {.unnumbered}
 
-There are two versions of the sample data. The first version includes raster layers with a resolution of 2.5 arc minutes (approximately 4 km at the equator). The second version has a higher resolution of 30 arc seconds (approximately 900 meters at the equator). Choose the version you prefer, download it, and unzip it into an existing GRASS database or an empty directory. If you unzip it into an empty directory, that directory will automatically be converted into a GRASS database, which is simply a directory containing one or more projects.
+The table below provides an overview of the data used in this tutorial.
 
+| Section | Name + link | Type |
+|----|----|----|
+| @sec-nationalboundaries | [1:10m Admin 0 - Countries](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/) | vector |
+| @sec-urban | [urban areas](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-urban-area/) | vector |
+| @sec-roads | [roads](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/roads/) | vector |
+| @sec-rivers | [rivers and lake centerlines](https://www.naturalearthdata.com/downloads/10m-physical-vectors/10m-rivers-lake-centerlines/) | vector |
+| @sec-rivers | [rivers, Europe supplement](https://www.naturalearthdata.com/downloads/10m-physical-vectors/10m-rivers-lake-centerlines/) | vector |
+| @sec-rangemap | [Rangemap Erebia albergana](https://www.iucnredlist.org/search?query=Erebia%20albergana&searchType=species) | vector |
+| @sec-occurrence | [GBIF *Erebia alberganus* occurrence data](https://www.gbif.org/species/5134543) | vector |
+| @sec-climatedata | [Worldclim historical climate data](https://www.worldclim.org/data/worldclim21.html#) | raster |
+| @sec-obtainfutureclimatelayers | [Worldclim future climate data](https://www.worldclim.org/data/cmip6/cmip6climate.html) | raster |
 
+: {tbl-colwidths="\[20,60,20\]"}
 
-Other climate data:
+<br>
 
-- https://sites.ualberta.ca/~ahamann/data/climateeu.html
-- https://gis.stackexchange.com/questions/82186/are-there-better-climate-data-than-worldclim-for-europe
-- https://www.ccafs-climate.org/statistical_downscaling_climgen/
-- https://rmets.onlinelibrary.wiley.com/doi/full/10.1002/gdj3.110
+### Other data sources {.unnumbered}
 
-Models:
+The list below provide a few potentially useful data sources. For a much longer list of curated list of public data sets, see [this link](https://github.com/awesomedata/awesome-public-datasets).
 
-- https://besjournals-onlinelibrary-wiley-com.has.idm.oclc.org/doi/full/10.1111/2041-210X.13360
-- https://www-sciencedirect-com.has.idm.oclc.org/science/article/pii/S0048969717336458
-- https://esd.copernicus.org/articles/14/457/2023/
-- https://cds.climate.copernicus.eu/cdsapp#!/dataset/projections-cmip6?tab=overview
+| Variable | Name + link |
+|----|----|
+| Altitude | [EU DEM](https://ec.europa.eu/eurostat/web/gisco/geodata/digital-elevation-model/eu-dem#DD) |
+| Climate data | [ClimateEU: historical and projected climate data for Europe](https://sites.ualberta.ca/~ahamann/data/climateeu.html) |
+| Climate data | [Statistical Downscaling (Climgen)](https://www.ccafs-climate.org/statistical_downscaling_climgen/) |
+| Climate data | [The ECLIPS-2.0 dataset, High-resolution gridded climate data for Europe](https://zenodo.org/records/3952159) |
+| Climate data | [Are there better climate data than Worldclim for Europe?](https://gis.stackexchange.com/questions/82186/are-there-better-climate-data-than-worldclim-for-europe) |
+| Climate data | [Climate Data Store](https://cds.climate.copernicus.eu/datasets) |
+| Land cover and use | [CORINE Land cover](https://land.copernicus.eu/en/products/corine-land-cover) |
+| Land cover and use | [Landelijk grondgebruik Nederland](https://lgn.nl/) |
 
-
-
+: {tbl-colwidths="\[30,70\]"}
