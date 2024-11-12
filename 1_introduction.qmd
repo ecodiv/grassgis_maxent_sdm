@@ -104,9 +104,19 @@ On my computer, this looks like this, but note that the path will depend on how 
 C:\Program Files\Zulu\zulu-21\bin\java.exe
 ```
 
-Now, you can add it to the `o4w_env.bat` file. GRASS GIS will look at this file at start up. The file is located in the `OSGEO4W_ROOT/bin` directory. Where that root directory is depends on how you have installed GRASS GIS. If you installed it using the [OSGeo4W]{.style-app} installer, you probably find it in `c:\OSGeo4W\bin`. If you installed it using the stand-alone installer, you probably find it in `c:\Program Fiels\GRASS GIS 8.4\bin`.
+Now, you can add it to the `o4w_env.bat` file. GRASS GIS will look at this file at start up. The file is located in the `OSGEO4W_ROOT/bin` directory. Where that root directory is depends on how you have installed GRASS GIS. If you installed it using the [OSGeo4W]{.style-app} installer, you probably find it in `c:\OSGeo4W\bin`. If you installed it using the stand-alone installer, you probably find it in `c:\Program Fiels\GRASS GIS 8.4\bin`. To add the path to your Java executable in the o4w_env.bat file, follow these steps:
 
-Open the file [o4w_env.bat]{.style-file} and on the line that starts with `set path=` add the path to your java executable. Save the file. To check if it works, start [GRASS GIS]{.style-app}, and on the command line, type:
+- Open o4w_env.bat in a text editor (you may need administrative privileges).
+- Locate the line that begins with set path=.
+- At the end of this line, add a semicolon ; followed by the full path to your Java executable. For example:
+
+```
+set path=%path%;C:\Path\To\Java\bin
+```
+
+Replace C:\Path\To\Java\bin with the actual path where Java is installed on your system.
+
+Save and close the file. To check if it works, start [GRASS GIS]{.style-app}, and on the command line, type:
 
 ``` bash
 java
