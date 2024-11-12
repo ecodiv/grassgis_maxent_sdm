@@ -85,7 +85,7 @@ Open the [v.in.ogr]{.style-function} dialog and fill in:
 : {tbl-colwidths="\[50,50\]"}
 :::
 
-The Almond-eyed Ringlet occurs in parts of Europe, so we’ll limit the areas for which we download the rest of the data to Europe, by setting the extent of the computational region (@sec-computationalregion). This can be done using [g.region](https://grass.osgeo.org/grass-stable/manuals/g.region.html) if we know the north, south, west and east limits, or interactively, using the [Set computational region extent interactively]{.style-menu} option under the [Various zoom options]{.style-menu} ![](images/zoom-more.png) button. For the latter, see the [{{< fa regular window-restore >}}]{.paneltabcolor} tab below.
+The Almond-eyed Ringlet occurs in parts of Europe, so we’ll limit the areas for which we download the rest of the data to Europe, by setting the extent of the computational region (@sec-computationalregion). This can be done using [](https://grass.osgeo.org/grass-stable/manuals/.html) if we know the north, south, west and east limits, or interactively, using the [Set computational region extent interactively]{.style-menu} option under the [Various zoom options]{.style-menu} ![](images/zoom-more.png) button. For the latter, see the [{{< fa regular window-restore >}}]{.paneltabcolor} tab below.
 
 ::: {#exm-7Z3CL3lWfe .hiddendiv}
 :::
@@ -94,13 +94,13 @@ The Almond-eyed Ringlet occurs in parts of Europe, so we’ll limit the areas fo
 ## {{< fa solid terminal >}}
 
 ``` bash
-g.region n=55 s=35 w=-10 e=33
+ n=55 s=35 w=-10 e=33
 ```
 
 ## {{< fa brands python >}}
 
 ``` python
-gs.run_command("g.region", n=55, s=35, w=-10, e=33)
+gs.run_command("", n=55, s=35, w=-10, e=33)
 ```
 
 ## {{< fa regular window-restore >}}
@@ -787,7 +787,7 @@ As explanatory variables for the species distribution modeling, we'll use the 19
 
 ![The Worldclim download page for the version 2.1 historical climate data, with the download link for the 30 arc-second bioclim variables.](images/worldclim_historic_bioclim.png){#fig-worldclim_historic_bioclim fig-align="left"}
 
-We'll create a new mapset [climate]{.style-db} to store the climate data, using the [g.mapset](https://grass.osgeo.org/grass-stable/manuals/g.mapset.html) module with the [-c]{.style-parameter} flag. Next, we use the [g.region](https://grass.osgeo.org/grass-stable/manuals/g.region.html) module to set the boundaries of the region for which we want to import the data. One option is to use the region extent we defined earlier. Or, now that we know more precisely where our species has been observed, we can defined new bounds using the [g.region]{.style-fuction} module with the [n]{.style-parameter}, [s]{.style-parameter}, [e]{.style-parameter}, and [w]{.style-parameter} parameters. We'll do the latter, and set the extent of the computational region to *54N*, *36S*, *-10w* and *32E*.
+We'll create a new mapset [climate]{.style-db} to store the climate data, using the [g.mapset](https://grass.osgeo.org/grass-stable/manuals/g.mapset.html) module with the [-c]{.style-parameter} flag. Next, we use the [](https://grass.osgeo.org/grass-stable/manuals/.html) module to set the boundaries of the region for which we want to import the data. One option is to use the region extent we defined earlier. Or, now that we know more precisely where our species has been observed, we can defined new bounds using the []{.style-fuction} module with the [n]{.style-parameter}, [s]{.style-parameter}, [e]{.style-parameter}, and [w]{.style-parameter} parameters. We'll do the latter, and set the extent of the computational region to *54N*, *36S*, *-10w* and *32E*.
 
 Note that, if the region and the raster layer are not perfectly aligned, the area that is imported will be slightly larger than the computational region. How much larger depends on the resolution of the computational region, as explained in (@sec-computationalregion). We therefore use the [res]{.style-parameter} parameter to set the resolution to match the resolution of the layers we want to import.
 
@@ -799,14 +799,14 @@ Note that, if the region and the raster layer are not perfectly aligned, the are
 
 ``` bash
 g.mapset -c mapset=climate_current
-g.region n=54 s=36 w=-10 e=32 res=0.00833
+ n=54 s=36 w=-10 e=32 res=0.00833
 ```
 
 ## {{< fa brands python >}}
 
 ``` python
 gs.run_command("g.mapset", flags="c", mapset="climate_current")
-gs.run_command("g.region", n=54, s=36, w=-10, e=32, res=0.0083)
+gs.run_command("", n=54, s=36, w=-10, e=32, res=0.0083)
 ```
 
 ## {{< fa regular window-restore >}}
@@ -820,7 +820,7 @@ Type in [g.mapset]{.style-function} in the console to open the dialog, and use t
 
 : {tbl-colwidths="\[50,50\]"}
 
-Next, run the [g.region]{.style-function} module with the following settings below. Alternatively, you can define the region's bounds manually in the [Map display]{.style-menu}, as explained in @sec-computationalregion.
+Next, run the []{.style-function} module with the following settings below. Alternatively, you can define the region's bounds manually in the [Map display]{.style-menu}, as explained in @sec-computationalregion.
 
 | Parameter                       | Value   |
 |---------------------------------|---------|
@@ -886,7 +886,7 @@ for n in range(1, 20):        # <2>
 {{< video "https://ecodiv.earth/share/sdm_in_grassgis/import_climate_data.mp4" >}}
 :::
 
-As mentioned earlier, GRASS will import raster layers with the resolution and alignment of the original raster files. This means the computational region and the raster layers may not be perfectly aligned. In addition, the region’s resolution may not match that of the imported layers. To check this, you can run [g.region]{.style-function} with the [-g]{.style-parameter} and compare the outcomes with those of the [r.info](https://grass.osgeo.org/grass-stable/manuals/r.info.html) module.
+As mentioned earlier, GRASS will import raster layers with the resolution and alignment of the original raster files. This means the computational region and the raster layers may not be perfectly aligned. In addition, the region’s resolution may not match that of the imported layers. To check this, you can run []{.style-function} with the [-g]{.style-parameter} and compare the outcomes with those of the [r.info](https://grass.osgeo.org/grass-stable/manuals/r.info.html) module.
 
 ::: {#exm-uqHZOxgy43 .hiddendiv}
 :::
@@ -895,20 +895,20 @@ As mentioned earlier, GRASS will import raster layers with the resolution and al
 ## {{< fa solid terminal >}}
 
 ``` bash
-g.region -p
+ -p
 r.info map=bio_1
 ```
 
 ## {{< fa brands python >}}
 
 ``` python
-gs.run_command("g.region", flags="p")
+gs.run_command("", flags="p")
 gs.run_command("r.info", map="bio_1")
 ```
 
 ## {{< fa regular window-restore >}}
 
-Type in [g.region]{.style-function} in the console to open the dialog, and use the following parameter settings.
+Type in []{.style-function} in the console to open the dialog, and use the following parameter settings.
 
 | Parameter                    | Value |
 |------------------------------|-------|
@@ -925,9 +925,9 @@ Open the [r.info]{.style-function} dialog, and run it with the following paramet
 : {tbl-colwidths="\[50,50\]"}
 :::
 
-To ensure that the region's settings (extent, resolution, orientation) match those of the imported bioclim layers, we use the [g.region](https://grass.osgeo.org/grass-stable/manuals/g.region.html) module again, but this time with the [raster]{.style-parameter} parameter[^2_obtaining_data-9]. We also use the [save]{.style-parameter} parameter to save the region settings in the named region file [aoi]{.style-data}.
+To ensure that the region's settings (extent, resolution, orientation) match those of the imported bioclim layers, we use the [](https://grass.osgeo.org/grass-stable/manuals/.html) module again, but this time with the [raster]{.style-parameter} parameter[^2_obtaining_data-9]. We also use the [save]{.style-parameter} parameter to save the region settings in the named region file [aoi]{.style-data}.
 
-[^2_obtaining_data-9]: The different options of the *g.region* function provide a lot of flexibility in to how to define the region. You are encouraged to carefully consider the different options each time you use this module.
+[^2_obtaining_data-9]: The different options of the ** function provide a lot of flexibility in to how to define the region. You are encouraged to carefully consider the different options each time you use this module.
 
 ::: {#exm-V0FK3TyzcN .hiddendiv}
 :::
@@ -936,13 +936,13 @@ To ensure that the region's settings (extent, resolution, orientation) match tho
 ## {{< fa solid terminal >}}
 
 ``` bash
-g.region raster=bio_1 save=aoi
+ raster=bio_1 save=aoi
 ```
 
 ## {{< fa brands python >}}
 
 ``` python
-gs.run_command("g.region raster=bio_1", save="aoi")
+gs.run_command("g.region", raster="bio_1", save="aoi")
 ```
 
 ## {{< fa regular window-restore >}}
