@@ -1,8 +1,4 @@
----
-toc: false
----
-
-# Preface {.unnumbered}
+# Welcome {.unnumbered}
 
 Species distribution modeling (SDM), also known as climate envelope modeling or niche modeling, are numerical methods that combine observations of species occurrence or abundance with environmental estimates. It is used to gain ecological and evolutionary insights and to predict distributions across landscapes [@elith2009], and have become an important tool in the toolbox of ecologists and professionals involved in e.g, conservation planning and management, biodiversity monitoring and environmental impact assessment.
 
@@ -10,7 +6,7 @@ Species distribution modeling (SDM), also known as climate envelope modeling or 
 ![The Almond-eyed Ringlet (*Erebia alberganus*). Source: [Wikimedia](https://commons.wikimedia.org/wiki/File:Erebia_alberganus.jpg), license [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)](images/Erebia_alberganus.jpg){#fig-erebiaalberganus}
 :::
 
-Maxent [@phillipsMaximumEntropyModeling2006a,@phillipsOpeningBlackBox2017a] is one of the more popular algorithms for species distribution modeling. Unlike many other algorithms, it focuses specifically on presence-only data, which is typically the type of data available. Maxent is, among others, available as a stand-alone program [@phillipsMaxentSoftwareSpecies] and as R package [@maxnetcit]. This tutorial focuses on the use of Maxent addons for [GRASS GIS](https://grass.osgeo.org/learn/overview/). As example, we will use SDM to map the potential distribution of species using the example of the Almond-eyed Ringlet (*Erebia alberganus*), a butterfly found in parts of Austria, Bulgaria, France, Italy, Serbia and Switzerland [@vanswaay2010].
+Maxent [@phillipsMaximumEntropyModeling2006a,@phillipsOpeningBlackBox2017a] is one of the more popular algorithms for species distribution modeling. Unlike many other algorithms, it focuses specifically on presence-only data, which is typically the type of data available. Maxent is, among others, available as a stand-alone program [@phillipsMaxentSoftwareSpecies] and as R package [@maxnetcit]. This tutorial focuses on the use of Maxent addons for [GRASS GIS](https://grass.osgeo.org/learn/overview/). As an example, we will use this to map the potential distribution of the Almond-eyed Ringlet (*Erebia alberganus*), a butterfly found in parts of Austria, Bulgaria, France, Italy, Serbia and Switzerland [@vanswaay2010].
 
 ::: {.callout-tip icon="false"}
 ## {{< iconify ph target-fill size=lg >}} Objective
@@ -21,6 +17,10 @@ This tutorial aims to introduce the Maxent tool set in GRASS @grassdevelopmentte
 You are assumed to be familiar with the fundamentals of species distribution modelling (SDM). If not, see [this free online course](https://www.youtube.com/playlist?list=PL8nSYhbf9nDSotrn-JSZiJki1sTnnw3yS) for a comprehensive introduction to the concepts and principles of SDM. For a more in-depth discussion, see the paper by Elith et al. [-@elith2009].
 
 You are also assumed to be familiar with GRASS GIS. If not, see [Appendix A](A1_grassbasics.qmd) for a quick introduction and check out the list of introductory and advanced [tutorials](https://grass.osgeo.org/learn/tutorials/) and courses.
+
+## Your feedback {.unnumbered}
+
+If you have any feedback or suggestions, please leave a message (see the green button on this page). Contributions are welcome and can be organized through [Github](https://github.com/ecodiv/grassgis_maxent_sdm). Please note that all contributions should follow the [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
 
 <!-- Read the Formbutton docs at formspree.io/formbutton/docs. See more examples at codepen.io/formspree -->
 

@@ -203,6 +203,15 @@ h2 {
   margin-top: 1.5rem !important;
 }
 
+#title-block-header.quarto-title-block.default .quarto-title h1.title {
+  margin-bottom: 0.5rem;
+}
+
+.quarto-section-identifier {
+  color: #6c6c6c;
+  font-weight: normal;
+}
+
 a {
   color: $ecodivlightblue-hover;
   text-decoration-color: $ecodivlightblue-hover !important;

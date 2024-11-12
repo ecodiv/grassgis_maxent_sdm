@@ -33,6 +33,9 @@ book:
   favicon: images/favicon.ico
   page-footer: "&copy; <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/'>CC BY-NC-SA 4.0</a> by Ecodiv.earth,  2024."
   language: en
+  repo-url: https://github.com/ecodiv/grassgis_maxent_sdm
+  repo-branch: main
+  repo-actions: [edit, issue]
 
   chapters:
     - index.qmd
