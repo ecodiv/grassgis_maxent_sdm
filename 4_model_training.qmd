@@ -75,7 +75,7 @@ We’ll also use a few additional parameters or flags. Click on the numbers in t
 
 ``` bash
 r.maxent.train \
-  samplesfile=dataset01/Erebia_alberganus_obs.swd \            # <1>
+  samplesfile=dataset01/species.swd \            # <1>
   environmentallayersfile=dataset01/background_points.swd \   # <2>
   projectionlayers=dataset01/envdat  \                        # <3>
   outputdirectory=model_01 \                                  # <4>
@@ -103,7 +103,7 @@ r.maxent.train \
 ``` python
 gs.run_command(
     "r.maxent.train",
-    samplesfile="dataset01/Erebia_alberganus_obs.swd",           # <1>
+    samplesfile="dataset01/species.swd",           # <1>
     environmentallayersfile="dataset01/background_points.swd",  # <2>
     projectionlayers="dataset01/envdat",                        # <3>
     outputdirectory="model_01",                                 # <4>

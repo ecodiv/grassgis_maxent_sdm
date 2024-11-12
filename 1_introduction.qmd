@@ -89,6 +89,50 @@ The addons [r.maxent.train](https://grass.osgeo.org/grass-stable/manuals/addons/
 
 The Maxent software can be used on any computer running Java version 1.4 or later. For the Java runtime environment, the Maxent website refers to java.sun.com/javase/downloads, but OpenJDK should work as well. There is a good change you already have Java installed, but if not, you can download it from [here](https://openjdk.org/). For Windows users, you can download an installer of an Azul Zulu build of OpenJDK [here](https://www.azul.com/downloads/#zulu).
 
+::: {.callout-tip collapse="true"}
+## For Window users
+
+For Window users, the path to the java executable may need to be specified. First, you need to find the path to the `java.exe`. Open the Command Prompt window (in the search bar, search for Command promt) and type in the following command and press Enter:
+
+``` bash
+where java
+```
+
+On my computer, this looks like this, but note that the path will depend on how you have installed Java.
+
+``` bash
+C:\Program Files\Zulu\zulu-21\bin\java.exe
+```
+
+Now, you can add it to the `o4w_env.bat` file. GRASS GIS will look at this file at start up. The file is located in the `OSGEO4W_ROOT/bin` directory. Where that root directory is depends on how you have installed GRASS GIS. If you installed it using the [OSGeo4W]{.style-app} installer, you probably find it in `c:\OSGeo4W\bin`. If you installed it using the stand-alone installer, you probably find it in `c:\Program Fiels\GRASS GIS 8.4\bin`.
+
+Open the file [o4w_env.bat]{.style-file} and on the line that starts with `set path=` add the path to your java executable. Save the file. To check if it works, start [GRASS GIS]{.style-app}, and on the command line, type:
+
+``` bash
+java
+```
+
+This should give you something like:
+
+```         
+Usage: java [options] <mainclass> [args...]
+           (to execute a class)
+   or  java [options] -jar <jarfile> [args...]
+           (to execute a jar file)
+   or  java [options] -m <module>[/<mainclass>] [args...]
+       java [options] --module <module>[/<mainclass>] [args...]
+           (to execute the main class in a module)
+   or  java [options] <sourcefile> [args]
+           (to execute a single source-file program)
+
+ Arguments following the main class, source file, -jar <jarfile>,
+ -m or --module <module>/<mainclass> are passed as the arguments to
+ main class.
+```
+:::
+
+I haven't tested this on a Mac, but presumably, similar steps should be followed as on Windows to make sure GRASS GIS can find the Java executable.
+
 ## The database {#sec-creatingadatabase}
 
 Once you have started GRASS GIS, the first thing to do for this tutorial is to create a new GRASS GIS database called [GRASSdb]{.style-db}. Next, create a new project called [SDM]{.style-db} with the coordinate reference system (CRS) [WGS84 lat/lon]{.style-parameter} ([EPSG 4326](https://epsg.io/4326)). The easiest way to do this is using the GUI, but if you want to make it part of an automated process, you can do this in Python as well.
