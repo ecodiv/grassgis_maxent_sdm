@@ -987,7 +987,7 @@ v.in.region output=aoi --overwrite
 
 ``` python
 gs.run_command("g.mapset", mapset="PERMANENT")
-gs.run_command("g.region ", region="aoi@climate_current")
+gs.run_command("g.region", region="aoi@climate_current")
 gs.run_command("v.in.region", output="aoi", overwrite=True) # <1>
 ```
 
