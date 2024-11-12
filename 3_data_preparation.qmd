@@ -300,7 +300,7 @@ g.region region=aoi@climate_current
 r.mask vector=countries@PERMANENT
 
 # Give access to layers in other mapsets
-g.mapsets mapset=climate_current,Erebia_alberganus operation=add
+g.mapsets mapset=climate_current,species_data operation=add
 ```
 
 ## {{< fa brands python >}}
@@ -317,7 +317,7 @@ gs.run_command("r.mask", vector="countries@PERMANENT")
 
 # Give access to layers in other mapsets
 gs.run_command(
-    "g.mapsets", mapset=["climate_current", "Erebia_alberganus"], operation="add"
+    "g.mapsets", mapset=["climate_current", "species_data"], operation="add"
 )
 ```
 
@@ -356,7 +356,7 @@ gs.run_command(
 
 (D) Give access to layers in the other mapsets.
 
-In the menu, go to [Settings → GRASS working environment → Mapset access]{.style-menu} and select the mapsets [climate_current]{.style-db} and [Erebia_alberganus]{.style-db}.
+In the menu, go to [Settings → GRASS working environment → Mapset access]{.style-menu} and select the mapsets [climate_current]{.style-db} and [species_data]{.style-db}.
 :::
 
 We have now a new raster layer named [MASK]{.style-data} in the mapset [dataset01]{.style-db}. We can use [r.info](https://grass.osgeo.org/grass-stable/manuals/r.info.html) to check that it has the same extent and resolution as the computational region ([@fig-studyareas]). The raster cells falling outside the MASK are not included in operations like raster algebra, statistics, or interpolation.
