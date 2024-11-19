@@ -496,7 +496,7 @@ The VIF algorithm offers a data-driven method for selecting variables. However, 
 
 ## Export data {#sec-maxentswd}
 
-The last step before we, finally, can start with the actual modelling, is to prepare and export the input dataset for the Maxent model. We'll use the module [v.maxent.swd](https://grass.osgeo.org/grass-stable/manuals/addons/v.maxent.swd.html) for this. The module exports the different layers in the right format for Maxent. The presence and background point layers are exported as so-called [swd]{.style-data} files. Raster layers are exported as [ascii]{.style-data} files.
+The last step before we, finally, can start with the actual modeling, is to prepare and export the input dataset for the Maxent model. We'll use the module [v.maxent.swd](https://grass.osgeo.org/grass-stable/manuals/addons/v.maxent.swd.html) for this. The module exports the different layers in the right format for Maxent. The presence and background point layers are exported as so-called [swd]{.style-data} files. Raster layers are exported as [ascii]{.style-data} files.
 
 First step is to create a new folder in your working directory. Let's call it [dataset01]{.style-db}. And in that folder, we create a sub-folder called [envdat]{.style-db}. We'll export the [swd]{.style-data} files to the first folder, and the [ascii]{.style-data} raster files to the second folder using [v.maxent.swd]{.style-function}. Note, this make take some time, so be patient.
 

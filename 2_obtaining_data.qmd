@@ -119,7 +119,7 @@ Open the [v.in.ogr]{.style-function} dialog and fill in:
 : {tbl-colwidths="\[50,50\]"}
 :::
 
-The Almond-eyed Ringlet occurs in parts of Europe, so we’ll limit the areas for which we download the rest of the data to Europe, by setting the extent of the computational region (@sec-computationalregion). This can be done using [ ](https://grass.osgeo.org/grass-stable/manuals/.html) if we know the north, south, west and east limits, or interactively, using the [Set computational region extent interactively]{.style-menu} option under the [Various zoom options]{.style-menu} ![](images/zoom-more.png) button. For the latter, see the [{{< fa regular window-restore >}}]{.paneltabcolor} tab below.
+The Almond-eyed Ringlet occurs in parts of Europe, so we’ll limit the areas for which we download the rest of the data to Europe, by setting the extent of the computational region (@sec-computationalregion). This can be done using the [g.region](https://grass.osgeo.org/grass-stable/manuals/g.region.html) module. As input we can define the north, south, west and east limits, or we can define these interactively, using the [Set computational region extent interactively]{.style-menu} option under the [Various zoom options]{.style-menu} ![](images/zoom-more.png) button. For the latter, see the [{{< fa regular window-restore >}}]{.paneltabcolor} tab below.
 
 ::: {#exm-7Z3CL3lWfe .hiddendiv}
 :::
@@ -293,7 +293,7 @@ Open the [v.clip]{.style-function} dialog, and fill in:
 
 We'll get the road data from Natural Earth as well. Download it from [here](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/roads/) and unzip it into your working directory. Similar to the previous step, we'll import the data as [tmp]{.style-data} using [v.in.ogr]{.style-function} with the [-r]{.style-parameter} flag.
 
-The vector data includes line features representing roads and ferry routes. Whether a line feature is a road or ferry route is defined in the [featurecla]{.style-parameter} column of the attribute table. We only want to import the roads. We can do this using the [where]{.style-parameter}.The [where]{.style-parameter} takes as SQL [Where](https://www.sqlitetutorial.net/sqlite-where/) query as an argument to select the features that match a particular condition.
+The vector data includes line features representing roads and ferry routes. Whether a line feature is a road or ferry route is defined in the [featurecla]{.style-parameter} column of the attribute table. We only want to import the roads. We can do this using the [where]{.style-parameter} parameter. This parameter takes as SQL [Where](https://www.sqlitetutorial.net/sqlite-where/) query as an argument to select the features that match a particular condition.
 
 ::: {#exm-cMoYfaHQwQ .hiddendiv}
 :::
@@ -336,7 +336,7 @@ Open the [v.in.ogr]{.style-function} dialog, and fill in:
 
 Next, we clip the layer to the boundaries of our region with [v.clip](https://grass.osgeo.org/grass-stable/manuals/v.clip.html) and remove the temporary data.
 
-Clipping this particular data will result in a vector layer without an attribute table. This type of error is often caused by incorrect attribute data, such as hard returns or invalid column names. The latter is the case here. There is a column 'add', which GRASS does not accept. There are two ways to fix this. Rename the offending column with [v.db.renamecolumn](https://grass.osgeo.org/grass-stable/manuals/v.db.renamecolumn.html) or remove it using [v.db.dropcolumn](https://grass.osgeo.org/grass-stable/manuals/v.db.dropcolumn.html). We'll go for the latter solution.
+In this particular case, we are out of luck, as the resulting vector layer does not have an attribute table. This type of error is often caused by incorrect attribute data, such as hard returns or invalid column names. The latter is the case here. There is a column 'add', which GRASS does not accept. There are two ways to fix this. Rename the offending column with [v.db.renamecolumn](https://grass.osgeo.org/grass-stable/manuals/v.db.renamecolumn.html) or remove it using [v.db.dropcolumn](https://grass.osgeo.org/grass-stable/manuals/v.db.dropcolumn.html). We'll go for the latter solution.
 
 ::: {#exm-e84zg44AIs .hiddendiv}
 :::

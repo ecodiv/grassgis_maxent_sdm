@@ -1,6 +1,6 @@
 # Introduction {#sec-introduction}
 
-This tutorial introduces a GRASS GIS toolset for species distribution modelling, and shows how to use it effectively in combination with other core modules and add-ons to predict the future potential distribution of the almond-eyed ringlet butterfly. The first part focuses on the essential building blocks of creating a species distribution model, from data collection to prediction. In the second part, we’ll dive deeper into the options, choices, and parameter settings to validate and fine-tune the model.
+This tutorial introduces a GRASS GIS tool set for species distribution modeling, and shows how to use it effectively in combination with other core modules and add-ons to predict the future potential distribution of the almond-eyed ringlet butterfly. The first part focuses on the essential building blocks of creating a species distribution model, from data collection to prediction. In the second part, we’ll dive deeper into the options, choices, and parameter settings to validate and fine-tune the model.
 
 ::: {.callout-tip collapse="true"}
 ## Tips and conventions used in this tutorial.
