@@ -1,4 +1,4 @@
-# Working in GRASS GIS {#seq-AppendixA}
+# GRASS basics {#seq-AppendixA}
 
 GRASS (Geographic Resources Analysis Support System) offers a wide range of tools for terrain and ecosystem modeling, hydrology, management and analysis of geospatial data, and the processing of satellite and aerial imagery. It comes with a temporal framework for advanced time series processing and a Python API for rapid geospatial programming. [Read more here…](https://grass.osgeo.org/learn/overview/)
 
@@ -312,4 +312,3 @@ gs.run_command("g.mapset", mapset="PERMANENT", project="SDM")
 <br><br>
 
 ## Footnotes {.unlisted .unnumbered .hidefootnotes}
-

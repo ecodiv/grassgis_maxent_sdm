@@ -40,33 +40,41 @@ book:
   chapters:
     - index.qmd
     - 1_introduction.qmd
-    - 2_obtaining_data.qmd
-    - 3_data_preparation.qmd
-    - 4_model_training.qmd
-    - 5_model_prediction.qmd
+    - part: the_basics.qmd
+      chapters:
+      - 2_obtaining_data.qmd
+      - 3_data_preparation.qmd
+      - 4_model_training.qmd
+      - 5_model_prediction.qmd
+    - part: beyond_the_basics.qmd
+      chapters:
+      - 6_modelvalidation.qmd
+      - 7_finetuning.qmd
     - references.qmd
   appendices:
     - A1_grassbasics.qmd
     - A3_sampledata.qmd
     - A4_scriptmap.qmd
 
+  bread-crumbs: false
   page-navigation: true
-  reader-mode: true
+  reader-mode: false
 
-  navbar:
-    pinned: false
-    background: primary
-    logo: images/logo.png
-    search: true
-    right:
-      - icon: home
-        text: "Ecodiv.earth"
-        file: https://ecodiv.earth
+  # navbar:
+  #   pinned: false
+  #   background: primary
+  #   logo: images/logo.png
+  #   search: true
+  #   right:
+  #     - icon: home
+  #       text: "Ecodiv.earth"
+  #       file: https://ecodiv.earth
 
   sidebar:
       logo: "images/logo_SDM2.png"
       style: "floating"
-      collapse-level: 1
+      search: true
+      collapse-level: 0
       # footer: |
       #    <p style="color:lightgrey;"><i>Naturally Geographic</i><br>
       #    <a href="https://www.has.nl/hbo-opleidingen/applied-geo-information-science/">Applied Geo-information Science</a> <br>
@@ -76,7 +84,7 @@ book:
   open-graph: true
   twitter-card:
     site: "@ecodiv"
-  #other-links:
+  # other-links:
   #  - text: Ecodiv.earth
   #    href: https://ecodiv.earth
   #  - text: HAS green academy
@@ -112,11 +120,11 @@ format:
     mainfont: Helvetica
     number-sections: true
     crossref:
-      sec-prefix: Chapter
+      sec-prefix: chapter
       fig-title: Figure
       tbl-title: Table
-      fig-prefix: Figure
-      tbl-prefix: Table
+      fig-prefix: figure
+      tbl-prefix: table
       exr-title: Q
       exr-prefix: Q
       exm-title: Step

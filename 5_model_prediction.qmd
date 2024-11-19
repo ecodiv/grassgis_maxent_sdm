@@ -1,8 +1,10 @@
 # Model prediction {#sec-modelprediction}
 
-A species distribution model trained on one set of environmental variables can be projected onto future climate scenarios to forecast potential shifts in habitat suitability over time. Similarly, models based on a species' native distribution can help predict its potential range in new areas outside its current habitat. This approach is valuable for assessing the potential risk of species becoming invasive in new regions.
+A species distribution model trained on one set of environmental variables can be projected onto future climate scenarios to forecast potential shifts in habitat suitability over time (@fig-Flowchart_model_predict2). Similarly, models based on a species' native distribution can help predict its potential range in new areas outside its current habitat. This approach is valuable for assessing the potential risk of species becoming invasive in new regions.
 
-In this section, we’ll use the model developed in @sec-4trainthemodel to project the future potential distribution of the Almond-eyed Ringlet (*Erebia alberganus*) for the period 2081-2100. This projection will use the SSP585 climate scenario from the *EC-Earth3-Veg* general circulation model.
+![A) The developing of a species distribution model. B) Usig the model to predict the potential distribution of a species under future climate conditions.](images/Flowchart_model_predict2.png){#fig-Flowchart_model_predict2 width="450" fig-align="left"}
+
+In this section, we’ll use the model developed in @sec-4trainthemodel to project the future potential distribution of the Almond-eyed Ringlet for the period 2081-2100. This projection will use the SSP585 climate scenario from the *EC-Earth3-Veg* general circulation model.
 
 ## Creating a future distribution map
 
@@ -132,11 +134,11 @@ Examining the resulting map reveals that by 2081, the potential distribution are
 ::: {.panel-tabset .exercise}
 ## Future climate conditions
 
-![The raster layer [E_alberganus_futprob]{.style-data} with the predicted probability of occurrences of *Erebia_alberganus* in 2081-2100 under the SSP585 climate scenario, based on model_01.](images/E_alberganus_futprob.png){#fig-futdistr_01}
+![The raster layer [E_alberganus_futprob]{.style-data} with the predicted probability of occurrences of *Erebia alberganus* in 2081-2100 under the SSP585 climate scenario, based on model_01.](images/E_alberganus_futprob.png){#fig-futdistr_01 group="presfut"}
 
 ## Current climate conditions
 
-![The raster layer [E_alberganus_probability]{.style-data} with the predicted probability of occurrences of Erebia_alberganus, based on model_01.](images/E_alberganus_probability.png){#fig-probdist_model_01b}
+![The raster layer [E_alberganus_probability]{.style-data} with the predicted probability of occurrences of *Erebia alberganus*, based on model_01.](images/E_alberganus_probability.png){#fig-probdist_model_01b group="presfut"}
 :::
 
 To highlight areas where the changes are expected to happen, we can create a change map by calculating the differences in habitat suitability scores between current and future distributions.

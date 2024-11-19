@@ -1,0 +1,10 @@
+# The basic steps {#sec-basics}
+
+In this part we'll go through the basic steps of species distribution modeling: acquiring and importing data (section [2](#sec-data)), preparing the data (section [3](#sec-dataprep)), training, validating and evaluating distribution models (section [4](#sec-modeltraining)), and using these models to predict the future potential distribution of the almond-eyed ringlet butterfly (section [5](#sec-modelprediction)). By the end of this section, you will know how to build a species distribution model using Maxent, and how to interpret and visualize the results.
+
+![The four main steps in species distribution modeling and the corresponding GRASS GIS addon[^the_basics-1].](images/modelling_workflow.png){#fig-modelling_workflow fig-align="left"}
+
+[^the_basics-1]: The rationale for having separate addons for each step is to encourage and help the user to carefully consider the assumptions and considerations at each stage of the modelling process. The tutorial follows the same structure.
+
+[^the_basics-2]: The rationale for having separate addons for each step is to encourage and help the user to carefully consider the assumptions and considerations at each stage of the modelling process. The tutorial follows the same structure.
+

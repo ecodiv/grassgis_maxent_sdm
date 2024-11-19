@@ -525,7 +525,7 @@ v.maxent.swd -t species=Erebia_alberganus_obs \                             # <1
 3.  The environmental raster layers that you want to include in your model as explanatory variables. Importantly, these should be continuous variables. Use the [evp_cat]{.style-parameter} for categorical variables (e.g., land use map).
 4.  The location and file name of the [species swd]{.style-data} file. Note that if you save the file in a sub-folder of your working directory, you can use the relative path.
 5.  The location and file name of the [background swd]{.style-data} file. Note that if you save the file in a sub-folder of your working directory, you can use the relative path.
-6.  The location of the [environmental raster layers]{.style-data}. Note that if you save them to a sub-folder of your working directory, you can use the relative path.
+6.  The location to which you want to export [environmental raster layers]{.style-data}. Note that if you save them to a sub-folder of your working directory, you can use the relative path. You can later on use these raster layers as input in Maxent to create prediction raster layers.
 
 ## {{< fa brands python >}}
 
@@ -552,7 +552,7 @@ gs.run_command(
 4.  The environmental raster layers that you want to include in your model as explanatory variables. Importantly, these should be continuous variables. Use the [evp_cat]{.style-parameter} for categorical variables (e.g., land use map).
 5.  The location and file name of the [species swd]{.style-data} file. Note that if you save the file in a sub-folder of your working directory, you can use the relative path.
 6.  The location and file name of the [backgroundpoints swd]{.style-data} file. Note that if you save the file in a sub-folder of your working directory, you can use the relative path.
-7.  The location of the [environmental raster layers]{.style-data}. Note that if you save them to a sub-folder of your working directory, you can use the relative path.
+7.  The location to which you want to export [environmental raster layers]{.style-data}. Note that if you save them to a sub-folder of your working directory, you can use the relative path. You can later on use these raster layers as input in Maxent to create prediction raster layers.
 
 ## {{< fa regular window-restore >}}
 
@@ -581,7 +581,7 @@ Create the folder [dataset01]{.style-db} and sub-folder [envdat]{.style-db} usin
 
 [^3_data_preparation-7]: [bgr_output]{.style-parameter}: The location and file name of the [backgroundpoints swd]{.style-data} file. Note that if you save the file in a sub-folder of your working directory, you can use the relative path.
 
-[^3_data_preparation-8]: [export_rasters]{.style-parameter}: The location of the [environmental raster layers]{.style-data}. Note that if you save them to a sub-folder of your working directory, you can use the relative path.
+[^3_data_preparation-8]: [export_rasters]{.style-parameter}: The location to which you want to export [environmental raster layers]{.style-data}. Note that if you save them to a sub-folder of your working directory, you can use the relative path. You can later on use these raster layers as input in Maxent to create prediction raster layers.
 
 [^3_data_preparation-9]: [-t]{.style-parameter}: Select this flag if you want to limit the species and background points to maximum one point per raster cell.
 
@@ -708,3 +708,4 @@ gs.run_command(
 <br><br>
 
 ## Footnotes {.unlisted .unnumbered .hidefootnotes}
+

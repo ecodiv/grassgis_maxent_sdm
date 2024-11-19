@@ -1,12 +1,6 @@
 # Introduction {#sec-introduction}
 
-## About the tutorial
-
-This tutorial introduces a GRASS GIS toolset for species distribution modelling. You will learn how to use it in combination with other core modules and add-ons to acquire and import data (section [2](#sec-data)), prepare data (section [3](#sec-dataprep)), train, validate and evaluate distribution models (section [4](#sec-modeltraining)), and use these models to predict the future potential distribution of the almond-eyed ringlet butterfly (section [5](#sec-modelprediction)). In subsequent sections, which will be available in the coming weeks, we’ll dive deeper into the options, choices, and parameter settings to validate and fine-tune the model.
-
-![The four main steps in species distribution modeling and the corresponding GRASS GIS addon. The rationale for having separate addons for each step is to encourage and help the user to carefully consider the assumptions and considerations at each stage of the modelling process. The tutorial follows the same structure.](images/modelling_workflow.png){#fig-modelling_workflow fig-align="left"}
-
-The examples in this tutorial show you how to run functions from the command line, using Python and, and using the GUI dialogs. There will not (always) be an explanation of the different settings and parameters. Instead, each time a function is used, a link is provided to the corresponding help page. These help pages are quite good, and you are encouraged to read them to fully understand the choices made in the tutorial.
+This tutorial introduces a GRASS GIS toolset for species distribution modelling, and shows how to use it effectively in combination with other core modules and add-ons to predict the future potential distribution of the almond-eyed ringlet butterfly. The first part focuses on the essential building blocks of creating a species distribution model, from data collection to prediction. In the second part, we’ll dive deeper into the options, choices, and parameter settings to validate and fine-tune the model.
 
 ::: {.callout-tip collapse="true"}
 ## Tips and conventions used in this tutorial.
@@ -39,15 +33,15 @@ print("this is an example") # <1>
 <br>Clicking on the circled number in the code block will open a pop-up window. If you hover over a code block, you will also see a small 'clipboard' icon {{< fa regular clipboard 2xs>}}. Click it to copy the code.
 :::
 
-## The software
+The examples in this tutorial show you how to run functions from the command line, using Python and, and using the GUI dialogs. There will not (always) be an explanation of the different settings and parameters. Instead, each time a function is used, a link is provided to the corresponding help page. These help pages are quite good, and you are encouraged to read them to fully understand the choices made in the tutorial.
 
-### GRASS GIS
+## GRASS GIS
 
 Go to the GRASS GIS website and open the [download page](https://grass.osgeo.org/download/) for your operating system from the menu. Use the stable release (at the time of writing, this is version 8.4.0).
 
 Window users will find that there are two main flavors on the [download page](https://grass.osgeo.org/download/windows/); the standalone winGRASS installer and the OSGeo4W installer. I recommend the latter, as it allows you to install a broad range of open source geospatial software packages, such as QGIS and GDAL/OGR. And it offers an easier way to update the software. Note that on Windows, if you have QGIS installed, there is a good change you already have GRASS GIS. In that case, just check if you have the latest version.
 
-### GRASS addons
+## GRASS addons
 
 The three main modules used in this tutorial are [v.maxent.swd](https://grass.osgeo.org/grass-stable/manuals/addons/v.maxent.swd.html), [r.maxent.train](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.train.html) and [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html). Install these addons with the [g.extension](https://grass.osgeo.org/grass-stable/manuals/g.extension.html) module.
 
@@ -83,11 +77,11 @@ Repeat the same for the other two addons.
 
 Installed modules can be run by typing their name in the Console or terminal. They are also available from the [Tools]{.style-menu} panel under [Addons]{.style-menu}. If you don't see them after installing them, you may have to restart GRASS first. You will install and use a few other addons later on in the tutorial.
 
-### Maxent {#sec-maxentsoftware}
+## Maxent {#sec-maxentsoftware}
 
 The addons [r.maxent.train](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.train.html) and [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html) both require the [Maxent]{.style-apps} software. Download the software from the [Maxent website](https://biodiversityinformatics.amnh.org/open_source/maxent/) and extract the [Maxent.jar]{.style-apps} file. When running [r.maxent.train]{.style-function} and [r.maxent.predict]{.style-function} for the first time you'll need to provide the path to this file. For now, just remember the location of the [Maxent.jar]{.style-apps} file.
 
-The Maxent software can be used on any computer running Java version 1.4 or later. For the Java runtime environment, the Maxent website refers to java.sun.com/javase/downloads, but OpenJDK should work as well. There is a good change you already have Java installed, but if not, you can download it from [here](https://openjdk.org/). For Windows users, you can download an installer of an Azul Zulu build of OpenJDK [here](https://www.azul.com/downloads/#zulu).
+The Maxent software can be used on any computer running Java version 1.4 or later. For the Java runtime environment, the Maxent website refers to java.sun.com/javase/downloads, but OpenJDK should work as well. There is a good change you already have Java installed, but if not, you can download it from e.g., [here](https://www.azul.com/downloads/#zulu) or [here](https://openjdk.org/).
 
 ::: {.callout-tip collapse="true"}
 ## For Window users
@@ -106,11 +100,11 @@ C:\Program Files\Zulu\zulu-21\bin\java.exe
 
 Now, you can add it to the `o4w_env.bat` file. GRASS GIS will look at this file at start up. The file is located in the `OSGEO4W_ROOT/bin` directory. Where that root directory is depends on how you have installed GRASS GIS. If you installed it using the [OSGeo4W]{.style-app} installer, you probably find it in `c:\OSGeo4W\bin`. If you installed it using the stand-alone installer, you probably find it in `c:\Program Fiels\GRASS GIS 8.4\bin`. To add the path to your Java executable in the o4w_env.bat file, follow these steps:
 
-- Open o4w_env.bat in a text editor (you may need administrative privileges).
-- Locate the line that begins with set path=.
-- At the end of this line, add a semicolon ; followed by the full path to your Java executable. For example:
+-   Open o4w_env.bat in a text editor (you may need administrative privileges).
+-   Locate the line that begins with set path=.
+-   At the end of this line, add a semicolon ; followed by the full path to your Java executable. For example:
 
-```
+```         
 set path=%path%;C:\Path\To\Java\bin
 ```
 
@@ -142,37 +136,3 @@ Usage: java [options] <mainclass> [args...]
 :::
 
 I haven't tested this on a Mac, but presumably, similar steps should be followed as on Windows to make sure GRASS GIS can find the Java executable.
-
-## The database {#sec-creatingadatabase}
-
-Once you have started GRASS GIS, the first thing to do for this tutorial is to create a new GRASS GIS database called [GRASSdb]{.style-db}. Next, create a new project called [SDM]{.style-db} with the coordinate reference system (CRS) [WGS84 lat/lon]{.style-parameter} ([EPSG 4326](https://epsg.io/4326)). The easiest way to do this is using the GUI, but if you want to make it part of an automated process, you can do this in Python as well.
-
-::: {#exm-2vSeGTk3HW .hiddendiv}
-:::
-
-::: panel-tabset
-## {{< fa regular window-restore >}}
-
-{{< video "https://ecodiv.earth/share/sdm_in_grassgis/create_project.mp4" >}}
-
-## {{< fa brands python >}}
-
-``` python
-# Create the folder for the GRASS GIS database
-os.mkdir("/media/paulo/HD2/")   # <1>
-
-# Create a new Project
-gs.create_project(
-    path="/media/paulo/HD2/GRASSdb",
-    name="SDM",
-    epsg="4326",
-)
-
-# Change to the newly created Project / mapset
-gs.run_command("g.mapset", mapset="PERMANENT", project="SDM")
-```
-
-1.  Replace the path with the path to the directory where you want to create the database. Note, on Windows, paths are written using backslashes (\\) as the separator between folder names. On Unix based operating system such as macOS, Linux, and BSDs, the forward slash (/) is used as the path separator.
-:::
-
-Now that you have your database ready, you can start with the next step, which is getting and preparing the input data for the species distribution modeling.

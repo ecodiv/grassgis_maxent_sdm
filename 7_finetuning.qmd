@@ -1,0 +1,13 @@
+# Model fine-tuning {#sec-modelfinetuning}
+
+In the first part of this tutorial, you were introduced to the basic steps of species distribution modeling. In @sec-modelvalidation, we explored various options for model validation, which allow us to evaluate and compare different models or iterations. In this section, we’ll build on that foundation by examining how changes in parameters can influence model outcomes.
+
+Questions we’ll touch on here are e.g., what parameters can we adjust, and how do these changes impact the results? Which model should we ultimately select? Or could we even combine multiple models?
+
+Note that we’ll assume you are already familiar with the basic steps of modeling. In this section, the focus will be on experimenting with alternative parameter settings. In practice, modeling involves testing different combinations of parameters, validating the outcomes, and ultimately selecting the model that performs best.
+
+::: callout-warning
+## Work in progress
+
+The chapters of this sections are being prepared and will be available in the coming weeks, so stay tuned!
+:::

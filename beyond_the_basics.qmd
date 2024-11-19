@@ -1,0 +1,5 @@
+# Beyond the basics {#sec-advancedsteps}
+
+In the previous sections, we covered the basic steps for building a species distribution model using Maxent. In this part, we'll explore various options to validating the results (@sec-modelvalidation) and fine-tune model options (@sec-modelfinetuning).
+
+We will explore various validation methods and parameter adjustments, addressing each option individually. It’s important to keep in mind that in practice, modeling involves experimenting with different parameter combinations, validating the results, and iteratively refining the model to achieve the best possible performance. By understanding these components, you’ll be better equipped to develop robust and reliable models.

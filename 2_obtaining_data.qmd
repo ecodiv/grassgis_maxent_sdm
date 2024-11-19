@@ -9,6 +9,40 @@ lightbox:
 
 For this tutorial, we will download and import various data layers that we need to develop a potential distribution model/map for our species, the almond-eyed ringlet (*Erebia alberganus*). This includes species distribution data and environmental data layers. The almond-eyed ringlet occurs in Europe, so we need a map of Europe to delimit our study area. For visualization purposes, we include some background layers, including a map of the national borders of European countries, rivers, major roads and urban areas in Europe.
 
+## The database {#sec-creatingadatabase}
+
+Once you have started GRASS GIS, the first thing to do for this tutorial is to create a new GRASS GIS database called [GRASSdb]{.style-db}. Next, create a new project called [SDM]{.style-db} with the coordinate reference system (CRS) [WGS84 lat/lon]{.style-parameter} ([EPSG 4326](https://epsg.io/4326)). The easiest way to do this is using the GUI, but if you want to make it part of an automated process, you can do this in Python as well.
+
+::: {#exm-2vSeGTk3HW .hiddendiv}
+:::
+
+::: panel-tabset
+## {{< fa regular window-restore >}}
+
+{{< video "https://ecodiv.earth/share/sdm_in_grassgis/create_project.mp4" >}}
+
+## {{< fa brands python >}}
+
+``` python
+# Create the folder for the GRASS GIS database
+os.mkdir("/media/paulo/HD2/")   # <1>
+
+# Create a new Project
+gs.create_project(
+    path="/media/paulo/HD2/GRASSdb",
+    name="SDM",
+    epsg="4326",
+)
+
+# Change to the newly created Project / mapset
+gs.run_command("g.mapset", mapset="PERMANENT", project="SDM")
+```
+
+1.  Replace the path with the path to the directory where you want to create the database. Note, on Windows, paths are written using backslashes (\\) as the separator between folder names. On Unix based operating system such as macOS, Linux, and BSDs, the forward slash (/) is used as the path separator.
+:::
+
+Now that you have your database ready, you can start with the next step, which is getting and preparing the input data for the species distribution modeling.
+
 ## Working directory {#sec-workingdirectory}
 
 Certain modules require a file as input or output. You can use the full path to the file. However, if you also define a working directory and you put your files in that working directory, you only need to provide the path relative to the working directory[^2_obtaining_data-1]. For this section, create your own working directory where you will store the downloaded data.
@@ -85,7 +119,7 @@ Open the [v.in.ogr]{.style-function} dialog and fill in:
 : {tbl-colwidths="\[50,50\]"}
 :::
 
-The Almond-eyed Ringlet occurs in parts of Europe, so we’ll limit the areas for which we download the rest of the data to Europe, by setting the extent of the computational region (@sec-computationalregion). This can be done using [](https://grass.osgeo.org/grass-stable/manuals/.html) if we know the north, south, west and east limits, or interactively, using the [Set computational region extent interactively]{.style-menu} option under the [Various zoom options]{.style-menu} ![](images/zoom-more.png) button. For the latter, see the [{{< fa regular window-restore >}}]{.paneltabcolor} tab below.
+The Almond-eyed Ringlet occurs in parts of Europe, so we’ll limit the areas for which we download the rest of the data to Europe, by setting the extent of the computational region (@sec-computationalregion). This can be done using [ ](https://grass.osgeo.org/grass-stable/manuals/.html) if we know the north, south, west and east limits, or interactively, using the [Set computational region extent interactively]{.style-menu} option under the [Various zoom options]{.style-menu} ![](images/zoom-more.png) button. For the latter, see the [{{< fa regular window-restore >}}]{.paneltabcolor} tab below.
 
 ::: {#exm-7Z3CL3lWfe .hiddendiv}
 :::
@@ -172,6 +206,7 @@ Open the [v.clip]{.style-function} dialog, and fill in:
 
 <!-- ### Land cover {#sec-landcover} -->
 
+```{=html}
 <!-- # r.import memory=40000 extent=region resolution=value resolution_value=0.000931 input=/home/paulo/Downloads/118168/Results/u2018_clc2018_v2020_20u1_raster100m/DATA/U2018_CLC2018_V2020_20u1.tif output=U2018_CLC2018_V2020_20u1 
 
 ### DEM
@@ -179,6 +214,7 @@ Open the [v.clip]{.style-function} dialog, and fill in:
 https://ec.europa.eu/eurostat/web/gisco/geodata/digital-elevation-model/eu-dem#DD
 
 -->
+```
 
 ### Urban areas {#sec-urban}
 
@@ -753,9 +789,9 @@ gs.run_command(
 
 Open the [g.extension]{.style-function} dialog, and run it with the following parameter settings:
 
-| Parameter               | Value     |
-|-------------------------|-----------|
-| Name of mapset (mapset) | v.in.gbif |
+| Parameter | Value     |
+|-----------|-----------|
+| Extension | v.in.gbif |
 
 : {tbl-colwidths="\[50,50\]"}
 
@@ -787,7 +823,7 @@ As explanatory variables for the species distribution modeling, we'll use the 19
 
 ![The Worldclim download page for the version 2.1 historical climate data, with the download link for the 30 arc-second bioclim variables.](images/worldclim_historic_bioclim.png){#fig-worldclim_historic_bioclim fig-align="left"}
 
-We'll create a new mapset [climate]{.style-db} to store the climate data, using the [g.mapset](https://grass.osgeo.org/grass-stable/manuals/g.mapset.html) module with the [-c]{.style-parameter} flag. Next, we use the [](https://grass.osgeo.org/grass-stable/manuals/.html) module to set the boundaries of the region for which we want to import the data. One option is to use the region extent we defined earlier. Or, now that we know more precisely where our species has been observed, we can defined new bounds using the []{.style-fuction} module with the [n]{.style-parameter}, [s]{.style-parameter}, [e]{.style-parameter}, and [w]{.style-parameter} parameters. We'll do the latter, and set the extent of the computational region to *54N*, *36S*, *-10w* and *32E*.
+We'll create a new mapset [climate]{.style-db} to store the climate data, using the [g.mapset](https://grass.osgeo.org/grass-stable/manuals/g.mapset.html) module with the [-c]{.style-parameter} flag. Next, we use the [ ](https://grass.osgeo.org/grass-stable/manuals/.html) module to set the boundaries of the region for which we want to import the data. One option is to use the region extent we defined earlier. Or, now that we know more precisely where our species has been observed, we can defined new bounds using the module with the [n]{.style-parameter}, [s]{.style-parameter}, [e]{.style-parameter}, and [w]{.style-parameter} parameters. We'll do the latter, and set the extent of the computational region to *54N*, *36S*, *-10w* and *32E*.
 
 Note that, if the region and the raster layer are not perfectly aligned, the area that is imported will be slightly larger than the computational region. How much larger depends on the resolution of the computational region, as explained in (@sec-computationalregion). We therefore use the [res]{.style-parameter} parameter to set the resolution to match the resolution of the layers we want to import.
 
@@ -820,7 +856,7 @@ Type in [g.mapset]{.style-function} in the console to open the dialog, and use t
 
 : {tbl-colwidths="\[50,50\]"}
 
-Next, run the []{.style-function} module with the following settings below. Alternatively, you can define the region's bounds manually in the [Map display]{.style-menu}, as explained in @sec-computationalregion.
+Next, run the module with the following settings below. Alternatively, you can define the region's bounds manually in the [Map display]{.style-menu}, as explained in @sec-computationalregion.
 
 | Parameter                       | Value   |
 |---------------------------------|---------|
@@ -886,7 +922,7 @@ for n in range(1, 20):        # <2>
 {{< video "https://ecodiv.earth/share/sdm_in_grassgis/import_climate_data.mp4" >}}
 :::
 
-As mentioned earlier, GRASS will import raster layers with the resolution and alignment of the original raster files. This means the computational region and the raster layers may not be perfectly aligned. In addition, the region’s resolution may not match that of the imported layers. To check this, you can run []{.style-function} with the [-g]{.style-parameter} and compare the outcomes with those of the [r.info](https://grass.osgeo.org/grass-stable/manuals/r.info.html) module.
+As mentioned earlier, GRASS will import raster layers with the resolution and alignment of the original raster files. This means the computational region and the raster layers may not be perfectly aligned. In addition, the region’s resolution may not match that of the imported layers. To check this, you can run with the [-g]{.style-parameter} and compare the outcomes with those of the [r.info](https://grass.osgeo.org/grass-stable/manuals/r.info.html) module.
 
 ::: {#exm-uqHZOxgy43 .hiddendiv}
 :::
@@ -908,7 +944,7 @@ gs.run_command("r.info", map="bio_1")
 
 ## {{< fa regular window-restore >}}
 
-Type in []{.style-function} in the console to open the dialog, and use the following parameter settings.
+Type in in the console to open the dialog, and use the following parameter settings.
 
 | Parameter                    | Value |
 |------------------------------|-------|
@@ -925,9 +961,9 @@ Open the [r.info]{.style-function} dialog, and run it with the following paramet
 : {tbl-colwidths="\[50,50\]"}
 :::
 
-To ensure that the region's settings (extent, resolution, orientation) match those of the imported bioclim layers, we use the [](https://grass.osgeo.org/grass-stable/manuals/.html) module again, but this time with the [raster]{.style-parameter} parameter[^2_obtaining_data-9]. Next, we run it again with the [save]{.style-parameter} parameter to save the region settings in the named region file [aoi]{.style-data}.
+To ensure that the region's settings (extent, resolution, orientation) match those of the imported bioclim layers, we use the [ ](https://grass.osgeo.org/grass-stable/manuals/.html) module again, but this time with the [raster]{.style-parameter} parameter[^2_obtaining_data-9]. Next, we run it again with the [save]{.style-parameter} parameter to save the region settings in the named region file [aoi]{.style-data}.
 
-[^2_obtaining_data-9]: The different options of the ** function provide a lot of flexibility in to how to define the region. You are encouraged to carefully consider the different options each time you use this module.
+[^2_obtaining_data-9]: The different options of the \*\* function provide a lot of flexibility in to how to define the region. You are encouraged to carefully consider the different options each time you use this module.
 
 ::: {#exm-V0FK3TyzcN .hiddendiv}
 :::
@@ -951,16 +987,16 @@ gs.run_command("g.region", save="aoi")
 
 Open the dialog of the [g.region]{.style-function} module, and run it with the following parameter settings:
 
-| Parameter                                                | Value |
-|----------------------------------------------------------|-------|
-| raster                                                   | bio_1 |
+| Parameter | Value |
+|-----------|-------|
+| raster    | bio_1 |
 
 : {tbl-colwidths="\[50,50\]"}
 
 Run the module again, but now with the following parameter settings:
 
-| Parameter                                                | Value |
-| Save current region settings in named region file (save) | aoi   |
+| Parameter \| Value \|
+| Save current region settings in named region file (save) \| aoi \|
 
 : {tbl-colwidths="\[50,50\]"}
 :::
@@ -1024,43 +1060,43 @@ Run the [v.in.region]{.style-function} module with the following parameter setti
 @fig-bioclimvars shows the bioclimatic maps 1 to 19 that we have just imported for our study area. The maps also show the range map of the Almond-eyed Ringlet butterfly. In case you are interested, see [here](#sec-bioclimvars) for the code used to create the maps.
 
 ::: {#fig-bioclimvars layout-ncol="4"}
-![](images/bio_1.png){group="my-group"}
+![](images/bio_1.png){group="LRNlhoGosy"}
 
-![](images/bio_2.png){group="my-group"}
+![](images/bio_2.png){group="LRNlhoGosy"}
 
-![](images/bio_3.png){group="my-group"}
+![](images/bio_3.png){group="LRNlhoGosy"}
 
-![](images/bio_4.png){group="my-group"}
+![](images/bio_4.png){group="LRNlhoGosy"}
 
-![](images/bio_5.png){group="my-group"}
+![](images/bio_5.png){group="LRNlhoGosy"}
 
-![](images/bio_6.png){group="my-group"}
+![](images/bio_6.png){group="LRNlhoGosy"}
 
-![](images/bio_7.png){group="my-group"}
+![](images/bio_7.png){group="LRNlhoGosy"}
 
-![](images/bio_8.png){group="my-group"}
+![](images/bio_8.png){group="LRNlhoGosy"}
 
-![](images/bio_9.png){group="my-group"}
+![](images/bio_9.png){group="LRNlhoGosy"}
 
-![](images/bio_10.png){group="my-group"}
+![](images/bio_10.png){group="LRNlhoGosy"}
 
-![](images/bio_11.png){group="my-group"}
+![](images/bio_11.png){group="LRNlhoGosy"}
 
-![](images/bio_12.png){group="my-group"}
+![](images/bio_12.png){group="LRNlhoGosy"}
 
-![](images/bio_13.png){group="my-group"}
+![](images/bio_13.png){group="LRNlhoGosy"}
 
-![](images/bio_14.png){group="my-group"}
+![](images/bio_14.png){group="LRNlhoGosy"}
 
-![](images/bio_15.png){group="my-group"}
+![](images/bio_15.png){group="LRNlhoGosy"}
 
-![](images/bio_16.png){group="my-group"}
+![](images/bio_16.png){group="LRNlhoGosy"}
 
-![](images/bio_17.png){group="my-group"}
+![](images/bio_17.png){group="LRNlhoGosy"}
 
-![](images/bio_18.png){group="my-group"}
+![](images/bio_18.png){group="group"}
 
-![](images/bio_19.png){group="my-group"}
+![](images/bio_19.png){group="group"}
 
 Bioclimatic variable 1 to 19 from [Worldclim version 2.0](https://www.worldclim.org/data/bioclim.html). The red outlines show the distribution of the Almond-eyed Ringlet butterfly according to the [IUCN Red List](https://www.iucnredlist.org/species/173278/6984115). Click on the image to enlarge and view the maps in detail.
 :::
@@ -1163,43 +1199,43 @@ Type in [r.in.gdal]{.style-function} in the console to open the dialog, and use 
 @fig-futbioclimvars shows the projected bioclimatic conditions for 2081-2100 (bioclim variables 1 to 19) that we have just imported for our study area. The maps also show the range map of the Almond-eyed Ringlet butterfly.
 
 ::: {#fig-futbioclimvars layout-ncol="4"}
-![](images/futbio_1.png){group="my-group"}
+![](images/futbio_1.png){group="NsFOs6E8BO"}
 
-![](images/futbio_2.png){group="my-group"}
+![](images/futbio_2.png){group="NsFOs6E8BO"}
 
-![](images/futbio_3.png){group="my-group"}
+![](images/futbio_3.png){group="NsFOs6E8BO"}
 
-![](images/futbio_4.png){group="my-group"}
+![](images/futbio_4.png){group="NsFOs6E8BO"}
 
-![](images/futbio_5.png){group="my-group"}
+![](images/futbio_5.png){group="NsFOs6E8BO"}
 
-![](images/futbio_6.png){group="my-group"}
+![](images/futbio_6.png){group="NsFOs6E8BO"}
 
-![](images/futbio_7.png){group="my-group"}
+![](images/futbio_7.png){group="NsFOs6E8BO"}
 
-![](images/futbio_8.png){group="my-group"}
+![](images/futbio_8.png){group="NsFOs6E8BO"}
 
-![](images/futbio_9.png){group="my-group"}
+![](images/futbio_9.png){group="\"NsFOs6E8BO"}
 
-![](images/futbio_10.png){group="my-group"}
+![](images/futbio_10.png){group="NsFOs6E8BO"}
 
-![](images/futbio_11.png){group="my-group"}
+![](images/futbio_11.png){group="NsFOs6E8BO"}
 
-![](images/futbio_12.png){group="my-group"}
+![](images/futbio_12.png){group="NsFOs6E8BO"}
 
-![](images/futbio_13.png){group="my-group"}
+![](images/futbio_13.png){group="NsFOs6E8BO"}
 
-![](images/futbio_14.png){group="my-group"}
+![](images/futbio_14.png){group="NsFOs6E8BO"}
 
-![](images/futbio_15.png){group="my-group"}
+![](images/futbio_15.png){group="NsFOs6E8BO"}
 
-![](images/futbio_16.png){group="my-group"}
+![](images/futbio_16.png){group="NsFOs6E8BO"}
 
-![](images/futbio_17.png){group="my-group"}
+![](images/futbio_17.png){group="NsFOs6E8BO"}
 
-![](images/futbio_18.png){group="my-group"}
+![](images/futbio_18.png){group="NsFOs6E8BO"}
 
-![](images/futbio_19.png){group="my-group"}
+![](images/futbio_19.png){group="NsFOs6E8BO"}
 
 Projected bioclimatic conditions for the period 2081-2100 based on the SSP585 from the GCM EC-Earth3-Veg. Source: [Worldclim version 2.0](https://www.worldclim.org/data/bioclim.html). The red outlines show the distribution of the Almond-eyed Ringlet butterfly according to the [IUCN Red List](https://www.iucnredlist.org/species/173278/6984115). Click on the image to enlarge and view the maps in detail.
 :::

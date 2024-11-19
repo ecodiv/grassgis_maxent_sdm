@@ -1,6 +1,6 @@
 # Sample data {#sec-sampledata}
 
-<br>
+The table below provides an overview of the raster and vector data used in this tutorial, including a link to source. In addition, a few potentially useful data sources are provided. For a list of curated list of public data sets, see [this link](https://github.com/awesomedata/awesome-public-datasets).
 
 ### Data in this tutorial {.unnumbered}
 
@@ -24,7 +24,7 @@ The table below provides an overview of the data used in this tutorial.
 
 ### Other data sources {.unnumbered}
 
-The list below provide a few potentially useful data sources. For a much longer list of curated list of public data sets, see [this link](https://github.com/awesomedata/awesome-public-datasets).
+The list below provide a few potentially useful data sources.
 
 | Variable | Name + link |
 |----|----|

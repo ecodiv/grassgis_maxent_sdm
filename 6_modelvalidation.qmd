@@ -1,0 +1,422 @@
+# Model Validation {#sec-modelvalidation}
+
+So far we have discussed how to build a model and use it to predict the distribution of a species. However, it is equally important to understand how to interpret and evaluate the results of the model. A key step in this process is assessing the accuracy of the model's predictions - a process known as *model validation*.
+
+In @sec-4evalstats, we introduced validation statistics such as AUC-ROC, which provide a first measure of model performance. However, it's important to keep in mind that evaluating a model on the same data it was trained on can lead to overly optimistic assessments, as models tend to perform worse on new, unseen data. To truly assess a model's predictive power, it must be tested on a separate dataset that wasn't used during training.
+
+## Training and testing Points
+
+The easiest way to do this is to split the presence data into two parts, and use one part to train the model, and another part to test the model's performance. But before we do that, we first create a new mapset and a folder to store the model results. Of course, you are free to organize your model results differently. However, it's important to note that while GRASS GIS prevents accidental overwriting of data, MaxEnt does not. If you use the same output folder and the files in that folder have the same names, MaxEnt will overwrite them without warning.
+
+::: {#exm-v4swwqZVAv .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+# Folders to store data
+mkdir model_02
+
+# Create a new mapset and switch to it
+g.mapset -c mapset=model_02
+
+# Define the region and set the MASK
+g.region raster=bio_1@climate_current
+```
+
+## {{< fa brands python >}}
+
+``` python
+# Set working directory and create a new folder in the working directory
+os.chdir("replace-for-path-to-working-directory")
+os.makedirs("model_02", exist_ok=True)
+
+# Create a new mapset and switch to it
+gs.run_command("g.mapset", flags="c", mapset="model_02")
+
+# Set the region and create a MASK
+gs.run_command("g.region", raster="bio_1@climate_current")  
+```
+
+## {{< fa regular window-restore >}}
+
+Create the folder [model_02]{.style-db} in your working directory using your favorite file browser. Next, create a new mapset and switch to this mapset using the Data panel. Alternatively, open the [g.mapsets]{.style-function} dialog and run it with the following parameter settings:
+
+| Parameter                             | Value    |
+|---------------------------------------|----------|
+| Name of mapset (mapset)               | model_02 |
+| Create mapset if it doesn't exist (c) | ✅       |
+
+<br>Next, use the [g.region]{.style-function} module to set the computational region style parameter, based on the [bio_1]{.style-data} raster layer in the [climate_current]{.style-db} mapset.
+
+| Parameter | Value                  |
+|-----------|------------------------|
+| raster    | bio_1\@climate_current |
+:::
+
+### Model training
+
+We train the model as we did in @sec-modeltraining, but this time we ask Maxent to use 80% of the presence points to train the model, and set aside 20% of the presence points to test the model's performance. We can do this using the [randomtestpoints]{.style-parameter} parameter of the [r.maxent.train]{.style-function} module.
+
+::: {#exm-kjKw0Mrq26 .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+r.maxent.train \
+  samplesfile=dataset01/species.swd \
+  environmentallayersfile=dataset01/background_points.swd \
+  outputdirectory=model_02 \ 
+  randomtestpoints=20 \
+  threads=4 memory=1000 \ 
+  -ybg
+```
+
+## {{< fa brands python >}}
+
+``` python
+gs.run_command(
+    "r.maxent.train",
+    samplesfile="dataset01/species.swd",  
+    environmentallayersfile="dataset01/background_points.swd",
+    outputdirectory="model_02", 
+    randomtestpoints=20,
+    threads=4,
+    memory=1000,
+    flags="ybg", 
+)  
+```
+
+## {{< fa regular window-restore >}}
+
+Open the [r.maxent.train]{.style-function} dialog and run the module with the following parameter settings:
+
+| Parameter | Value |
+|----|----|
+| samplesfile | dataset01/species.swd |
+| environmentallayersfile | dataset01/background.swd |
+| outputdirectory | model_02 |
+| randomtestpoints | 20 |
+| threads | 4 |
+| memory | 1000 |
+| Create a vector point layer from the sample predictions (y) | ✅ |
+| Create a vector point layer with predictions at backgr. points (b) | ✅ |
+| Create response curves (g) | ✅ |
+
+: {tbl-colwidths="\[63,37\]"}
+
+<br>Tip: if you are using the r.maxent.train dialog screen, keep it open after it finishes. That way, for our next run, you only need to adjust some parameter settings instead of typing in all again.
+:::
+
+:::: {.panel-tabset .exercise}
+## {{< fa regular circle-question >}}
+
+::: {#exr-3_1}
+You might have noticed that when training the model, we omitted a few parameters compared to @exm-g8jUY2JKvW. Which parameters did we leave out, and what does this mean for our outcomes?
+:::
+
+## {{< fa regular comment >}}
+
+**projectionlayers**: We omitted the [projectionlayers]{.style-paramter} parameter. As explained in the [help page](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.train.html), this parameter allows you to specify the location of a set of rasters representing the same environmental variables used to build the Maxent model. When provided, Maxent generates a prediction raster layer based on these rasters. Since we didn’t use this parameter, no prediction raster layer was created in this run. Skipping this step saves time, as generating these layers can be time-consuming.
+
+**samplepredictions**: We included the [-y]{.style-parameter}, instructing Maxent to create vector point layers with predictions at presence points. However, we did not set the [samplepredictions]{.style-parameter} parameters so Maxent assigned a default name to the output. This default name combines the species name with the suffix \*\_obs_samplePredictions\*. In this case, the point layer is named [Erebia_alberganus_obs_samplePredictions]{.style-data}
+
+**backgroundpredictions**: Similarly, we used the [-b]{.style-parameter} parameter to create vector point layers with predictions at background points. Since we did not specify the [backgroundpredictions]{.style-parameter} parameter, Maxent again used a default naming convention: the species name followed by the suffix \*\_obs_backgroundPredictions\*. Thus, the file is named [Erebia_alberganus_obs_backgroundPredictions]{.style-data}.
+
+To reiterate, none of these are model parameters, i.e., leaving them out does not change the model itself.
+::::
+
+### Validation
+
+The [r.maxent.train]{.style-function} module output on the console (@fig-modeltrainconsulemessages02) shows that compared to the first model, we have fewer training samples. Twenty percent less to be exactly, which are of course the training samples that we set aside as test points.
+
+This time, two AUC statistics are reported: the training AUC and the test AUC. The training AUC reflects how well the model fits the training data, while the test AUC reflects how well the model generalizes to new data. The training AUC is 0.8844, while the test AUC is slightly higher at 0.886, with a standard deviation of 0.004.
+
+::: {.panel-tabset .exercise}
+## Output messages
+
+![Messages of the r.maxent.train module in the console, showing the number of training points, and the training and test AUC.](images/modeltrainconsulemessages02.png){#fig-modeltrainconsulemessages02 fig-align="left" width=""}
+
+## ROC
+
+![ROC curve and the area under the curve statistics of model_02, based on the training data (red curve) and the test data (blue curve).](images/Erebia_alberganus_obs_roc_model02.png){#fig-auc_model_02 fig-align="left"}
+:::
+
+To view the corresponding ROC curve (@fig-auc_model_02), open the file [Erebia_alberganus_obs.html]{.style-file} located in the results folder. The red line represents the ROC curve based on the training data, while the blue line represents the ROC curve based on the test data. The curves are very similar. This is to be expected. The density of sample points is high, which means that training and test points are usually close together. That is, the environmental conditions in the test points are very similar to those in the training point locations.
+
+:::: {.panel-tabset .exercise}
+## {{< fa regular circle-question >}}
+
+::: {#exr-SErwbZwytm}
+It is somewhat surprising that the AUC based on the test data is higher than that based on the training data. What could be a possible explanation?
+:::
+
+## {{< fa regular comment >}}
+
+A possible explanation is that the test data represents a much smaller set of presence points, which results in a much smaller prevalence — the ratio of presence points to background points — in the test set compared to the training dataset. Background points are typically easier to classify as absence, especially if they are situated in environmentally distinct areas that are far from the species' known occurrences. This can lead to a higher true negative rate (specificity) because the model more confidently identifies absence areas. Since AUC (area under the ROC curve) reflects both sensitivity (true positive rate) and specificity (true negative rate), an improvement in specificity is likely to result in a higher AUC.
+::::
+
+As we did not change any of the model parameters, the outcomes should otherwise be the same as in [paragraph -@sec-4trainthemodel], with some minor differences.
+
+### Using the model
+
+The process of setting aside occurrence data for testing is essential to evaluate the predictive power of a model under new conditions or in untested areas. This validation step ensures that the model can generalize beyond the data it was trained on. Typically, you will develop and compare multiple models, each trained using different parameter settings or algorithms. Through this process, the best-performing model is identified based on validation results.
+
+Once the best model is selected, the next step is to rebuild it using all available occurrence data. By incorporating the full dataset, the final model benefits from the maximum amount of information, improving its robustness for future predictions and analyses. This comprehensive model is the one typically used for practical applications, such as predicting species distributions across a broader landscape or under different environmental scenarios.
+
+## Cross-validation
+
+### Description
+
+A more robust and commonly used technique to estimate the accuracy of a predictive model is [cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). There are different types of cross-validation, but we'll focus on k-fold cross-validation here. In k-fold cross-validation, the original sample is randomly partitioned into **k** subsamples with an approximately equal number of records. For this tutorial, we carry out a 4-fold cross-validation.
+
+![Schematic explanation of a 4-fold cross-validation. The presence data is randomly partitioned into 4 groups with an approximately equal number of records. Of these groups, a single group is set apart as the validation data for testing the model, and the remaining subsamples are combined to be used as training data to create the model. Next, the model is used to predict the presence of the locations of the validation subset. The results of the prediction are then compared with the known presence and background designations in the validation subset. The cross-validation process is repeated as many times as there are subsamples, whereby each of the subsamples is used exactly once as the validation data.](images/4-fold_cross-validation.svg){#fig-vkgSx6qmBy fig-align="left" width="600"}
+
+### Model training
+
+To perform a cross-validation, we run [r.maxent.train]{.style-function} with the [replicatetype]{.style-parameter} and the [replicates]{.style-parameter} parameter to tell Maxent to run a 4-fold cross-validation. This means that Maxent will process trains four models in the background, calculates validation statistics for each model, and computes average statistics across the four sub-models.
+
+::: {.callout-note appearance="simple"}
+We will henceforth refer to these as the "four models". However, these are not distinct, separate models but represent the four iterations of a 4-fold cross-validation process. Each iteration corresponds to training the model on a unique combination of three subsets of the data and testing it on the remaining subset. Thus, while the parameters and results may vary slightly across the iterations due to differences in the training and testing subsets, they are essentially iterations of the same underlying model, evaluated under different data splits.
+:::
+
+If both the option to create a sample prediction ([-y]{.style-parameter} flag) and k-fold cross-validation are selected, the sample prediction point layer's attribute table will include the average predicted probabilities and the range of predicted probabilities across the four models for each point. Note that the the [v.db.pyupdate](https://grass.osgeo.org/grass-stable/manuals/v.db.update.html) addon needs to be installed to do this.
+
+We furthermore specify the location of the folder with the input environmental raster layers using the [projectionlayers]{.style-parameter} parameter. This instructs Maxent to generate a raster prediction layer. When the k-fold cross-validation option is enabled, this raster shows the average predicted probability of species presence, calculated across all four model iterations. Additionally, three extra layers will be produced, showing the minimum, maximum, and standard deviation of the predictions across the four models.
+
+::: {#exm-fb4bZ2MIs0 .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+# Install addon
+g.extension extension=v.db.pyupdate
+
+# Setup
+mkdir model_03
+g.mapset -c mapset=model_03
+g.region raster=bio_1@climate_current
+
+# Train
+r.maxent.train \
+  samplesfile=dataset01/species.swd \
+  environmentallayersfile=dataset01/background_points.swd \
+  projectionlayers=dataset01/envdat  \
+  outputdirectory=model_03 \ 
+  replicatetype=crossvalidate \
+  replicates=4 \
+  threads=4 memory=1000 \ 
+  -yg
+```
+
+## {{< fa brands python >}}
+
+``` python
+# Install addon
+gs.run_command("g.extension", extension="v.db.pyupdate")
+
+# Setup
+os.chdir("replace-for-path-to-working-directory")
+os.makedirs("model_03", exist_ok=True)
+gs.run_command("g.mapset", flags="c", mapset="model_03")
+gs.run_command("g.region", raster="bio_1@climate_current")  
+
+# Train
+gs.run_command(
+    "r.maxent.train",
+    samplesfile="dataset01/species.swd",  
+    environmentallayersfile="dataset01/background_points.swd",
+    projectionlayers="dataset01/envdat",
+    outputdirectory="model_03", 
+    replicatetype="crossvalidate",
+    replicates=4,
+    threads=4,
+    memory=1000,
+    flags="yg", 
+)  
+```
+
+## {{< fa regular window-restore >}}
+
+To install the addon, go to the menu \[settings → addon extensions → install extensions from addons\], look for *v.db.pyupdate* and install it.
+
+Create the folder [model_03]{.style-db} in your working directory using your favorite file browser. Next, create a new mapset and switch to this mapset using the Data panel. Alternatively, open the [g.mapsets]{.style-function} dialog and run it with the following parameter settings:
+
+| Parameter                             | Value    |
+|---------------------------------------|----------|
+| Name of mapset (mapset)               | model_03 |
+| Create mapset if it doesn't exist (c) | ✅       |
+
+<br>Next, use the [g.region]{.style-function} module to set the computational region style parameter, based on the [bio_1]{.style-data} raster layer in the [climate_current]{.style-db} mapset.
+
+| Parameter | Value                  |
+|-----------|------------------------|
+| raster    | bio_1\@climate_current |
+
+<br>Open the [r.maxent.train]{.style-function} dialog and run the module with the following parameter settings:
+
+| Parameter | Value |
+|----|----|
+| samplesfile | dataset01/species.swd |
+| environmentallayersfile | dataset01/background.swd |
+| projectionlayers | dataset01/envdat |
+| outputdirectory | model_03 |
+| replicatetype | crossvalidate |
+| replicates | 4 |
+| threads | 4 |
+| memory | 1000 |
+| Create a vector point layer from the sample predictions (y) | ✅ |
+| Create response curves (g) | ✅ |
+
+: {tbl-colwidths="\[63,37\]"}
+:::
+
+### Evaluation statistics
+
+To examine the model statistics, open the HTML file [Erebia_alberganus_obs.html]{.style-file} located in the [model_03]{.style-db} output folder. The page provides a summary of the results from the 4-fold cross-validation and includes links to the results of the individual models in the top right corner. The average test AUC across the replicate runs is 0.889, with a standard deviation of 0.003.
+
+::: {.panel-tabset .exercise}
+## AUC-ROC
+
+Figure [-@fig-roc-auc_model3] shows the receiver operating characteristic (ROC) curve, averaged over the replicate runs (red line). The standard deviation is represented by the blue band around the red line.
+
+![ROC curve and the area under the curve statistics for model_03.](share/model_03/plots/Erebia_alberganus_obs_roc.png){#fig-roc-auc_model3 fig-align="left" group="corcom"}
+
+## Omission graph
+
+Figure [-@fig-omission_model3] shows the test omission rate (green line) and predicted area (red line) as a function of the cumulative threshold, averaged over the replicate runs. The standard deviation of the omission rate and predicted area are illustrated by respectively the yellow and blue bands.
+
+![The omission/commission graph for model_03.](share/model_03/plots/Erebia_alberganus_obs_omission.png){#fig-omission_model3 fig-align="left" group="corcom"}
+:::
+
+The validation diagnostics from each group help indicate how the model will perform when estimating presence in unknown locations. If the model performs well for some groups, but poorly for others, we should be careful when interpreting the model outcomes. In this case, differences are fairly small (resulting in a small standard deviation).
+
+### Probability maps
+
+The sample prediction layer and the various raster prediction layers generated by Maxent offer further understanding of the spatial patterns of agreement and disagreement across the cross-validation iterations.
+
+The default color scheme of the [Erebia_alberganus_obs_samplePredictions]{.style-data} represents the average predicted probabilities, based on the four models (Figure @fig-samlepred_model_03a). To visualizing the variability in predictions across the four models, we use the values in the [Cloglog_range]{.style-data} column of the attribute table. These values represent the range (difference between the maximum and minimum predicted probabilities) across the four models (@fig-samlepred_model_03b).
+
+To create the new color table, we use the [r.colors](https://grass.osgeo.org/grass-stable/manuals/r.colors.html) function.
+
+::: {#exm-varKii8QsL .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+v.colors map=Erebia_alberganus_obs_samplePredictions \
+use=attr \
+column=Cloglog_range \
+color=bcyr
+```
+
+## {{< fa brands python >}}
+
+``` python
+gs.run_command(
+    "v.colors",
+    map="Erebia_alberganus_obs_samplePredictions",
+    use="attr",
+    column="Cloglog_range",
+    color="bcyr",
+)
+```
+
+## {{< fa regular window-restore >}}
+
+Open the [v.colors]() dialog and run it with:
+
+| Parameter | Value                                   |
+|-----------|-----------------------------------------|
+| map       | Erebia_alberganus_obs_samplePredictions |
+| use       | attr                                    |
+| column    | Cloglog_range                           |
+| color     | bcyr                                    |
+:::
+
+Now, go to the [data]{.style-menu} panel, and and open the various layers in the [Map display]{.style-menu} panel. Pay particular attention to the areas of disagreement. These highlight regions where the model predictions are less consistent, signaling the need for cautious interpretation of the results in these areas.
+
+::: {.panel-tabset .exercise}
+## Average sample predictions
+
+![The [Erebia_alberganus_obs_samplePredictions]{.style-data} vector layer with the GBIF occurrences. The colors represent the predicted probability that the species occurs at these locations, averaged over the four models.](images/Erebia_alberganus_obs_samplePredictions1.png){#fig-samlepred_model_03a group="ytHc07Sg8P"}
+
+## Range sample predictions
+
+![The [Erebia_alberganus_obs_samplePredictions]{.style-data} vector layer with GBIF occurrence data. The colors represent the range of predicted probabilities (the difference between the maximum and minimum values) across the four models.](images/Erebia_alberganus_obs_samplePredictions2.png){#fig-samlepred_model_03b group="ytHc07Sg8P"}
+:::
+
+To get a better idea about the spatial patterns of agreement and disagreement among the models outside the areas where the species was observed, we can examine the prediction raster layers with the average and standard deviation of the values generated by the four models.
+
+::: {.panel-tabset .exercise}
+## Average predictions
+
+![The [Erebia_alberganus_obs_envdat_avg]{.style-data} raster layer. The colors represent the predicted probability, averaged over the four models.](images/Erebia_alberganus_obs_envdat_avg.png){#fig-predlay_model_03a group="ytHc07Sg8P"}
+
+## Standard deviation of predictions
+
+![The [Erebia_alberganus_obs_envdata_stddev]{.style-data} raster layer. The colors represent the standard deviation of predicted probabilities across the four models.](images/Erebia_alberganus_obs_envdat_stddev.png){#fig-predlay_model_03b group="ytHc07Sg8P"}
+:::
+
+### Response curves {#sec-4responsecurves_model3}
+
+The response curves in the HTML file [Erebia_alberganus_obs.html]{.style-file} show the mean response of the 4 replicate Maxent runs (red) and and the mean +/- one standard deviation (blue, two shades for categorical variables).
+
+::::: {.panel-tabset .exercise}
+## Marginal response curves
+
+::: {#fig-responsecurves1 layout-ncol="4"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_1.png){group="4foldresponse"}
+
+![](share/model_03/plots/Erebia_alberganus_obs_bio_2.png){group="4foldresponse"}
+
+![](share/model_03/plots/Erebia_alberganus_obs_bio_4.png){group="4foldresponse"}
+
+![](share/model_03/plots/Erebia_alberganus_obs_bio_8.png){group="4foldresponse"}
+
+![](share/model_03/plots/Erebia_alberganus_obs_bio_9.png){group="4foldresponse"}
+
+![](share/model_03/plots/Erebia_alberganus_obs_bio_13.png){group="4foldresponse"}
+
+![](share/model_03/plots/Erebia_alberganus_obs_bio_14.png){group="4foldresponse"}
+
+![](share/model_03/plots/Erebia_alberganus_obs_bio_15.png){group="4foldresponse"}
+
+Response curves created by varying the specific variable, while keeping all other variables fixed at their average sample value
+:::
+
+## single-variable response curves
+
+::: {#fig-responsecurves2 layout-ncol="4"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_1_only.png){group="4foldresponse2"}
+
+![](share/model_03/plots/Erebia_alberganus_obs_bio_2_only.png){group="4foldresponse2"}
+
+![](share/model_03/plots/Erebia_alberganus_obs_bio_4_only.png){group="4foldresponse2"}
+
+![](share/model_03/plots/Erebia_alberganus_obs_bio_8_only.png){group="4foldresponse2"}
+
+![](share/model_03/plots/Erebia_alberganus_obs_bio_9_only.png){group="4foldresponse2"}
+
+![](share/model_03/plots/Erebia_alberganus_obs_bio_13_only.png){group="4foldresponse2"}
+
+![](share/model_03/plots/Erebia_alberganus_obs_bio_14_only.png){group="4foldresponse2"}
+
+![](share/model_03/plots/Erebia_alberganus_obs_bio_15_only.png){group="4foldresponse2"}
+
+Response curves created by running a model based on only the specific variable as explanatory variable.
+:::
+:::::
+
+### Using the model
+
+We used cross-validation to evaluate the predictive power of the model (as defined by the selected parameter settings) under new conditions or in untested areas. This process produced four model variants, each trained on slightly different subsets of the data due to the cross-validation procedure. These models are described by the lambdas files in the output folder. For each of these model variants, MaxEnt generated a raster layer representing the predicted probability of occurrence. These layers were then summarized by calculating their average, median, minimum, maximum, and standard deviation. The resulting summary layers are the ones currently available in our mapset.
+
+But what if we want to use the selected parameter settings to predict species distributions under different environmental scenarios and compare the result predicted potential distribution with the current potential distribution? One option is to select one of the four models or compute the average probability values across all four, as done during training. However, the standard approach is to rebuild the model using all available occurrence data, ensuring that the model benefits from the full dataset. This model can then be used to make predictions under different environmental conditions or in new geographic areas.

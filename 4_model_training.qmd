@@ -1,6 +1,8 @@
 # Model training {#sec-modeltraining}
 
-In this chapter, we’ll guide you through the essential steps for creating a species distribution model. The focus here is to help you become familiar with the core modules and understand the basic workflow. We’ll mostly rely on default parameter settings to keep things straightforward. Later, we’ll introduce additional sections that will delve deeper into fine-tuning model options and exploring various methods for result validation. The first of these sections will be available in the coming weeks.
+In this chapter, we’ll go through the basic steps for creating a species distribution model. The goal is to familiarize you with the essential modules and workflows involved. To keep things straightforward, we will primarily use default parameter settings. Later chapters will explore more advanced topics, including methods for validating model results (paragraph [-@sec-modelvalidation]) and fine-tuning model options (paragraph [-@sec-modelfinetuning]).
+
+![This chapter focuses on developing a species distribution model (A). In the next chapter, we'll use this model to predict the potential distribution of a species under future climate conditions (B). Note that while we will generate some prediction layers in pararaph [-@sec-4probabilitymaps]. These are intended primarily for evaluating the model's performance.](images/Flowchart_model_predict1.png){#fig-Flowchart_model_predict width="450" fig-align="left"}
 
 ## Organize outputs {#sec-4organizeoutputs}
 
@@ -47,12 +49,12 @@ gs.run_command("g.region", raster="bio_1@climate_current")   # <1>
 
 Create the folder [model_01]{.style-db} in your working directory using your favorite file browser. Next, create a new mapset and switch to this mapset using the Data panel. Alternatively, open the [g.mapsets]{.style-function} dialog and run it with the following parameter settings:
 
-| Parameter                             | Value     |
-|---------------------------------------|-----------|
-| Name of mapset (mapset)               | dataset01 |
-| Create mapset if it doesn't exist (c) | ✅        |
+| Parameter                             | Value    |
+|---------------------------------------|----------|
+| Name of mapset (mapset)               | model_01 |
+| Create mapset if it doesn't exist (c) | ✅       |
 
-<br>Next, use the [g.region]{.style-function} module to set the computational region style parameter, based on the region file we created earlier (@exm-V0FK3TyzcN).
+<br>Next, use the [g.region]{.style-function} module to set the computational region style parameter, based on the [bio_1]{.style-data} raster layer in the [climate_current]{.style-db} mapset.
 
 | Parameter                   | Value                  |
 |-----------------------------|------------------------|
@@ -89,7 +91,7 @@ r.maxent.train \
 
 1.  The (relative) path to the [species swd]{.style-data} file.
 2.  The (relative) path to the [background swd]{.style-data} file.
-3.  The (relative) path to the folder that holds the ascii raster layers of the input environmental variables.
+3.  The (relative) path to the folder that holds the ascii raster layers of the input environmental variables. If you select these, Maxent will first create the model, and than use the ascii layers as input in the model to create a prediction raster layer. See also point 8.
 4.  The (relative) path to the folder that where Maxent should write the results.
 5.  The module will create a point layer with the locations of species occurrences used for the model. The attribute table contains the predicted probability scores. With this parameter, you can specify a custom name for this point layer. If left empty, a default name will be used, based on the species name, with as suffix *samplePredictions*
 6.  The module will create a vector layer with background points used as input for this model. The attribute table contains the predicted probability scores. With this parameter, you can specify a custom name for the layer. If left empty, a default name will be used, based on the species name, with as suffix *backgroundPredictions*.
@@ -119,7 +121,7 @@ gs.run_command(
 
 1.  The (relative) path to the [species swd]{.style-data} file.
 2.  The (relative) path to the [background swd]{.style-data} file.
-3.  The (relative) path to the folder that holds the ascii raster layers of the input environmental variables.
+3.  The (relative) path to the folder that holds the ascii raster layers of the input environmental variables. If you select these, Maxent will first create the model, and than use the ascii layers as input in the model to create a prediction raster layer. See also point 8.
 4.  The (relative) path to the folder that where Maxent should write the results.
 5.  The module will create a point layer with the locations of species occurrences used for the model. The attribute table contains the predicted probability scores. With this parameter, you can specify a custom name for this point layer. If left empty, a default name will be used, based on the species name, with as suffix *samplePredictions*
 6.  The module will create a vector layer with background points used as input for this model. The attribute table contains the predicted probability scores. With this parameter, you can specify a custom name for the layer. If left empty, a default name will be used, based on the species name, with as suffix *backgroundPredictions*.
@@ -159,7 +161,7 @@ Open the [r.maxent.train]{.style-function} dialog and run the module with the fo
 
 [^4_model_training-4]: The (relative) path to the [background swd]{.style-data} file.
 
-[^4_model_training-5]: The (relative) path to the folder that holds the ascii raster layers of the input environmental variables.
+[^4_model_training-5]: The (relative) path to the folder that holds the ascii raster layers of the input environmental variables. If you select these, Maxent will first create the model, and than use the ascii layers as input in the model to create a prediction raster layer. See also point 9.
 
 [^4_model_training-6]: The (relative) path to the folder that where Maxent should write the results.
 
@@ -246,27 +248,27 @@ The Area Under the Receiver Operator Curve (AUC) is a common metric for evaluati
 The [Erebia_alberganus_obs.html]{.style-output} file in the output folder provides more evaluation statistics, including a short explanation of the results. Before reviewing these, let's examine the sample prediction, background prediction, and raster prediction layers. In GRASS, go to the [data]{.style-menu} panel, and double click on each of them to open them in the [Map display]{.style-data} panel.
 
 ::: {.panel-tabset .exercise}
-## E_alberganus_probability
-
-![The raster layer [E_alberganus_probability]{.style-data} with the predicted probability of occurrences of *Erebia_alberganus*, based on model_01.](images/E_alberganus_probability.png){#fig-probdist_model_01}
-
-The map in @fig-probdist_model_01 shows the predicted probability of presence of *Erebia_alberganus* within the bounds of the study area. As expected, probability scores are high in most areas where the species has been observed. However, there are additional areas where predicted probability scores are also high. We will not attempt to explain these differences here, as that analysis is beyond the scope of this tutorial, but it is clear that these results warrant further investigation.
-
 ## E_alberganus_samplepred
 
-![The [E_alberganus_samplepred]{.style-data} vector layer with the GBIF occurrences. The colors in this layer represent the predicted probability that the species occurs at these locations, based on model_01.](images/E_alberganus_samplepred.png){#fig-samlepred_model_01}
+![The [E_alberganus_samplepred]{.style-data} vector layer with the GBIF occurrences. The colors in this layer represent the predicted probability that the species occurs at these locations, based on model_01.](images/E_alberganus_samplepred.png){#fig-samlepred_model_01 group="DMu5ABe7FD"}
 
 The map in @fig-samlepred_model_01 shows the predicted probability that *Erebia alberganus* occurs at each observed location, allowing us to assess where the model accurately predicts suitable conditions and where it incorrectly suggests less or no suitable conditions. Notable examples of the latter include several occurrence points in Bulgaria. A follow up step would be to compare these predictions with maps of relevant environmental data layers or examining the GBIF source data for these observations more closely.
 
 ## E_alberganus_bgrdpred
 
-![The [E_alberganus_bgrdpred]{.style-data} vector layer with the locations of the background points. The colors in this layer represent the predicted probability of the occurrence of the species at these locations, based on model_01.](images/E_alberganus_bgrdpred.png){#fig-bgrpred_model_01}
+![The [E_alberganus_bgrdpred]{.style-data} vector layer with the locations of the background points. The colors in this layer represent the predicted probability of the occurrence of the species at these locations, based on model_01.](images/E_alberganus_bgrdpred.png){#fig-bgrpred_model_01 group="DMu5ABe7FD"}
 
 The map in @fig-bgrpred_model_01 shows the predicted probability of *Erebia alberganus* to occur at individual background point locations, providing similar information to @fig-probdist_model_01, but with a different presentation. Depending on your needs / preferences, you may want to have the module generate one of these maps.
 
+## E_alberganus_probability
+
+![The raster layer [E_alberganus_probability]{.style-data} with the predicted probability of occurrences of *Erebia_alberganus*, based on model_01.](images/E_alberganus_probability.png){#fig-probdist_model_01 group="DMu5ABe7FD"}
+
+The map in @fig-probdist_model_01 shows the predicted probability of presence of *Erebia_alberganus* within the bounds of the study area. As expected, probability scores are high in most areas where the species has been observed. However, there are additional areas where predicted probability scores are also high. We will not attempt to explain these differences here, as that analysis is beyond the scope of this tutorial, but it is clear that these results warrant further investigation.
+
 ## Clamping map
 
-![The values in the E_alberganus_probability_clamping raster layer give the absolute difference in predictions when using clamping vs not using clamping. The map is the second map shown in the Erebia_alberganus_obs.html webpage.](images/E_alberganus_probability_clamping.png){#fig-clamping_model_01}
+![The values in the E_alberganus_probability_clamping raster layer give the absolute difference in predictions when using clamping vs not using clamping. The map is the second map shown in the Erebia_alberganus_obs.html webpage.](images/E_alberganus_probability_clamping.png){#fig-clamping_model_01 group="DMu5ABe7FD"}
 
 Clamping restricts environmental variables and features to the range of values found in the training data. For example, if the input raster layer for [bio_1]{.style-variable} (annual mean temperature) has a value of 35°C, but the highest temperature among the training points is 32°C, all [bio_1]{.style-variable} values above 32°C are clamped to 32°C. This prevents the model from extrapolating beyond the conditions observed during training and ensures that predictions remain within the range of known environmental conditions. Higher values on the map indicate areas where clamping is likely to have a greater effect on predicted fitness.
 
@@ -332,7 +334,7 @@ Or use the [r.mapcalc]{.style-function} module. You can find this in the menu [r
 
 The challenge is to choose the best threshold. The answer is the perhaps unsatisfactory "it depends". Setting a lower threshold will classify more cells as "present", which means the model will correctly identify more actual presence locations (more true positives). However, this also increases the likelihood of predicting the species in areas where it may not actually occur (more false positives). Conversely, a higher threshold will make the model more conservative, classifying fewer cells as "present". This reduces false positives, but also means that many areas where the species actually occurs may be missed (increasing false negatives).
 
-The best threshold depends on your priorities: whether it's more important to maximize sensitivity (identifying all areas where the species might occur) or specificity (ensuring that areas predicted to be suitable are actually suitable). @tbl-tresholdvalues_model01, which comes from the file [Erebia_alberganus_obs.html](share/model_01/Erebia_alberganus_obs.html){target="_blank"} in the output folder, shows some common thresholds and the corresponding omission rates and fraction of the study area that would be classified as suitable based on that threshold. See the Maxent manual and references for an explanation of these thresholds.
+The best threshold depends on your priorities: whether it's more important to maximize sensitivity (identifying all areas where the species might occur) or specificity (ensuring that areas predicted to be suitable are actually suitable). [Table -@tbl-tresholdvalues_model01], which comes from the file [Erebia_alberganus_obs.html](share/model_01/Erebia_alberganus_obs.html){target="_blank"} in the output folder, shows some common thresholds and the corresponding omission rates and fraction of the study area that would be classified as suitable based on that threshold. See the Maxent manual and references for an explanation of these thresholds.
 
 ::: {.panel-tabset .exercise}
 ## Threshold values
@@ -353,15 +355,15 @@ The best threshold depends on your priorities: whether it's more important to ma
 
 ## 0.261
 
-![Binary map based on a Maximum training sensitivity plus specificity threshold. The red oulines show the boundaries of the species rangemap.](images/E_alberganus_bin4.png){#fig-thr2 fig-align="left"}
+![Binary map based on a Maximum training sensitivity plus specificity threshold. The red oulines show the boundaries of the species rangemap.](images/E_alberganus_bin4.png){#fig-thr2 fig-align="left" group="presabs"}
 
 ## 0.412
 
-![Binary map based on a Fixed cumulative value 10 threshold. The red oulines show the boundaries of the species range according to the IUCN Redlist rangemap.](images/E_alberganus_bin2.png){#fig-thr3 fig-align="left"}
+![Binary map based on a Fixed cumulative value 10 threshold. The red oulines show the boundaries of the species range according to the IUCN Redlist rangemap.](images/E_alberganus_bin2.png){#fig-thr3 fig-align="left" group="presabs"}
 
 ## 0.600
 
-![Binary map based on a Equal training sensitivity and specificity threshold. The red oulines show the boundaries of the species range according to the IUCN Redlist rangemap.](images/E_alberganus_bin3.png){#fig-thr4 fig-align="left"}
+![Binary map based on a Equal training sensitivity and specificity threshold. The red oulines show the boundaries of the species range according to the IUCN Redlist rangemap.](images/E_alberganus_bin3.png){#fig-thr4 fig-align="left" group="presabs"}
 :::
 
 Comparing the predicted distribution with the IUCN Red List range map highlights several discrepancies. In some areas, the range map boundaries appear slightly shifted, while in others they seem overly optimistic. The question is whether this is due to unaccounted for variables or indicates a decline of the species' presence in these areas. Notably, there are the extensive areas with similar climate conditions where the species has not been recorded according to GBIF data. This suggests that factors other than those used in the model may play a critical role in determining the distribution of the species.
@@ -373,24 +375,26 @@ To determine how good the model is at predicting the presence of a species, Maxe
 ::: {.panel-tabset .exercise}
 ## AUC-ROC
 
-The ROC plot compares the proportion of correctly classified presence points, known as the sensitivity of the model, with the proportion of background points classified as presence. This comparison is made across a range of presence probability cutoff values between 0 and 1. The closer the ROC curve is to the upper left corner, the larger the area under the curve (AUC), and the better the model performance. In other words, the AUC provides a threshold-independent estimate of the predictive power of the model. As we have seen before, the AUC for our model is 0.866.
+The ROC plot compares the proportion of correctly classified presence points, known as the sensitivity of the model, with the proportion of background points classified as presence. This comparison is made across a range of presence probability cutoff values between 0 and 1. The closer the ROC curve is to the upper left corner, the larger the area under the curve (AUC), and the better the model performance[^4_model_training-19]. In other words, the AUC provides a threshold-independent estimate of the predictive power of the model. As we have seen before, the AUC for our model is 0.866.
+
+![ROC curve and the area under the curve statistics for our model. Because we are dealing with presence-only data, we do not have real absence points. Therefore, on the X-axis, Maxent uses the 1 - fraction of background points predicted to be present instead of the fraction of absence points that are predicted to be present.](images/Erebia_alberganus_obs_roc.png){#fig-roc-auc fig-align="left" group="qmXR1UJHFa"}
 
 A ROC curve below the black line indicates that the model performs worse than a random model would. It is important to reiterate that AUC values tend to be higher for species with narrow ranges, relative to the study area described by the environmental data.
 
-![ROC curve and the area under the curve statistics. Because we are dealing with presence-only data, we do not have real absence points. Therefore, on the X-axis, Maxent uses the 1 - fraction of background points predicted to be present instead of the fraction of absence points that are predicted to be present.](images/Erebia_alberganus_obs_roc.png){#fig-commissiongraph fig-align="left"}
-
 ## Omission graph
 
-The *omission and predicted area* graph (@fig-commissiongraph) illustrates how the proportion of presence points incorrectly classified as absence (omission - blue line) and the fraction of background points predicted as suitable (red line) vary with the choice of cumulative threshold. Note that the x-axis shows the cumulative raw threshold values[^4_model_training-19]. We see that the omission matches the expected omission rate (black line) closely.
+The *omission and predicted area* graph (@fig-commissiongraph) illustrates how the proportion of presence points incorrectly classified as absence (omission - blue line) and the fraction of background points predicted as suitable (red line) vary with the choice of cumulative threshold. Note that the x-axis shows the cumulative raw threshold values[^4_model_training-20]. We see that the omission matches the expected omission rate (black line) closely.
 
-![The omission/commission graph shows how omission rate and predicted area vary with the choice of cumulative threshold. The pink arrows show two of the threshold values and corresponding omission rate in @tbl-tresholdvalues_model01.](images/omission_predicted_area.png){#fig-commissiongraph fig-align="left"}
+![The omission/commission graph shows how omission rate and predicted area vary with the choice of cumulative threshold. The pink arrows show two of the threshold values and corresponding omission rate in @tbl-tresholdvalues_model01.](images/omission_predicted_area.png){#fig-commissiongraph fig-align="left" group="qmXR1UJHFa"}
 
 ## {{< iconify ic outline-tips-and-updates size=lg >}}
 
 Note that Maxent uses random background points rather than true absence points. Since the background points don't exclusively represent areas where the species is absent but rather a sample of the entire study area, there's a degree of overlap between conditions at presence and background points. This overlap limits the model's ability to perfectly separate the two classes, meaning that the AUC will typically be less than 1. In contrast, if true absences were available and clearly distinct from presences, a higher maximum AUC could theoretically be achieved.
 :::
 
-[^4_model_training-19]: So to be clear, it does not use the cloglog values. In the file that ends with [\_omission.csv]{.style-data} (in our case, this is the file [Erebia_alberganus_obs_omission.csv]{.style-data}), you can find for each raw value the corresponding cloglog value. In @tbl-relativeimportance some key treshold values are provided (both the raw and cloglog variants) with the corresponding omission values.
+[^4_model_training-19]: ![The ROC plot used to evaluate the model performance. Source: Wikipedia.](images/Roc_curve.svg)
+
+[^4_model_training-20]: So to be clear, it does not use the cloglog values. In the file that ends with [\_omission.csv]{.style-data} (in our case, this is the file [Erebia_alberganus_obs_omission.csv]{.style-data}), you can find for each raw value the corresponding cloglog value. In @tbl-relativeimportance some key treshold values are provided (both the raw and cloglog variants) with the corresponding omission values.
 
 ### Variable importance {#sec-4variableimportance}
 
@@ -416,9 +420,9 @@ The other metric is the *Permutation importance*. The contribution for each vari
 
 ### Response curves {#sec-4responsecurves}
 
-The HTML file [Erebia_alberganus_obs.html](share/model_01/Erebia_alberganus_obs.html){target="_blank"} also includes a section with two types of response curves. Both show how each environmental variable affects the prediction of the species probability distribution. Note that you can click on a plot for a larger and more detailed image[^4_model_training-20].
+The HTML file [Erebia_alberganus_obs.html](share/model_01/Erebia_alberganus_obs.html){target="_blank"} also includes a section with two types of response curves. Both show how each environmental variable affects the prediction of the species probability distribution. Note that you can click on a plot for a larger and more detailed image[^4_model_training-21].
 
-[^4_model_training-20]: We have attempted to reduce the issue of multi-collinearity using the stepwise VIF procedure (@sec-multicollinearity). But the results suggest that this did not solve all problems.
+[^4_model_training-21]: We have attempted to reduce the issue of multi-collinearity using the stepwise VIF procedure (@sec-multicollinearity). But the results suggest that this did not solve all problems.
 
 The first set of curves (@fig-responsecurves1) illustrates how the predicted probability of presence changes when each environmental variable is varied individually, while keeping all other variables fixed at their average sample value. These are known as *marginal response curves*. They indicate, for example, that the species prefers cooler areas, with a mean annual temperature ([bio_1]{.style-variable}) below 5°C, or a temperature seasonality around 600, corresponding to a standard deviation of monthly temperatures close to 6°C.
 
@@ -428,21 +432,21 @@ The curves in @fig-responsecurves2 represent different models, where each model 
 ## Marginal response curves
 
 ::: {#fig-responsecurves1 layout-ncol="4"}
-![](share/model_01/plots/Erebia_alberganus_obs_bio_1.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_1.png){group="hbhHpuMH7S"}
 
-![](share/model_01/plots/Erebia_alberganus_obs_bio_2.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_2.png){group="hbhHpuMH7S"}
 
-![](share/model_01/plots/Erebia_alberganus_obs_bio_4.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_4.png){group="hbhHpuMH7S"}
 
-![](share/model_01/plots/Erebia_alberganus_obs_bio_8.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_8.png){group="hbhHpuMH7S"}
 
-![](share/model_01/plots/Erebia_alberganus_obs_bio_9.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_9.png){group="hbhHpuMH7S"}
 
-![](share/model_01/plots/Erebia_alberganus_obs_bio_13.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_13.png){group="hbhHpuMH7S"}
 
-![](share/model_01/plots/Erebia_alberganus_obs_bio_14.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_14.png){group="hbhHpuMH7S"}
 
-![](share/model_01/plots/Erebia_alberganus_obs_bio_15.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_15.png){group="hbhHpuMH7S"}
 
 Response curves created by varying the specific variable, while keeping all other variables fixed at their average sample value
 :::
@@ -450,21 +454,21 @@ Response curves created by varying the specific variable, while keeping all othe
 ## single-variable response curves
 
 ::: {#fig-responsecurves2 layout-ncol="4"}
-![](share/model_01/plots/Erebia_alberganus_obs_bio_1_only.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_1_only.png){group="d5aRYc7tfLd"}
 
-![](share/model_01/plots/Erebia_alberganus_obs_bio_2_only.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_2_only.png){group="d5aRYc7tfLd"}
 
-![](share/model_01/plots/Erebia_alberganus_obs_bio_4_only.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_4_only.png){group="d5aRYc7tfLd"}
 
-![](share/model_01/plots/Erebia_alberganus_obs_bio_8_only.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_8_only.png){group="d5aRYc7tfLd"}
 
-![](share/model_01/plots/Erebia_alberganus_obs_bio_9_only.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_9_only.png){group="d5aRYc7tfLd"}
 
-![](share/model_01/plots/Erebia_alberganus_obs_bio_13_only.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_13_only.png){group="d5aRYc7tfLd"}
 
-![](share/model_01/plots/Erebia_alberganus_obs_bio_14_only.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_14_only.png){group="d5aRYc7tfLd"}
 
-![](share/model_01/plots/Erebia_alberganus_obs_bio_15_only.png)
+![](share/model_01/plots/Erebia_alberganus_obs_bio_15_only.png){group="d5aRYc7tfLd"}
 
 Response curves created by running a model based on only the specific variable as explanatory variable.
 :::
@@ -472,9 +476,9 @@ Response curves created by running a model based on only the specific variable a
 
 These two types of curves can sometimes yield conflicting insights. Click between the tabs to compare them. For instance, the marginal response curve for precipitation of the driest month ([bio_14]{.style-variable}) suggests a negative relationship between this variable and the predicted probability of presence. In other words, when all other variables are held constant, an increase in precipitation during the driest month reduces the predicted probability of presence.
 
-In contrast, the single-variable response curve for [bio_14]{.style-variable} shows the opposite trend: as precipitation increases, the predicted probability of presence also rises. This discrepancy likely arises because [bio_14]{.style-variable} is correlated with other precipitation-based variables[^4_model_training-21]. Consequently, when environmental variables are correlated, marginal response curves can sometimes be misleading. Another example of this occurs when two closely correlated variables have nearly opposite response curves, producing a combined effect that remains minimal across most areas.
+In contrast, the single-variable response curve for [bio_14]{.style-variable} shows the opposite trend: as precipitation increases, the predicted probability of presence also rises. This discrepancy likely arises because [bio_14]{.style-variable} is correlated with other precipitation-based variables[^4_model_training-22]. Consequently, when environmental variables are correlated, marginal response curves can sometimes be misleading. Another example of this occurs when two closely correlated variables have nearly opposite response curves, producing a combined effect that remains minimal across most areas.
 
-[^4_model_training-21]: We have attempted to reduce the issue of multi-collinearity using the stepwise VIF procedure (@sec-multicollinearity). But the results suggest that this did not solve all problems.
+[^4_model_training-22]: We have attempted to reduce the issue of multi-collinearity using the stepwise VIF procedure (@sec-multicollinearity). But the results suggest that this did not solve all problems.
 
 Therefore, it’s advisable to examine and compare both sets of curves for a clearer understanding. For further details and examples, see the [Maxent tutorial](https://biodiversityinformatics.amnh.org/open_source/maxent/).
 

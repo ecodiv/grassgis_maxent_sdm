@@ -203,6 +203,10 @@ h2 {
   margin-top: 1.5rem !important;
 }
 
+h3 {
+  color: #6c6c6c;
+}
+
 #title-block-header.quarto-title-block.default .quarto-title h1.title {
   margin-bottom: 0.5rem;
 }
@@ -262,6 +266,7 @@ section#footnotes > hr {
 .footnotes .style-parameter,
 .footnotes .style-apps,
 .footnotes .style-file,
+.footnotes .style-folder,
 .footnotes code
 {
   color: $gray-500 !important;
@@ -323,6 +328,10 @@ section#footnotes {
   font-size: 0.9rem;
 }
 .style-file {
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+.style-folder {
   font-family: monospace;
   font-size: 0.9rem;
 }

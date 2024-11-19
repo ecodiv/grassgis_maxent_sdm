@@ -1,3 +1,0 @@
-# Fine-tuning and validation {#sec-advancedsteps}
-
-In the previous sections, we covered the basic steps for building a species distribution model using Maxent. Now, we'll dive deeper with examples that demonstrate how to fine-tune model options and explore various approaches to validating the results. The first of these sections will be available in the coming weeks, with additional updates to follow, expanding your modeling toolkit even further. Stay tuned!
