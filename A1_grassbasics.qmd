@@ -10,7 +10,7 @@ To run GRASS, click on the GRASS link on the desktop or from the system menu. Al
 
 ![Start-up screen for first time users](images/startup_firsttime_users.png){#fig-startup_firsttime_users}
 
-You can also download other sample datasets. For example, the [North Carolina]{.style-db} dataset is often used in tutorials. You can simply reach them through [Download sample project to current database]{.style-menu} management icon ![](images/location-download.png) in the [Data]{.style-menu} panel. The sample data will be downloaded as a new project. in the current GRASS database.
+You can also download other sample datasets. For example, the [North Carolina]{.style-db} dataset is often used in tutorials. You can simply reach them through [Download sample project to current database]{.style-menu} icon ![](images/location-download.png) in the [Data]{.style-menu} panel. The sample data will be downloaded and imported as a new project in the current GRASS database.
 
 The start up message offers you the option to create a new [project]{.style-db} (it still uses the older term Location for [project]{.style-db} here). Selecting this will start a [project wizard]{.style-menu} which will guide you through a series of steps to browse and select the [coordinate reference system (CRS)](https://en.wikipedia.org/wiki/Spatial_reference_system) suitable for your study area or one that matches your data's CRS. By default, it will do this in the current GRASS database, but you have the option to create a new one in the process. But before you start creating your own database, let's see how GRASS handles and stores data.
 
