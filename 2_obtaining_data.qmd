@@ -197,7 +197,7 @@ Open the [v.clip]{.style-function} dialog, and fill in:
 
 | Parameter | Value     |
 |-----------|-----------|
-| Input     | tmp       |
+| Input     | admin0    |
 | Clip      | aoi       |
 | Output    | countries |
 
