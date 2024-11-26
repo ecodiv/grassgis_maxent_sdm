@@ -6,9 +6,32 @@ In this chapter, we’ll go through the basic steps for creating a species distr
 
 ## Organize outputs {#sec-4organizeoutputs}
 
-In this chapter, we'll use the [r.maxent.train](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.train.html) module to create several species distribution models based on different input data and parameter settings[^4_model_training-1]. Each time we train a model, the module creates a number of output files and GRASS output layers. To keep things organized, we'll create a separate sub-folder in our working directory for each model we create. Similarly, we will create a new mapset in our GRASS database for each new model. You may have your own way of organizing your data. That is fine, of course, but organize your data.
+In this chapter, we'll use the [r.maxent.train](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.train.html) module to create several species distribution models based on different input data and parameter settings[^4_model_training-1]. It is an addon, so we first need to install it.
 
 [^4_model_training-1]: It is good to reiterate that [r.maxent.train]{.style-function} runs the [Maxent]{.style-apps} application in the background. In this tutorial, we cover some of the results, but for a deeper understanding, refer to the tutorial and other essential resources available on the [Maxent website](https://biodiversityinformatics.amnh.org/open_source/maxent/).
+
+::: {#exm-q5111a .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+g.extension extension=r.maxent.train
+```
+
+## {{< fa brands python >}}
+
+``` python
+gs.run_command("g.extension", extension="r.maxent.train")
+```
+
+## {{< fa regular window-restore >}}
+
+{{< video "https://ecodiv.earth/share/sdm_in_grassgis/install_addons.mp4" >}}
+:::
+
+Each time we train a model, the module creates a number of output files and GRASS output layers. To keep things organized, we'll create a separate sub-folder in our working directory for each model we create. Similarly, we will create a new mapset in our GRASS database for each new model. You may have your own way of organizing your data. That is fine, of course, but organize your data.
 
 ::: {#exm-qvd5XNQcBw .hiddendiv}
 :::
@@ -84,9 +107,8 @@ r.maxent.train \
   samplepredictions=E_alberganus_samplepred \                  # <5>
   backgroundpredictions=E_alberganus_bgrdpred \                # <6>
   predictionlayer=E_alberganus_probability \                   # <7>
-  maxent=maxent.jar \                                         # <8> 
-  threads=4 memory=1000 \                                     # <9> 
-  -ybgi                                                       # <10>
+  threads=4 memory=1000 \                                     # <8> 
+  -ybgi                                                       # <9>
 ```
 
 1.  The (relative) path to the [species swd]{.style-data} file.
@@ -96,9 +118,8 @@ r.maxent.train \
 5.  The module will create a point layer with the locations of species occurrences used for the model. The attribute table contains the predicted probability scores. With this parameter, you can specify a custom name for this point layer. If left empty, a default name will be used, based on the species name, with as suffix *samplePredictions*
 6.  The module will create a vector layer with background points used as input for this model. The attribute table contains the predicted probability scores. With this parameter, you can specify a custom name for the layer. If left empty, a default name will be used, based on the species name, with as suffix *backgroundPredictions*.
 7.  If the [projectionlayers]{.style-parameter} is set, a raster prediction layer will be created that reflects the potential distribution based on the projection layers. With the parameter [predictionlayer]{.style-parameter}, you can set the name of this output layers. If left empty, a default name will be used, based on the species name, with as suffix the name of the folder with the environmental raster layers. In this case, that would have been *Erebia_alberganus_obs_envdat*.
-8.  Since this is the first time we are running this module, we use the [maxent]{.style-parameter} parameter to set the path to the [Maxent.jar]{.style-app} file, and the [-i]{.style-parameter} flag to copy the jar file to the add-on directory where GRASS will automatically find it on subsequent runs. If you don't know where to find this file, go back to @sec-maxentsoftware. Note, here, the maxent.jar file is assumed to be in the working directory. If not, provide the full path to the file.
-9.  To improve the performance, you can increase the number of [threads]{.style-parameter} and allocate more [memory]{.style-parameter}. However, before making adjustments, check your system specifications and adjust the settings based on your system’s capabilities.
-10. The first three flags will create extra output that helps you to evaluate the model: **y**: Create a point feature layer with for each occurrence point the predicted probability score. This can be useful to identify discrepancies between the observed and predicted distribution. **b**: Create a vector point layer with predicted probability scores at the background point locations. This is useful to identify discrepancies between the observed and predicted distribution. **g**: Create response curves, which visualize the (marginal) effect of each explanatory variable on the predicted probability. With the **i** flag, you copy the maxent.jar file to the addon directory, so GRASS can find it next times without you having to provide the path. I.e., you only need to set this flag the first time you use this module.
+8.  To improve the performance, you can increase the number of [threads]{.style-parameter} and allocate more [memory]{.style-parameter}. However, before making adjustments, check your system specifications and adjust the settings based on your system’s capabilities.
+9.  The first three flags will create extra output that helps you to evaluate the model: **y**: Create a point feature layer with for each occurrence point the predicted probability score. This can be useful to identify discrepancies between the observed and predicted distribution. **b**: Create a vector point layer with predicted probability scores at the background point locations. This is useful to identify discrepancies between the observed and predicted distribution. **g**: Create response curves, which visualize the (marginal) effect of each explanatory variable on the predicted probability. With the **i** flag, you copy the maxent.jar file to the addon directory, so GRASS can find it next times without you having to provide the path. I.e., you only need to set this flag the first time you use this module.
 
 ## {{< fa brands python >}}
 
@@ -112,10 +133,9 @@ gs.run_command(
     samplepredictions="E_alberganus_samplepred",                 # <5>
     backgroundpredictions="E_alberganus_bgrdpred",               # <6>
     predictionlayer="E_alberganus_probability",                  # <7>
-    maxent="maxent.jar",                                        # <8>
-    threads=4,                                                  # <9>
-    memory=1000,                                                # <10>
-    flags="ybgi",                                               # <11>
+    threads=4,                                                  # <8>
+    memory=1000,                                                # <9>
+    flags="ybgi",                                               # <10>
 )  
 ```
 
@@ -126,10 +146,9 @@ gs.run_command(
 5.  The module will create a point layer with the locations of species occurrences used for the model. The attribute table contains the predicted probability scores. With this parameter, you can specify a custom name for this point layer. If left empty, a default name will be used, based on the species name, with as suffix *samplePredictions*
 6.  The module will create a vector layer with background points used as input for this model. The attribute table contains the predicted probability scores. With this parameter, you can specify a custom name for the layer. If left empty, a default name will be used, based on the species name, with as suffix *backgroundPredictions*.
 7.  If the [projectionlayers]{.style-parameter} is set, a raster prediction layer will be created that reflects the potential distribution based on the projection layers. With the parameter [predictionlayer]{.style-parameter}, you can set the name of this output layers. If left empty, a default name will be used, based on the species name, with as suffix the name of the folder with the environmental raster layers. In this case, that would have been *Erebia_alberganus_obs_envdat*.
-8.  Since this is the first time we are running this module, we use the [maxent]{.style-parameter} parameter to set the path to the [Maxent.jar]{.style-app} file, and the [-i]{.style-parameter} flag to copy the jar file to the add-on directory where GRASS will automatically find it on subsequent runs. If you don't know where to find this file, go back to @sec-maxentsoftware. Note, here, the maxent.jar file is assumed to be in the working directory. If not, provide the full path to the file.
-9.  To improve the performance, you can increase the number of [threads]{.style-parameter}. However, before making adjustments, check your system specifications and adjust the settings based on your system’s capabilities.
-10. To improve the performance, you can allocate more [memory]{.style-parameter}. However, before making adjustments, check your system specifications and adjust the settings based on your system’s capabilities.
-11. The first three flags will create extra output that helps you to evaluate the model: **y**: Create a point feature layer with for each occurrence point the predicted probability score. This can be useful to identify discrepancies between the observed and predicted distribution. **b**: Create a vector point layer with predicted probability scores at the background point locations. This is useful to identify discrepancies between the observed and predicted distribution. **g**: Create response curves, which visualize the (marginal) effect of each explanatory variable on the predicted probability. With the **i** flag, you copy the maxent.jar file to the addon directory, so GRASS can find it next times without you having to provide the path. I.e., you only need to set this flag the first time you use this module.
+8.  To improve the performance, you can increase the number of [threads]{.style-parameter}. However, before making adjustments, check your system specifications and adjust the settings based on your system’s capabilities.
+9.  To improve the performance, you can allocate more [memory]{.style-parameter}. However, before making adjustments, check your system specifications and adjust the settings based on your system’s capabilities.
+10. The first three flags will create extra output that helps you to evaluate the model: **y**: Create a point feature layer with for each occurrence point the predicted probability score. This can be useful to identify discrepancies between the observed and predicted distribution. **b**: Create a vector point layer with predicted probability scores at the background point locations. This is useful to identify discrepancies between the observed and predicted distribution. **g**: Create response curves, which visualize the (marginal) effect of each explanatory variable on the predicted probability. With the **i** flag, you copy the maxent.jar file to the addon directory, so GRASS can find it next times without you having to provide the path. I.e., you only need to set this flag the first time you use this module.
 
 ## {{< fa regular window-restore >}}
 
@@ -144,13 +163,12 @@ Open the [r.maxent.train]{.style-function} dialog and run the module with the fo
 | samplepredictions[^4_model_training-7] | E_alberganus_samplepred |
 | backgroundpredictions[^4_model_training-8] | E_alberganus_bgrdpred |
 | predictionlayer[^4_model_training-9] | E_alberganus_probability |
-| maxent [^4_model_training-10] | maxent.jar |
-| Copy maxent.jar to addon directory (i) [^4_model_training-11] | ✅ |
-| threads [^4_model_training-12] | 4 |
-| memory [^4_model_training-13] | 1000 |
-| Create a vector point layer from the sample predictions (y) [^4_model_training-14] | ✅ |
-| Create a vector point layer with predictions at backgr. points (b) [^4_model_training-15] | ✅ |
-| Create response curves (g) [^4_model_training-16] | ✅ |
+| Copy maxent.jar to addon directory (i) [^4_model_training-10] | ✅ |
+| threads [^4_model_training-11] | 4 |
+| memory [^4_model_training-12] | 1000 |
+| Create a vector point layer from the sample predictions (y) [^4_model_training-13] | ✅ |
+| Create a vector point layer with predictions at backgr. points (b) [^4_model_training-14] | ✅ |
+| Create response curves (g) [^4_model_training-15] | ✅ |
 
 : {tbl-colwidths="\[63,37\]"}
 
@@ -171,19 +189,17 @@ Open the [r.maxent.train]{.style-function} dialog and run the module with the fo
 
 [^4_model_training-9]: If the [projectionlayers]{.style-parameter} is set, a raster prediction layer will be created that reflects the potential distribution based on the projection layers. With the parameter [predictionlayer]{.style-parameter}, you can set the name of this output layers. If left empty, a default name will be used, based on the species name, with as suffix the name of the folder with the environmental raster layers. In this case, that would have been *Erebia_alberganus_obs_envdat*.
 
-[^4_model_training-10]: Since this is the first time we are running this module, we use the [maxent]{.style-parameter} parameter to set the path to the [Maxent.jar]{.style-app} file, and the [-i]{.style-parameter} flag to copy the jar file to the add-on directory where GRASS will automatically find it on subsequent runs. If you don't know where to find this file, go back to @sec-maxentsoftware. Note, here, the maxent.jar file is assumed to be in the working directory. If not, provide the full path to the file.
+[^4_model_training-10]: With the [-i]{.style-parameter} flag, you copy the maxent.jar file to the addon directory, so GRASS can find it next times without you having to provide the path. I.e., you only need to set this flag the first time you use this module.
 
-[^4_model_training-11]: With the [-i]{.style-parameter} flag, you copy the maxent.jar file to the addon directory, so GRASS can find it next times without you having to provide the path. I.e., you only need to set this flag the first time you use this module.
+[^4_model_training-11]: To improve the performance, you can increase the number of [threads]{.style-parameter}. However, before making adjustments, check your system specifications and adjust the settings based on your system’s capabilities.
 
-[^4_model_training-12]: To improve the performance, you can increase the number of [threads]{.style-parameter}. However, before making adjustments, check your system specifications and adjust the settings based on your system’s capabilities.
+[^4_model_training-12]: To improve the performance, you can allocate more [memory]{.style-parameter}. However, before making adjustments, check your system specifications and adjust the settings based on your system’s capabilities.
 
-[^4_model_training-13]: To improve the performance, you can allocate more [memory]{.style-parameter}. However, before making adjustments, check your system specifications and adjust the settings based on your system’s capabilities.
+[^4_model_training-13]: Create a point feature layer with for each occurrence point the predicted probability score. This can be useful to identify discrepancies between the observed and predicted distribution.
 
-[^4_model_training-14]: Create a point feature layer with for each occurrence point the predicted probability score. This can be useful to identify discrepancies between the observed and predicted distribution.
+[^4_model_training-14]: Create a vector point layer with predicted probability scores at the background point locations. This is useful to identify discrepancies between the observed and predicted distribution.
 
-[^4_model_training-15]: Create a vector point layer with predicted probability scores at the background point locations. This is useful to identify discrepancies between the observed and predicted distribution.
-
-[^4_model_training-16]: Create response curves, which visualize the (marginal) effect of each explanatory variable on the predicted probability.
+[^4_model_training-15]: Create response curves, which visualize the (marginal) effect of each explanatory variable on the predicted probability.
 
 Depending on how you run the module, it will generate some information in the terminal, console, Python console, or the function's command output window (we will refer to any of these as the *console*). It also creates a number of files in the output directory you specify, and layers in the current mapset. We will look at these results in the next section.
 
@@ -231,11 +247,11 @@ By default, Maxent adds the presence points to the background points. You can di
 Still, the presence + original background points do not add up to the number reported here. This is because Maxent ignores presence points if there is already a background point at that location.
 ::::
 
-The Area Under the Receiver Operator Curve (AUC) is a common metric for evaluating species distribution model (SDM) performance. Here, we are provided with the training AUC, calculated using the same presence and absence points that were used to train the model. The AUC represents the probability that a randomly selected presence location ranks higher than a randomly selected background point[^4_model_training-17]. An AUC of 0.866 suggests that the model has reasonably good predictive ability for species distribution[^4_model_training-18]. We'll revisit this statistic in more detail below.
+The Area Under the Receiver Operator Curve (AUC) is a common metric for evaluating species distribution model (SDM) performance. Here, we are provided with the training AUC, calculated using the same presence and absence points that were used to train the model. The AUC represents the probability that a randomly selected presence location ranks higher than a randomly selected background point[^4_model_training-16]. An AUC of 0.866 suggests that the model has reasonably good predictive ability for species distribution[^4_model_training-17]. We'll revisit this statistic in more detail below.
 
-[^4_model_training-17]: The AUC is normally used to determine how the model distinguishes between presences and absences. That is, it compares the portion of correctly classified known presence points, known as the sensitivity of the model, and the portion of absence points that were classified as presence. In presence-only models like Maxent, there are no absence points. So the ROC compares the portion of correctly classified presence points with the fraction of background points that is predicted to be present (1- specificity, or fractional predicted area).
+[^4_model_training-16]: The AUC is normally used to determine how the model distinguishes between presences and absences. That is, it compares the portion of correctly classified known presence points, known as the sensitivity of the model, and the portion of absence points that were classified as presence. In presence-only models like Maxent, there are no absence points. So the ROC compares the portion of correctly classified presence points with the fraction of background points that is predicted to be present (1- specificity, or fractional predicted area).
 
-[^4_model_training-18]: AUC values range from 0 to 1, with certain threshold interpretations commonly applied: values below 0.5 indicate the model is performing worse than random chance. Values between 0.5 and 0.7 typically suggest poor model performance, values from 0.7 to 0.9 suggest reasonable performance, and values above 0.9 are generally considered good. However, these thresholds should be interpreted cautiously and not used at face value.
+[^4_model_training-17]: AUC values range from 0 to 1, with certain threshold interpretations commonly applied: values below 0.5 indicate the model is performing worse than random chance. Values between 0.5 and 0.7 typically suggest poor model performance, values from 0.7 to 0.9 suggest reasonable performance, and values above 0.9 are generally considered good. However, these thresholds should be interpreted cautiously and not used at face value.
 
     <p>
 
@@ -375,7 +391,7 @@ To determine how good the model is at predicting the presence of a species, Maxe
 ::: {.panel-tabset .exercise}
 ## AUC-ROC
 
-The ROC plot compares the proportion of correctly classified presence points, known as the sensitivity of the model, with the proportion of background points classified as presence. This comparison is made across a range of presence probability cutoff values between 0 and 1. The closer the ROC curve is to the upper left corner, the larger the area under the curve (AUC), and the better the model performance[^4_model_training-19]. In other words, the AUC provides a threshold-independent estimate of the predictive power of the model. As we have seen before, the AUC for our model is 0.866.
+The ROC plot compares the proportion of correctly classified presence points, known as the sensitivity of the model, with the proportion of background points classified as presence. This comparison is made across a range of presence probability cutoff values between 0 and 1. The closer the ROC curve is to the upper left corner, the larger the area under the curve (AUC), and the better the model performance[^4_model_training-18]. In other words, the AUC provides a threshold-independent estimate of the predictive power of the model. As we have seen before, the AUC for our model is 0.866.
 
 ![ROC curve and the area under the curve statistics for our model. Because we are dealing with presence-only data, we do not have real absence points. Therefore, on the X-axis, Maxent uses the 1 - fraction of background points predicted to be present instead of the fraction of absence points that are predicted to be present.](images/Erebia_alberganus_obs_roc.png){#fig-roc-auc fig-align="left" group="qmXR1UJHFa"}
 
@@ -383,7 +399,7 @@ A ROC curve below the black line indicates that the model performs worse than a 
 
 ## Omission graph
 
-The *omission and predicted area* graph (@fig-commissiongraph) illustrates how the proportion of presence points incorrectly classified as absence (omission - blue line) and the fraction of background points predicted as suitable (red line) vary with the choice of cumulative threshold. Note that the x-axis shows the cumulative raw threshold values[^4_model_training-20]. We see that the omission matches the expected omission rate (black line) closely.
+The *omission and predicted area* graph (@fig-commissiongraph) illustrates how the proportion of presence points incorrectly classified as absence (omission - blue line) and the fraction of background points predicted as suitable (red line) vary with the choice of cumulative threshold. Note that the x-axis shows the cumulative raw threshold values[^4_model_training-19]. We see that the omission matches the expected omission rate (black line) closely.
 
 ![The omission/commission graph shows how omission rate and predicted area vary with the choice of cumulative threshold. The pink arrows show two of the threshold values and corresponding omission rate in @tbl-tresholdvalues_model01.](images/omission_predicted_area.png){#fig-commissiongraph fig-align="left" group="qmXR1UJHFa"}
 
@@ -392,9 +408,9 @@ The *omission and predicted area* graph (@fig-commissiongraph) illustrates how t
 Note that Maxent uses random background points rather than true absence points. Since the background points don't exclusively represent areas where the species is absent but rather a sample of the entire study area, there's a degree of overlap between conditions at presence and background points. This overlap limits the model's ability to perfectly separate the two classes, meaning that the AUC will typically be less than 1. In contrast, if true absences were available and clearly distinct from presences, a higher maximum AUC could theoretically be achieved.
 :::
 
-[^4_model_training-19]: ![The ROC plot used to evaluate the model performance. Source: Wikipedia.](images/Roc_curve.svg)
+[^4_model_training-18]: ![The ROC plot used to evaluate the model performance. Source: Wikipedia.](images/Roc_curve.svg)
 
-[^4_model_training-20]: So to be clear, it does not use the cloglog values. In the file that ends with [\_omission.csv]{.style-data} (in our case, this is the file [Erebia_alberganus_obs_omission.csv]{.style-data}), you can find for each raw value the corresponding cloglog value. In @tbl-relativeimportance some key treshold values are provided (both the raw and cloglog variants) with the corresponding omission values.
+[^4_model_training-19]: So to be clear, it does not use the cloglog values. In the file that ends with [\_omission.csv]{.style-data} (in our case, this is the file [Erebia_alberganus_obs_omission.csv]{.style-data}), you can find for each raw value the corresponding cloglog value. In @tbl-relativeimportance some key treshold values are provided (both the raw and cloglog variants) with the corresponding omission values.
 
 ### Variable importance {#sec-4variableimportance}
 
@@ -420,9 +436,9 @@ The other metric is the *Permutation importance*. The contribution for each vari
 
 ### Response curves {#sec-4responsecurves}
 
-The HTML file [Erebia_alberganus_obs.html](share/model_01/Erebia_alberganus_obs.html){target="_blank"} also includes a section with two types of response curves. Both show how each environmental variable affects the prediction of the species probability distribution. Note that you can click on a plot for a larger and more detailed image[^4_model_training-21].
+The HTML file [Erebia_alberganus_obs.html](share/model_01/Erebia_alberganus_obs.html){target="_blank"} also includes a section with two types of response curves. Both show how each environmental variable affects the prediction of the species probability distribution. Note that you can click on a plot for a larger and more detailed image[^4_model_training-20].
 
-[^4_model_training-21]: We have attempted to reduce the issue of multi-collinearity using the stepwise VIF procedure (@sec-multicollinearity). But the results suggest that this did not solve all problems.
+[^4_model_training-20]: We have attempted to reduce the issue of multi-collinearity using the stepwise VIF procedure (@sec-multicollinearity). But the results suggest that this did not solve all problems.
 
 The first set of curves (@fig-responsecurves1) illustrates how the predicted probability of presence changes when each environmental variable is varied individually, while keeping all other variables fixed at their average sample value. These are known as *marginal response curves*. They indicate, for example, that the species prefers cooler areas, with a mean annual temperature ([bio_1]{.style-variable}) below 5°C, or a temperature seasonality around 600, corresponding to a standard deviation of monthly temperatures close to 6°C.
 
@@ -476,9 +492,9 @@ Response curves created by running a model based on only the specific variable a
 
 These two types of curves can sometimes yield conflicting insights. Click between the tabs to compare them. For instance, the marginal response curve for precipitation of the driest month ([bio_14]{.style-variable}) suggests a negative relationship between this variable and the predicted probability of presence. In other words, when all other variables are held constant, an increase in precipitation during the driest month reduces the predicted probability of presence.
 
-In contrast, the single-variable response curve for [bio_14]{.style-variable} shows the opposite trend: as precipitation increases, the predicted probability of presence also rises. This discrepancy likely arises because [bio_14]{.style-variable} is correlated with other precipitation-based variables[^4_model_training-22]. Consequently, when environmental variables are correlated, marginal response curves can sometimes be misleading. Another example of this occurs when two closely correlated variables have nearly opposite response curves, producing a combined effect that remains minimal across most areas.
+In contrast, the single-variable response curve for [bio_14]{.style-variable} shows the opposite trend: as precipitation increases, the predicted probability of presence also rises. This discrepancy likely arises because [bio_14]{.style-variable} is correlated with other precipitation-based variables[^4_model_training-21]. Consequently, when environmental variables are correlated, marginal response curves can sometimes be misleading. Another example of this occurs when two closely correlated variables have nearly opposite response curves, producing a combined effect that remains minimal across most areas.
 
-[^4_model_training-22]: We have attempted to reduce the issue of multi-collinearity using the stepwise VIF procedure (@sec-multicollinearity). But the results suggest that this did not solve all problems.
+[^4_model_training-21]: We have attempted to reduce the issue of multi-collinearity using the stepwise VIF procedure (@sec-multicollinearity). But the results suggest that this did not solve all problems.
 
 Therefore, it’s advisable to examine and compare both sets of curves for a clearer understanding. For further details and examples, see the [Maxent tutorial](https://biodiversityinformatics.amnh.org/open_source/maxent/).
 

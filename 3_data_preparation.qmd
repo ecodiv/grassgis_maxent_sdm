@@ -496,9 +496,32 @@ The VIF algorithm offers a data-driven method for selecting variables. However, 
 
 ## Export data {#sec-maxentswd}
 
-The last step before we, finally, can start with the actual modeling, is to prepare and export the input dataset for the Maxent model. We'll use the module [v.maxent.swd](https://grass.osgeo.org/grass-stable/manuals/addons/v.maxent.swd.html) for this. The module exports the different layers in the right format for Maxent. The presence and background point layers are exported as so-called [swd]{.style-data} files. Raster layers are exported as [ascii]{.style-data} files.
+The last step before we, finally, can start with the actual modeling, is to prepare and export the input dataset for the Maxent model. We'll use the module [v.maxent.swd](https://grass.osgeo.org/grass-stable/manuals/addons/v.maxent.swd.html) for this. The module exports the different layers in the right format for Maxent. The presence and background point layers are exported as so-called [swd]{.style-data} files. Raster layers are exported as [ascii]{.style-data} files. Let's first install the addon.
 
-First step is to create a new folder in your working directory. Let's call it [dataset01]{.style-db}. And in that folder, we create a sub-folder called [envdat]{.style-db}. We'll export the [swd]{.style-data} files to the first folder, and the [ascii]{.style-data} raster files to the second folder using [v.maxent.swd]{.style-function}. Note, this make take some time, so be patient.
+::: {#exm-Cb1zDqdZuC .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+g.extension extension=v.maxent.swd
+```
+
+## {{< fa brands python >}}
+
+``` python
+gs.run_command("g.extension", extension="v.maxent.swd")
+```
+
+## {{< fa regular window-restore >}}
+
+Follow the steps in the video below, but instead of [r.maxent.train]{.style-function}, install [v.maxent.swd]{.style-function}.
+
+{{< video "https://ecodiv.earth/share/sdm_in_grassgis/install_addons.mp4" >}}
+:::
+
+Now, we create a new folder in the working directory. Let's call it [dataset01]{.style-db}. And in that folder, we create a sub-folder called [envdat]{.style-db}. We'll export the [swd]{.style-data} files to the first folder, and the [ascii]{.style-data} raster files to the second folder using [v.maxent.swd]{.style-function}. Note, this make take some time, so be patient.
 
 ::: {#exm-ddddddwdr .hiddendiv}
 :::
@@ -613,7 +636,7 @@ os.chdir(working_directory)
 # Switch to the mapset containing species data
 gs.run_command("g.mapset", mapset=species_mapset)
 
-# Set the region to match the extent and resolution of the species observations
+# Set the region to match the extent and resolution of the data
 gs.run_command(
     "g.region",
     flags="a",
@@ -670,13 +693,14 @@ os.makedirs(swd_export_rasters_dir, exist_ok=True)
 # Create a new mapset for further analysis
 # and add access to necessary mapsets
 gs.run_command("g.mapset", flags="c", mapset=aoi_mapset)
-gs.run_command("g.mapsets", mapset=[climate_mapset, species_mapset], operation="add")
+gs.run_command("g.mapsets", mapset=[climate_mapset, species_mapset], 
+                operation="add")
 
-# Set the region to match the area of interest and apply a mask for analysis
+# Set the region to match the area of interest and apply a mask
 gs.run_command("g.region", region=f"aoi@{climate_mapset}")
 gs.run_command("r.mask", vector=country_vector)
 
-# Identify relevant climate layers using VIF (Variance Inflation Factor)
+# Identify relevant climate layers using VIF
 # to reduce multicollinearity
 layers = gs.list_strings(
     pattern=selected_layers_pattern,
@@ -687,7 +711,10 @@ selected_layers = gs.read_command(
     "r.vif", flags="v", maps=layers, seed=vif_seed, n=vif_n, maxvif=vif_max  # <1>
 ).strip()  # <2>
 
-# Export data for Maxent input, including species presence and background data
+# Install the addon
+gs.run_command("g.extension", extension="v.maxent.swd")
+
+# Export data for Maxent input
 gs.run_command(
     "v.maxent.swd",
     flags="t",
@@ -708,4 +735,3 @@ gs.run_command(
 <br><br>
 
 ## Footnotes {.unlisted .unnumbered .hidefootnotes}
-

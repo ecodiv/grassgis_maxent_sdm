@@ -99,8 +99,8 @@ $space_text_object_bottom: 0;
 // ------------- Page ----------------------------------------------------------
 
 $body-color:    $gray-800 !default;
-$grid-body-width: 900px !default;
-$grid-margin-width: 300px !default;
+$grid-body-width: 825px !default;
+// $grid-margin-width: 250px !default;
 // $grid-sidebar-width: 250px !default;
 
 // ============= RULES =======================================================
@@ -201,6 +201,7 @@ font-size: 2.2rem !important;
 
 h2 {
   margin-top: 1.5rem !important;
+  color: #6c6c6c;
 }
 
 h3 {

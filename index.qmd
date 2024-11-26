@@ -1,8 +1,8 @@
 # Welcome {.unnumbered}
 
 :::::: grid
-:::: {.g-col-md-6 .g-col-12}
-Species distribution modeling (SDM), also known as climate envelope or niche modeling, are numerical methods that combine observations of species occurrence or abundance with environmental estimates. It is used to gain ecological and evolutionary insights and to predict distributions across landscapes [@elith2009]. They have become an important tool in the toolbox of ecologists and professionals involved in e.g, nature conservation, biodiversity monitoring and environmental impact assessment.
+:::: {.g-col-md-7 .g-col-12}
+Species distribution models (SDM), also known as niche models, combine observations of species occurrence or abundance with environmental estimates. It is used to gain ecological and evolutionary insights and to predict distributions across landscapes [@elith2009]. They have become an important tool in the toolbox of ecologists and professionals involved in e.g, nature conservation, biodiversity monitoring and environmental impact assessment.
 
 ::: {.callout-tip icon="false"}
 ## {{< iconify ph target-fill size=lg >}} Objective
@@ -11,7 +11,7 @@ This tutorial introduces the Maxent tool set in GRASS, and illustrates how to us
 :::
 ::::
 
-::: {.g-col-md-6 .g-col-12}
+::: {.g-col-md-5 .g-col-12}
 ![The Almond-eyed Ringlet (*Erebia alberganus*). Source: [Wikimedia](https://commons.wikimedia.org/wiki/File:Erebia_alberganus.jpg), license [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)](images/Erebia_alberganus.jpg){#fig-erebiaalberganus width="95%" fig-align="left"}
 :::
 ::::::
@@ -19,50 +19,3 @@ This tutorial introduces the Maxent tool set in GRASS, and illustrates how to us
 Maxent [@phillipsMaximumEntropyModeling2006a,@phillipsOpeningBlackBox2017a] is one of the more popular algorithms for species distribution modeling. Unlike many other algorithms, it focuses specifically on presence-only data, which is typically the type of data available. Maxent is, among others, available as a stand-alone program [@phillipsMaxentSoftwareSpecies] and as R package [@maxnetcit]. This tutorial focuses on the use of Maxent addons for [GRASS GIS](https://grass.osgeo.org/learn/overview/) @grassdevelopmentteam2024. As an example, we will use this to map the potential distribution of the Almond-eyed Ringlet (*Erebia alberganus*), a butterfly found in parts of Austria, Bulgaria, France, Italy, Serbia and Switzerland [@vanswaay2010].
 
 You are assumed to be familiar with the fundamentals of species distribution modeling (SDM). If not, see [this free online course](https://www.youtube.com/playlist?list=PL8nSYhbf9nDSotrn-JSZiJki1sTnnw3yS) for a comprehensive introduction to the concepts and principles of SDM. For a more in-depth discussion, see the paper by Elith et al. [-@elith2009]. You are also assumed to be familiar with GRASS GIS. If not, see [Appendix A](A1_grassbasics.qmd) for a quick introduction and check out the list of introductory and advanced [tutorials](https://grass.osgeo.org/learn/tutorials/) and courses.
-
-<!-- Read the Formbutton docs at formspree.io/formbutton/docs. See more examples at codepen.io/formspree -->
-
-```{=html}
-<script src="https://formspree.io/js/formbutton-v1.min.js" defer></script>
-```
-
-```{=html}
-<script>
-  /* paste this line in verbatim */
-  window.formbutton=window.formbutton||function(){(formbutton.q=formbutton.q||[]).push(arguments)};
-  /* customize formbutton below*/     
-  formbutton("create", {
-    action: "https://formspree.io/f/xjvppyvg",
-    title: "Feedback", 
-    fields: [
-      { 
-        type: "email", 
-        label: "Email:", 
-        name: "email",
-        required: true,
-        placeholder: "your@email.com"
-      },
-      {
-        type: "hidden",
-        label: "",
-        value: "sdmingrass - 1 Introduction",
-      },
-      {
-        type: "textarea",
-        label: "Message:",
-        name: "message",
-        placeholder: "Question or feedback? Let us know here.",
-      },
-      { type: "submit" }      
-    ],
-    styles: {
-      title: {
-        backgroundColor: "#57B444"
-      },
-      button: {
-        backgroundColor: "#57B444"
-      }
-    }
-  });
-</script>
-```

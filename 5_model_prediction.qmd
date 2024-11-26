@@ -33,7 +33,30 @@ gs.run_command(
 In the menu, go to [Settings → GRASS working environment → Mapset access]{.style-menu} and select the mapsets [climate_EC_Earth3_Veg]{.style-db}.
 :::
 
-We can now use the [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html) to apply the previously created Maxent model to this set of climate raster data. The minimum input requirements are the names of the input raster layers and a [lambdas]{.style-output} file and the name of the raster layers for the predictor variables described in the lambdas file. The [lambdas]{.style-output} file was one of the outputs from [r.maxent.train]{.style-function} and can be found in the output folder [model_01]{.style-output}. It has the extension *.lambdas* and describes the Maxent model.
+We can now use the [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html) to apply the previously created Maxent model to this set of climate raster data. It is an addon, so we first need to install it.
+
+::: {#exm-q52222b .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+g.extension extension=r.maxent.predict
+```
+
+## {{< fa brands python >}}
+
+``` python
+gs.run_command("g.extension", extension="r.maxent.predict")
+```
+
+## {{< fa regular window-restore >}}
+
+Open the [g.extension]{.style-function} module from the menu: [Settings → addon extensions → install extensions from addons]{.style-menu}, search for the name of the addon and install it.
+:::
+
+The minimum input requirements of [r.maxent.predict]{.style-function} are the names of the input raster layers and a [lambdas]{.style-output} file and the name of the raster layers for the predictor variables described in the lambdas file. The [lambdas]{.style-output} file was one of the outputs from [r.maxent.train]{.style-function} and can be found in the output folder [model_01]{.style-output}. It has the extension *.lambdas* and describes the Maxent model.
 
 The names of the raster layers need to be the same as the variable names used to create the Maxent model. If you are not sure, you can check the file [maxent_explanatory_variable_names.csv]{.style-file} in folder with the model out. This file is automatically created by the [r.maxent.train]{.style-function} module and can be found in the [model_01]{.style-output} folder. If the raster names are not the same as the variables used to create the Maxent model, the [variables]{.style-parameter} parameter can be used to provide the right variable names[^5_model_prediction-1].
 

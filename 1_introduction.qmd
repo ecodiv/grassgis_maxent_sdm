@@ -2,10 +2,18 @@
 
 This tutorial introduces a GRASS GIS tool set for species distribution modeling, and shows how to use it effectively in combination with other core modules and add-ons to predict the future potential distribution of the almond-eyed ringlet butterfly. The first part focuses on the essential building blocks of creating a species distribution model, from data collection to prediction. In the second part, we’ll dive deeper into the options, choices, and parameter settings to validate and fine-tune the model.
 
-::: {.callout-tip collapse="true"}
-## Tips and conventions used in this tutorial.
+![Potential habitat of the Almond-eyed Ringlet (*Erebia alberganus*) in the Alps. Source: Paulo van Breugel](images/habitat.jpg){#fig-habitatalps fig-align="left"}
 
-The following typographical conventions are used in this tutorial:
+## Using the reader
+
+This reader guides you step by step through the species modeling process. The examples demonstrate how to execute functions via the command line [{{< fa solid terminal >}}]{.paneltabcolor}, Python scripts [{{< fa brands python >}}]{.paneltabcolor}, and the GUI dialogs [{{< fa regular window-restore >}}]{.paneltabcolor}.
+
+While detailed explanations of the various settings and parameters are not always provided, each function includes a link to its corresponding help page. These help pages are comprehensive, and reading them is highly recommended to fully understand the choices made in the tutorial and the options available to you.
+
+::: {.callout-tip appearance="simple" collapse="true"}
+## Typographical conventions
+
+The following typographical conventions are used in this reader:
 
 -   [Names of databases, storage locations, file names]{.style-db}
 -   [Names of GRASS data layers]{.style-data}
@@ -13,126 +21,221 @@ The following typographical conventions are used in this tutorial:
 -   [Name of programs, code libraries, addons]{.style-apps}
 -   [Function names, parameters, variable names]{.style-function}
 -   [Parameter settings, user-supplied values]{.style-parameter}
-
-The examples in this tutorial show you how to run modules / functions using:
-
--   [{{< fa solid terminal >}}]{.paneltabcolor}     the command line
--   [{{< fa brands python >}}]{.paneltabcolor}     Python code
--   [{{< fa regular window-restore >}}]{.paneltabcolor}     GUI dialogs
-
-Throughout the text, you'll find cross-references with hyperlinks to e.g., figures, literature references and footnotes. Instead of clicking the hyperlink, you can also hoover over the link with your mouse. This will open the corresponding figure, reference or footnote in a floating Window. Try for example @fig-erebiaalberganus.
-
-Some code is enriched with explanatory notes. You can read these notes by clicking on the number next to the code. See for example:
-
-``` python
-print("this is an example") # <1>
-```
-
-1.  You got it
-
-<br>Clicking on the circled number in the code block will open a pop-up window. If you hover over a code block, you will also see a small 'clipboard' icon {{< fa regular clipboard 2xs>}}. Click it to copy the code.
 :::
 
-The examples in this tutorial show you how to run functions from the command line, using Python and, and using the GUI dialogs. There will not (always) be an explanation of the different settings and parameters. Instead, each time a function is used, a link is provided to the corresponding help page. These help pages are quite good, and you are encouraged to read them to fully understand the choices made in the tutorial.
+Throughout the text you'll find literature references and footnotes. You are encouraged to check them out. Simply hoover over the link with your mouse. You'll also find that some code includes explanatory notes. You can read these notes by clicking on the number next to the code.
 
-## GRASS GIS
+If you find some errors or have suggestions for improvements, you can create an so-called issue at Github. To do so, click on {{< fa brands github >}} [Report an issue]{.style-menu} in the upper right corner of the page (you'll need a Github account). You can also send me a message using the form (see the green button in the lower right corner of this page).
 
-Go to the GRASS GIS website and open the [download page](https://grass.osgeo.org/download/) for your operating system from the menu. Use the stable release (at the time of writing, this is version 8.4.0).
+## Install the software
 
-Window users will find that there are two main flavors on the [download page](https://grass.osgeo.org/download/windows/); the standalone winGRASS installer and the OSGeo4W installer. I recommend the latter, as it allows you to install a broad range of open source geospatial software packages, such as QGIS and GDAL/OGR. And it offers an easier way to update the software. Note that on Windows, if you have QGIS installed, there is a good change you already have GRASS GIS. In that case, just check if you have the latest version.
+Before diving into this reader, make sure to install GRASS GIS, Maxent, and Java. Below, you'll find a brief guide on where to download the software and how to install it. Later on, you'll also install a number of GRASS GIS addons. These provide additional functionality not (yet) available in the core software package.
 
-## GRASS addons
+### GRASS GIS
 
-The three main modules used in this tutorial are [v.maxent.swd](https://grass.osgeo.org/grass-stable/manuals/addons/v.maxent.swd.html), [r.maxent.train](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.train.html) and [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html). Install these addons with the [g.extension](https://grass.osgeo.org/grass-stable/manuals/g.extension.html) module.
+Visit the GRASS GIS website and navigate to the [download page](https://grass.osgeo.org/download/) for your operating system via the menu. Be sure to use the stable release (at the time of writing, this is version 8.4.0).
 
-::: {#exm-Cb1zDqdZuC .hiddendiv}
+For Windows users, the [download page](https://grass.osgeo.org/download/windows/) offers two main options: the standalone winGRASS installer and the OSGeo4W installer. I recommend using the OSGeo4W installer, as it allows you to install a wide range of open-source geospatial software packages, including QGIS and GDAL/OGR. Additionally, it provides a more convenient way to keep your software up to date.
+
+Note that if you already have QGIS installed on your Windows system, there’s a good chance you also have GRASS GIS installed. In that case, simply check whether you’re using the latest version.
+
+### Maxent {#sec-maxentsoftware}
+
+For the species distribution modeling, we'll use a two addons, [r.maxent.train](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.train.html) and [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html), which provide a convenient interface to the Maxent software. Download the software from the [Maxent website](https://biodiversityinformatics.amnh.org/open_source/maxent/) and extract the [Maxent.jar]{.style-apps} file. Install it into the GRASS GIS add-on directory using the [r.maxent.setup](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.setup.html) module. This will allow the other add-ons to find and use it automatically.
+
+::: {#exm-l4ovVBumNL .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+If you first copy the [Maxent.jar]{.style-file} file to the working directory, you only need to provide the file name as input in the code below. Otherwise, provide the full path to the file.
+
+``` bash
+r.maxent.setup maxent=path-to-file/maxent.jar
+```
+
+## {{< fa brands python >}}
+
+``` python
+gs.run_command("r.maxent.setup", maxent="path-to-file/maxent.jar")
+```
+
+## {{< fa regular window-restore >}}
+
+Open the [r.maxent.setup]{.style-function} module dialog and run it with the following parameter settings.
+
+| Parameter | Value                   |
+|-----------|-------------------------|
+| maxent    | path-to-file/maxent.jar |
+:::
+
+Note that you only have to do this once. If you already installed the Maxent.jar file, but want to update it, you can use the [u]{.style-parameter}. This will replace the older version with the new one.
+
+### Java OpenJDK
+
+The [Maxent]{.style-apps} software requires [Java]{.style-apps} or the [Java Runtime Environment]{.style-apps} (JRE) version 1.4 or later to be installed on your computer. There is a good change you already have [Java]{.style-apps} installed. You can check this using the step below.
+
+::: {.panel-tabset group="os"}
+## {{< fa brands linux >}}
+
+Open the command line, and type:
+
+``` bash
+java --version
+```
+
+## {{< fa brands windows >}}
+
+In the Window search bar, type [cmd]{.style-menu} and hit enter. This will open the Command prompt. Next, type in the following code string.
+
+``` bash
+java --version
+```
+
+## {{< fa brands apple >}}
+
+I have no access to an Apple computer, but perhaps [this page](https://javaforge.com/how-to-find-java-path-in-mac/) can help you. Otherwise, you'll need to look it up yourself.
+:::
+
+If you have [Java]{.style-apps} on your computer, it should show you the version. If not, you'll get the message that it cannot be found. In that case, download it from e.g., [here](https://www.azul.com/downloads/#zulu) or [here](https://openjdk.org/) and install it.
+
+Now we need to ensures that [GRASS GIS]{.style-apps} can locate the [Java]{.style-apps} executable, a prerequisite for running [Maxent]{.style-apps}. On Linux, and in some cases on Windows, GRASS may have access to [Java]{.style-apps} without further steps. You can check this using the following command.
+
+::: {#exm-eUGszZQwy4 .hiddendiv}
 :::
 
 ::: {.panel-tabset group="interface"}
 ## {{< fa solid terminal >}}
 
 ``` bash
-g.extension extension=v.maxent.swd
-g.extension extension=r.maxent.train
-g.extension extension=r.maxent.predict
+r.maxent.setup -j
 ```
 
 ## {{< fa brands python >}}
 
 ``` python
-import grass.script as gs               # <1>
-gs.run_command("g.extension", extension="v.maxent.swd")
-gs.run_command("g.extension", extension="r.maxent.train")
-gs.run_command("g.extension", extension="r.maxent.predict")
+gs.run_command("r.maxent.setup", flags="j")
 ```
-
-1.  Note that you only need to import the [grass.script]{.style-function} once per session. So this will only be shown once here.
 
 ## {{< fa regular window-restore >}}
 
-{{< video "https://ecodiv.earth/share/sdm_in_grassgis/install_addons.mp4" >}}
+Open the [r.maxent.setup]{.style-function} module dialog and run it with the following parameter settings.
 
-Repeat the same for the other two addons.
+| Parameter                                    | Value |
+|----------------------------------------------|-------|
+| Check if Java can be found on the system (j) | ✅    |
 :::
 
-Installed modules can be run by typing their name in the Console or terminal. They are also available from the [Tools]{.style-menu} panel under [Addons]{.style-menu}. If you don't see them after installing them, you may have to restart GRASS first. You will install and use a few other addons later on in the tutorial.
+If you see the message that [Java is accessible from GRASS GIS]{.style-output}, you can skip the rest of the steps on this page. If you get the warning that [Java cannot be found from GRASS GIS]{.style-output}, you need to find the path to the java executable. See below for suggestions for how to find this.
 
-## Maxent {#sec-maxentsoftware}
+::: {#exm-sa2Ci8G2Aj .hiddendiv}
+:::
 
-The addons [r.maxent.train](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.train.html) and [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html) both require the [Maxent]{.style-apps} software. Download the software from the [Maxent website](https://biodiversityinformatics.amnh.org/open_source/maxent/) and extract the [Maxent.jar]{.style-apps} file. When running [r.maxent.train]{.style-function} and [r.maxent.predict]{.style-function} for the first time you'll need to provide the path to this file. For now, just remember the location of the [Maxent.jar]{.style-apps} file.
+::: {.panel-tabset group="os"}
+## {{< fa brands linux >}}
 
-The Maxent software can be used on any computer running Java version 1.4 or later. For the Java runtime environment, the Maxent website refers to java.sun.com/javase/downloads, but OpenJDK should work as well. There is a good change you already have Java installed, but if not, you can download it from e.g., [here](https://www.azul.com/downloads/#zulu) or [here](https://openjdk.org/).
+Open the command line, and type the following to get the path to the java executable:
 
-::: {.callout-tip collapse="true"}
-## For Window users
+``` bash
+which java
+```
 
-For Window users, the path to the java executable may need to be specified. First, you need to find the path to the `java.exe`. Open the Command Prompt window (in the search bar, search for Command promt) and type in the following command and press Enter:
+## {{< fa brands windows >}}
+
+On Windows, Java is usually installed in the directory [C:/Program Files/Java]{.style-menu}. You can check if this folder exists. If the folder does not exist, we can’t be sure that Java is not installed on your computer. It could have been installed in a different path.
+
+To find out, in the Window search bar, type [cmd]{.style-menu} and hit enter. This will open the Command prompt. Next, type in the following code string.
 
 ``` bash
 where java
 ```
 
-On my computer, this looks like this, but note that the path will depend on how you have installed Java.
+If the code above doesn't work, you can try the code below (you can also try to replace [java.exe]{.style-apps} with [javac.exe]{.style-apps}).
 
 ``` bash
-C:\Program Files\Zulu\zulu-21\bin\java.exe
+for %i in (java.exe) do @echo.   %~$PATH:i
 ```
 
-Now, you can add it to the `o4w_env.bat` file. GRASS GIS will look at this file at start up. The file is located in the `OSGEO4W_ROOT/bin` directory. Where that root directory is depends on how you have installed GRASS GIS. If you installed it using the [OSGeo4W]{.style-app} installer, you probably find it in `c:\OSGeo4W\bin`. If you installed it using the stand-alone installer, you probably find it in `c:\Program Fiels\GRASS GIS 8.4\bin`. To add the path to your Java executable in the o4w_env.bat file, follow these steps:
+Alternatively, you can search for the [java.exe]{.style-apps} file on the disk. Open [My Computer]{.style-menu} where you can see [C drive]{.style-menu}, [D drive]{.style-menu} etc. On the top right corner you can see [Search bar]{.style-menu}. Enter [java.exe]{.style-apps} and hit enter. Note, this may take some time.
 
--   Open o4w_env.bat in a text editor (you may need administrative privileges).
--   Locate the line that begins with set path=.
--   At the end of this line, add a semicolon ; followed by the full path to your Java executable. For example:
+## {{< fa brands apple >}}
 
-```         
-set path=%path%;C:\Path\To\Java\bin
-```
-
-Replace C:\Path\To\Java\bin with the actual path where Java is installed on your system.
-
-Save and close the file. To check if it works, start [GRASS GIS]{.style-app}, and on the command line, type:
-
-``` bash
-java
-```
-
-This should give you something like:
-
-```         
-Usage: java [options] <mainclass> [args...]
-           (to execute a class)
-   or  java [options] -jar <jarfile> [args...]
-           (to execute a jar file)
-   or  java [options] -m <module>[/<mainclass>] [args...]
-       java [options] --module <module>[/<mainclass>] [args...]
-           (to execute the main class in a module)
-   or  java [options] <sourcefile> [args]
-           (to execute a single source-file program)
-
- Arguments following the main class, source file, -jar <jarfile>,
- -m or --module <module>/<mainclass> are passed as the arguments to
- main class.
-```
+Please search online for how to find the path to the Java executable.
 :::
 
-I haven't tested this on a Mac, but presumably, similar steps should be followed as on Windows to make sure GRASS GIS can find the Java executable.
+Make sure to write down the full path to the java executable. On Windows, this could for example be [C:/Program Files/Java/java.exe]{.style-menu}. Use this as input for [r.maxent.setup](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.setup.html).
+
+::: {#exm-WkMBbifIZR .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+r.maxent.setup java=path-to-java/java.exe
+```
+
+## {{< fa brands python >}}
+
+``` python
+gs.run_command("r.maxent.setup", java="path-to-java/java.exe")
+```
+
+## {{< fa regular window-restore >}}
+
+Open the [r.maxent.setup]{.style-function} module dialog and run it with the following parameter settings.
+
+| Parameter | Value                 |
+|-----------|-----------------------|
+| java      | path-to-java/java.exe |
+:::
+
+Note that @exm-l4ovVBumNL and @exm-WkMBbifIZR can be combined in one step by providing both the [maxent]{.style-parameter} and [java]{.style-parameter} parameters to [r.maxent.setup]{.style-function} at the same time.
+
+<!-- Read the Formbutton docs at formspree.io/formbutton/docs. See more examples at codepen.io/formspree -->
+
+```{=html}
+<script src="https://formspree.io/js/formbutton-v1.min.js" defer></script>
+```
+
+```{=html}
+<script>
+  /* paste this line in verbatim */
+  window.formbutton=window.formbutton||function(){(formbutton.q=formbutton.q||[]).push(arguments)};
+  /* customize formbutton below*/     
+  formbutton("create", {
+    action: "https://formspree.io/f/xjvppyvg",
+    title: "Feedback", 
+    fields: [
+      { 
+        type: "email", 
+        label: "Email:", 
+        name: "email",
+        required: true,
+        placeholder: "your@email.com"
+      },
+      {
+        type: "hidden",
+        label: "",
+        value: "sdmingrass - 1 Introduction",
+      },
+      {
+        type: "textarea",
+        label: "Message:",
+        name: "message",
+        placeholder: "Question or feedback? Send us a message.",
+      },
+      { type: "submit" }      
+    ],
+    styles: {
+      title: {
+        backgroundColor: "#57B444"
+      },
+      button: {
+        backgroundColor: "#57B444"
+      }
+    }
+  });
+</script>
+```
