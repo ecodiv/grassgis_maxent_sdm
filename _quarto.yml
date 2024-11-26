@@ -15,7 +15,7 @@ project:
 book:
   title: "Species distribution modeling"
   subtitle: "Using Maxent in GRASS GIS"
-  date: "11-19-2024"
+  date: today
   original-date: "11-1-2024"
   author:
     - name: Paulo van Breugel
