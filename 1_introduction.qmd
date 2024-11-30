@@ -41,7 +41,7 @@ Note that if you already have QGIS installed on your Windows system, there’s a
 
 ### Maxent {#sec-maxentsoftware}
 
-For the species distribution modeling, we'll use a two addons, [r.maxent.train](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.train.html) and [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html), which provide a convenient interface to the Maxent software. Download the software from the [Maxent website](https://biodiversityinformatics.amnh.org/open_source/maxent/) and extract the [Maxent.jar]{.style-apps} file. Install it into the GRASS GIS add-on directory using the [r.maxent.setup](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.setup.html) module. This will allow the other add-ons to find and use it automatically.
+For the species distribution modeling, we'll use two addons, [r.maxent.train](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.train.html) and [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html), that use the Maxent software in the background. Download the Maxent software from the [Maxent website](https://biodiversityinformatics.amnh.org/open_source/maxent/) and extract the [Maxent.jar]{.style-apps} file. Install it into the GRASS GIS add-on directory using the [r.maxent.setup](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.setup.html) module. This will allow the other add-ons to find and use it automatically.
 
 ::: {#exm-l4ovVBumNL .hiddendiv}
 :::
@@ -49,13 +49,15 @@ For the species distribution modeling, we'll use a two addons, [r.maxent.train](
 ::: {.panel-tabset group="interface"}
 ## {{< fa solid terminal >}}
 
-If you first copy the [Maxent.jar]{.style-file} file to the working directory, you only need to provide the file name as input in the code below. Otherwise, provide the full path to the file.
+Make sure you know where you have extracted the [Maxent.jar]{.style-file} file. You need to provide the full path below.
 
 ``` bash
 r.maxent.setup maxent=path-to-file/maxent.jar
 ```
 
 ## {{< fa brands python >}}
+
+Make sure you know where you have extracted the [Maxent.jar]{.style-file} file. You need to provide the full path below.
 
 ``` python
 gs.run_command("r.maxent.setup", maxent="path-to-file/maxent.jar")
@@ -68,6 +70,8 @@ Open the [r.maxent.setup]{.style-function} module dialog and run it with the fol
 | Parameter | Value                   |
 |-----------|-------------------------|
 | maxent    | path-to-file/maxent.jar |
+
+Note that you can also use the browse button in the [r.maxent.setup]{.style-function} window to find the file.
 :::
 
 Note that you only have to do this once. If you already installed the Maxent.jar file, but want to update it, you can use the [u]{.style-parameter}. This will replace the older version with the new one.

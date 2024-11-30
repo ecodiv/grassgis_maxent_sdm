@@ -1,8 +1,16 @@
 # Beyond the basics {#sec-advancedsteps}
 
+::::: grid
+::: {.g-col-md-6 .g-col-12}
 In the previous sections, we covered the basic steps for building a species distribution model using Maxent. In this part, we'll explore various options to validating the results (@sec-modelvalidation) and fine-tune model options (@sec-modelfinetuning).
 
 We will examine various validation methods and parameter adjustments, addressing each option individually. It’s important to keep in mind that that species distribution modeling is an iterative process: experimenting with different parameter combinations, validating the results, and refining the model to enhance performance. By understanding these aspects, you'll be better equipped to develop robust and reliable models.
+:::
+
+::: {.g-col-md-6 .g-col-12}
+![The Almond-eyed Ringlet (*Erebia alberganus*) in the Italian alps. Source: Paulo van Breugel](images/Erebia_alberganus2.jpg){fig-align="left"}
+:::
+:::::
 
 <!-- Read the Formbutton docs at formspree.io/formbutton/docs. See more examples at codepen.io/formspree -->
 

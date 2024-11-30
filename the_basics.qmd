@@ -8,7 +8,7 @@ In this part we'll go through the basic steps of species distribution modeling: 
 
 [^the_basics-2]: The rationale for having separate addons for each step is to encourage and help the user to carefully consider the assumptions and considerations at each stage of the modeling process. The tutorial follows the same structure.
 
-This is just the beginning of your journey into species distribution modeling. You normally will further explore various ways to fine-tune your model. This includes experimenting with different input data, adjusting parameters, and evaluating the outcomes to identify the best model or set of models for your needs. Some of these steps are explored in the second part of this reader, Beyond the Basics, where we dive deeper into techniques for refining and validating your models.
+This is just the beginning of your journey into species distribution modeling. You normally will further explore various ways to fine-tune your model. This includes experimenting with different input data, adjusting parameters, and evaluating the outcomes to identify the best model or set of models for your needs. Some of these steps are explored in the second part of this reader, 'Beyond the Basics', where we dive deeper into techniques for refining and validating your models.
 
 <!-- Read the Formbutton docs at formspree.io/formbutton/docs. See more examples at codepen.io/formspree -->
 

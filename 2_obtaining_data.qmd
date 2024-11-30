@@ -881,9 +881,9 @@ To avoid having to type in the same command 19 times, we can use a small script 
 
 ``` bash
 base="wc2.1_30s_bio_"   # <1>
-for n in {1..19}; do              # <2>
-    input="${base}${n}.tif"       # <3>
-    output="bio_${n}"             # <4>
+for n in {1..19}; do # <2>
+    input="${base}${n}.tif" # <3>
+    output="bio_${n}" # <4>
     r.in.gdal -r input=${input} output=${output} memory=1000  # <5>
 done
 ```

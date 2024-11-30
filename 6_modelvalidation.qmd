@@ -2,15 +2,17 @@
 
 So far we have discussed how to build a model and use it to predict the distribution of a species. However, it is equally important to understand how to interpret and evaluate the results of the model. A key step in this process is assessing the accuracy of the model's predictions - a process known as *model validation*.
 
-In @sec-4evalstats, we introduced validation statistics such as AUC-ROC, which provide a first measure of model performance. However, it's important to keep in mind that evaluating a model on the same data it was trained on can lead to overly optimistic assessments, as models tend to perform worse on new, unseen data. To truly assess a model's predictive power, it must be tested on a separate dataset that wasn't used during training.
+In @sec-4evalstats, we introduced the AUC-ROC, a statistic that provides a first measure of model performance. However, it's important to note that evaluating a model on the same data it was trained on can lead to overly optimistic assessments, as models tend to perform worse on new, unseen data. To truly assess a model's predictive power, it must be tested on a separate dataset that wasn't used during training (paragraph [-@sec-traintestpoints] and [-@sec-crossvalidation]).
 
-::: callout-warning
+Another important consideration is the context in which predictions are made. For example, making predictions under climate conditions that deviate strongly from those represented in the training data (novel climates) introduces uncertainty. In such cases, the model's assumptions and extrapolations may no longer hold, which can compromise the reliability of its predictions (paragraph [-@sec-novelclimates]).
+
+::: callout-note
 ## Work in progress
 
-This chapter is work in progress, and will be updated with new examples in the coming weeks, so stay tuned!
+This chapter is work in progress, and will be updated with new examples as time allows, so stay tuned!
 :::
 
-## Training and testing Points
+## Training and testing Points {#sec-traintestpoints}
 
 The easiest way to do this is to split the presence data into two parts, and use one part to train the model, and another part to test the model's performance. But before we do that, we first create a new mapset and a folder to store the model results. Of course, you are free to organize your model results differently. However, it's important to note that while GRASS GIS prevents accidental overwriting of data, MaxEnt does not. If you use the same output folder and the files in that folder have the same names, MaxEnt will overwrite them without warning.
 
@@ -54,11 +56,15 @@ Create the folder [model_02]{.style-db} in your working directory using your fav
 | Name of mapset (mapset)               | model_02 |
 | Create mapset if it doesn't exist (c) | ✅       |
 
+: {tbl-colwidths="\[50,50\]"}
+
 <br>Next, use the [g.region]{.style-function} module to set the computational region style parameter, based on the [bio_1]{.style-data} raster layer in the [climate_current]{.style-db} mapset.
 
 | Parameter | Value                  |
 |-----------|------------------------|
 | raster    | bio_1\@climate_current |
+
+: {tbl-colwidths="\[50,50\]"}
 :::
 
 ### Model training
@@ -99,20 +105,6 @@ gs.run_command(
 ## {{< fa regular window-restore >}}
 
 Open the [r.maxent.train]{.style-function} dialog and run the module with the following parameter settings:
-
-| Parameter | Value |
-|----|----|
-| samplesfile | dataset01/species.swd |
-| environmentallayersfile | dataset01/background.swd |
-| outputdirectory | model_02 |
-| randomtestpoints | 20 |
-| threads | 4 |
-| memory | 1000 |
-| Create a vector point layer from the sample predictions (y) | ✅ |
-| Create a vector point layer with predictions at backgr. points (b) | ✅ |
-| Create response curves (g) | ✅ |
-
-: {tbl-colwidths="\[63,37\]"}
 
 <br>Tip: if you are using the r.maxent.train dialog screen, keep it open after it finishes. That way, for our next run, you only need to adjust some parameter settings instead of typing in all again.
 :::
@@ -165,19 +157,19 @@ It is somewhat surprising that the AUC based on the test data is higher than tha
 A possible explanation is that the test data represents a much smaller set of presence points, which results in a much smaller prevalence — the ratio of presence points to background points — in the test set compared to the training dataset. Background points are typically easier to classify as absence, especially if they are situated in environmentally distinct areas that are far from the species' known occurrences. This can lead to a higher true negative rate (specificity) because the model more confidently identifies absence areas. Since AUC (area under the ROC curve) reflects both sensitivity (true positive rate) and specificity (true negative rate), an improvement in specificity is likely to result in a higher AUC.
 ::::
 
-As we did not change any of the model parameters, the outcomes should otherwise be the same as in [paragraph -@sec-4trainthemodel], with some minor differences.
+As we did not change any of the model parameters, the outcomes should otherwise be the same as in [paragraph -@sec-4trainthemodel], with some minor differences due to small differences in input data.
 
 ### Using the model
 
 The process of setting aside occurrence data for testing is essential to evaluate the predictive power of a model under new conditions or in untested areas. This validation step ensures that the model can generalize beyond the data it was trained on. Typically, you will develop and compare multiple models, each trained using different parameter settings or algorithms. Through this process, the best-performing model is identified based on validation results.
 
-Once the best model is selected, the next step is to rebuild it using all available occurrence data. By incorporating the full dataset, the final model benefits from the maximum amount of information, improving its robustness for future predictions and analyses. This comprehensive model is the one typically used for practical applications, such as predicting species distributions across a broader landscape or under different environmental scenarios - i.e., model prediction as we have done in @sec-modelprediction.
+Once the best model is selected, the next step is to rebuild it using all available occurrence data. By incorporating the full dataset, the final model benefits from the maximum amount of information, improving its robustness for future predictions and analyses. This model is the one typically used for practical applications, such as predicting species distributions across a broader landscape or under different environmental scenarios. In other words, model prediction as we have done in @sec-modelprediction.
 
-## Cross-validation
+## Cross-validation {#sec-crossvalidation}
 
 ### Description
 
-A more robust and commonly used technique to estimate the accuracy of a predictive model is [cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). There are different types of cross-validation, but we'll focus on k-fold cross-validation here. In k-fold cross-validation, the original sample is randomly partitioned into **k** subsamples with an approximately equal number of records. For this tutorial, we carry out a 4-fold cross-validation.
+One limitation of the validation method described in the previous paragraph is that the results can vary significantly depending on which 20% of the points are selected for testing. A more robust and commonly used technique to estimate the accuracy of a predictive model is [cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). There are different types of cross-validation, but we'll focus on k-fold cross-validation here. In k-fold cross-validation, the original sample is randomly partitioned into **k** subsamples with an approximately equal number of records. For this tutorial, we carry out a 4-fold cross-validation.
 
 ![Schematic explanation of a 4-fold cross-validation. The presence data is randomly partitioned into 4 groups with an approximately equal number of records. Of these groups, a single group is set apart as the validation data for testing the model, and the remaining subsamples are combined to be used as training data to create the model. Next, the model is used to predict the presence of the locations of the validation subset. The results of the prediction are then compared with the known presence and background designations in the validation subset. The cross-validation process is repeated as many times as there are subsamples, whereby each of the subsamples is used exactly once as the validation data.](images/4-fold_cross-validation.svg){#fig-vkgSx6qmBy fig-align="left" width="600"}
 
@@ -258,11 +250,15 @@ Create the folder [model_03]{.style-db} in your working directory using your fav
 | Name of mapset (mapset)               | model_03 |
 | Create mapset if it doesn't exist (c) | ✅       |
 
+: {tbl-colwidths="\[60,40\]"}
+
 <br>Next, use the [g.region]{.style-function} module to set the computational region style parameter, based on the [bio_1]{.style-data} raster layer in the [climate_current]{.style-db} mapset.
 
 | Parameter | Value                  |
 |-----------|------------------------|
 | raster    | bio_1\@climate_current |
+
+: {tbl-colwidths="\[60,40\]"}
 
 <br>Open the [r.maxent.train]{.style-function} dialog and run the module with the following parameter settings:
 
@@ -279,7 +275,7 @@ Create the folder [model_03]{.style-db} in your working directory using your fav
 | Create a vector point layer from the sample predictions (y) | ✅ |
 | Create response curves (g) | ✅ |
 
-: {tbl-colwidths="\[63,37\]"}
+: {tbl-colwidths="\[60,40\]"}
 :::
 
 ### Evaluation statistics
@@ -426,3 +422,173 @@ Response curves created by running a model based on only the specific variable a
 We used cross-validation to evaluate the predictive power of the model (as defined by the selected parameter settings) under new conditions or in untested areas. This process produced four model variants, each trained on slightly different subsets of the data due to the cross-validation procedure. These models are described by the lambdas files in the output folder. For each of these model variants, MaxEnt generated a raster layer representing the predicted probability of occurrence. These layers were then summarized by calculating their average, median, minimum, maximum, and standard deviation. The resulting summary layers are the ones currently available in our mapset.
 
 But what if we want to use the selected parameter settings to predict species distributions under different environmental scenarios and compare the result predicted potential distribution with the current potential distribution (as we have done in @sec-modelprediction)? One option is to select one of the four models or compute the average probability values across all four, as done during training. However, the standard approach is to rebuild the model using all available occurrence data, ensuring that the model benefits from the full dataset. This model can then be used to make predictions under different environmental conditions or in new geographic areas.
+
+## Novel climates {#sec-novelclimates}
+
+When using a species distribution model to make predictions under conditions that are outside the range of conditions observed during model training (novel conditions), predictions may be less reliable. This is because the model is based on relationships learned from the training data. And these relationships may be very different in other areas or under future conditions.
+
+### MES statistics
+
+The Multivariate Environmental Similarity (MES), as described by Elith et al. [@elith2010], can be used to evaluate if and where future conditions are outside the range of conditions observed during model training, and thus where model predictions might be less reliable. In GRASS, we can use the [r.mess](https://grass.osgeo.org/grass-stable/manuals/addons/r.mess.html) addon to calculate the MESS.
+
+We use [r.mess]{.style-function} to examine how different the climatic conditions in 2081 are to present conditions. For the present climate conditions, we use the same data and bioclimatic variables as we used to create our first model in [paragraph -@sec-4trainthemodel]. We only consider the conditions in the presence and background locations, as this is what we used to train the model. To do so, we combine and convert presence and background points into a new raster layer [referencelayer]{.style-data}, and use this as input for the [ref_rast]{.style-parameter} parameter.
+
+::: {#exm-dCCiaw6IUX .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+# Install the addon
+g.extension extension=r.mess
+
+# Go to mapset 'model_01' and set the region 
+g.mapset mapset=model_01 
+g.region raster=bio_1@climate_current # <1>
+
+# Combine the occurrence and background points
+v.patch input=E_alberganus_samplepred,E_alberganus_bgrdpred" \
+output=referencepoints
+
+# Convert the point layer to a raster layer # <2>
+v.to.rast input=referencepoints output=referencepoints use=value
+```
+
+1.  The region should already be defined correctly, but just to be sure.
+2.  In the next step, we use the [ref_rast]{.style-parameter} parameter to set the reference raster layer, which we create here, as the reference layer. Alternatively, we could use the [ref_vect]{.style-parameter} parameter with the [referencepoints]{.style-data} vector layer. However, the vector layer contains multiple point within some raster cells. The [r.mess]{.style-function} module will ignore all but one with a warning message. To avoid such message, we convert the point layer to a raster, effectively resolving the issue by eliminating duplicate points.
+
+## {{< fa brands python >}}
+
+``` python
+# Install the addon
+gs.run_command("g.extension", extension="r.mess")
+
+# Go to mapset 'model_01' and set the region 
+gs.run_command("g.mapset", mapset="model_01") 
+gs.run_command("g.region", raster="bio_1@climate_current") # <1>
+
+# Combine the occurrence and background points
+gs.run_command(
+    "v.patch",
+    input=["E_alberganus_samplepred", "E_alberganus_bgrdpred"],
+    output="referencepoints",
+)
+
+# Convert the point layer to a raster layer # <2>
+gs.run_command(
+    "v.to.rast", input="referencepoints", output="referencepoints", use="value"
+)
+```
+
+1.  The region should already be defined correctly, but just to be sure.
+2.  In the next step, we use the [ref_rast]{.style-parameter} parameter to set the reference raster layer, which we create here, as the reference layer. Alternatively, we could use the [ref_vect]{.style-parameter} parameter with the [referencepoints]{.style-data} vector layer. However, the vector layer contains multiple point within some raster cells. The [r.mess]{.style-function} module will ignore all but one with a warning message. To avoid such message, we convert the point layer to a raster, effectively resolving the issue by eliminating duplicate points.
+
+## {{< fa regular window-restore >}}
+
+Open the [g.extension]{.style-function} dialog and run it with:
+
+| Parameter | Value  |
+|-----------|--------|
+| extension | r.mess |
+
+: {tbl-colwidths="\[40,60\]"}
+
+Open the [g.mapset]{.style-function} dialog and run it with:
+
+| Parameter | Value    |
+|-----------|----------|
+| mapset    | model_01 |
+
+: {tbl-colwidths="\[40,60\]"}
+
+Open the [g.region]{.style-function} dialog and run it with:
+
+| Parameter | Value                  |
+|-----------|------------------------|
+| raster    | bio_1\@climate_current |
+
+: {tbl-colwidths="\[40,60\]"}
+
+To combine the occurrence and background points, open the [v.patch]{.style-function} dialog, and run it with:
+
+| Parameter | Value                                         |
+|-----------|-----------------------------------------------|
+| input     | E_alberganus_samplepred,E_alberganus_bgrdpred |
+| output    | referencepoints                               |
+
+: {tbl-colwidths="\[40,60\]"}
+
+And convert the point layer to a raster with the [v.to.rast]{.style-function} module. Open it and run it with the following parameters:
+
+| Parameter | Value           |
+|-----------|-----------------|
+| input     | referencepoints |
+| output    | referencepoints |
+
+: {tbl-colwidths="\[40,60\]"}
+
+In the next step, we use the [ref_rast]{.style-parameter} parameter to set the reference raster layer, which we create here, as the reference layer. Alternatively, we could use the [ref_vect]{.style-parameter} parameter with the [referencepoints]{.style-data} vector layer. However, the vector layer contains multiple point within some raster cells. The [r.mess]{.style-function} module will ignore all but one with a warning message. To avoid such message, we convert the point layer to a raster, effectively resolving the issue by eliminating duplicate points.
+:::
+
+To assess if and where future conditions are outside the range of conditions observed during model training, we use as projection layers the future climate data that we used as input to our model prediction in [paragraph -@sec-e8039LmOdu]. These are the projected bioclimatic data for the period 2081-2100, based on the SSP585 climate scenario from the EC-Earth3-Veg general circulation model.
+
+::: {#exm-lHWXJikKCV .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+# Compute mess
+r.mess flags=mnkci \# <1>
+ref_env=bio_1,bio_2,bio_4,bio_8,bio_9,bio_13,bio_14,bio_15,bio_19 \
+proj_env=bio.1,bio.2,bio.4,bio.8,bio.9,bio.13,bio.14,bio.15,bio.19 \
+ref_rast=referencepoints output=mess nprocs=2 memory=1000
+```
+
+1.  Check the [manual page](https://grass.osgeo.org/grass-stable/manuals/addons/r.mess.html) about the meaning of these flags.
+
+## {{< fa brands python >}}
+
+``` python
+gs.run_command("r.mess", flags="mnkci", # <1>
+    ref_env=["bio_1", "bio_2", "bio_4", "bio_8", "bio_9",
+             "bio_13", "bio_14", "bio_15", "bio_19"],
+    proj_env=["bio.1", "bio.2", "bio.4", "bio.8","bio.9",
+              "bio.13", "bio.14", "bio.15", "bio.19"],
+    ref_rast="referencepoints", output="mess",
+    nprocs=2, memory=1000,
+)
+```
+
+1.  Check the [manual page](https://grass.osgeo.org/grass-stable/manuals/addons/r.mess.html) about the meaning of these flags.
+
+## {{< fa regular window-restore >}}
+
+Open the [r.mess]{.style-function} dialog and run it with:
+
+| Parameter | Value |
+|----|----|
+| ref_env | bio_1,bio_2,bio_4,bio_8,bio_9,bio_13,bio_14,bio_15,bio_19 |
+| proj_env | bio.1,bio.2,bio.4,bio.8,bio.9,bio.13,bio.14,bio.15,bio.19 |
+| proj_env | attr |
+| ref_rast | referencepoints |
+| nprocs | 2 |
+| memory | 1000 |
+| Most dissimilar variable (MoD) (m) | ✅ |
+| Area with negative MESS (n) | ✅ |
+| sum(IES), where IES \< 0 (k) | ✅ |
+| Number of IES layers with values \< 0 (c) | ✅ |
+| Remove ind. env. similarity layers (IES) (i) | ✅ |
+
+: {tbl-colwidths="\[42,57\]"}
+:::
+
+We have now five new layers that provide more insight in where future conditions are outside the range of conditions observed during model training. We can compare these to the predicted probability distribution of our species
+
+### Results
+
+. A negative MESS value shows an environmental variable outside the training data range, indicating a novel climate.
+
+n MESS map areas in red have one or more environmental variables outside the range present in the training data, so predictions in those areas should be treated with strong caution. (For interpretation of the references to color in this figure legend, the reader is referred to the Web version of this article.)

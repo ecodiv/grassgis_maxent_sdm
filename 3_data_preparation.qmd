@@ -431,7 +431,13 @@ Open the [r.random]{.style-function}, and use the following parameter settings.
 
 ## Multicollinearity {#sec-multicollinearity}
 
-Multicollinearity occurs when two or more explanatory variables are highly correlated. This can make it difficult to determine the individual effect of each variable on the species distribution, and redundant variables may add noise to the model without improving its predictive power. Maxent, a commonly used SDM tool, is relatively insensitive to multicollinearity because it selects the most informative variables during model training. Yet, excluding highly redundant variables might still help to get a more parsimonious, robust and interpretable model. And on a practical note, it will reduce the time it takes to train the model.
+Multicollinearity occurs when two or more explanatory variables are highly correlated. This can make it difficult to determine the individual effect of each variable on the species distribution, and redundant variables may add noise to the model without improving its predictive power.
+
+::: {.callout-tip appearance="simple"}
+When building a species distribution model using highly correlated explanatory variables, the model has multiple ways to achieve a similar fit within the training area. Consequently, two models based on these variables are likely to perform comparably in the training area. However, when these models are projected to a new geographic region or applied under different climate conditions, their predictions can diverge drastically if the correlation between the explanatory variables in the new region differ from those observed during training.
+:::
+
+Maxent, a commonly used SDM tool, is relatively insensitive to multicollinearity because it selects the most informative variables during model training. Yet, excluding highly redundant variables might still help to get a more parsimonious, robust and interpretable model. And on a practical note, it will reduce the time it takes to train the model.
 
 ![The bioclim 6 and bioclim 11 variables are highly correlated (r=0.98). This begs the question of how useful it is to use both as predictor variables in the model. You can explore the relation between any two variables yourself using the bivariate scatterplot tool. Click on the ![](images/layer-raster-analyze.png) in the toolbar of the map display.](images/bio6_bio11_scatterplot.png){#fig-bio6_bio11_scatterplot fig-align="left"}
 
@@ -456,7 +462,7 @@ r.vif maps=$layers seed=5 n=100000 maxvif=10 # <3>
 
 1.  Installs the r.vif add-on in GRASS GIS if it is not already installed.
 2.  This line creates a comma separated list of raster layers in the mapset 'climate_current' whose names start with 'bio'. The resulting list is stored in the variable 'layers'. With the *-m* flag, the mapset is included in the layers names.
-3.  **maps=\$layers**: Uses the list of raster layers stored in the 'layers' variable as input for the VIF analysis. You can, alternatively, skip the previous line, and type in the names of each of the layers.
+3.  **maps=\$layers**: Uses the list of raster layers stored in the 'layers' variable as input for the VIF analysis. You can, alternatively, skip the previous line, and type in the names of each of the layers. The [seed]{.style-parameter} parameter ensures that the random processes are reproducible. You can set any number. If next time you run this with the same seed value, the function will use the same set of random points.
 
 ## {{< fa brands python >}}
 
@@ -465,25 +471,27 @@ r.vif maps=$layers seed=5 n=100000 maxvif=10 # <3>
 gs.run_command("g.extension", extension="r.vif")  # <1>
 
 # Select the input variable
-layers = gs.list_strings(pattern="bio*", mapset="climate_current", type="raster")  # <2>
-gs.run_command("r.vif", maps=layers, seed=5, n=100000, maxvif=10) # <3>
+layers = gs.list_strings(pattern="bio*", mapset="climate_current",
+                         type="raster")  # <2>
+gs.run_command("r.vif", maps=layers, n=100000, maxvif=10, seed=5) # <3>
 ```
 
 1.  Installs the r.vif add-on in GRASS GIS if it is not already installed.
 2.  The [list_strings]{.style-function} module provides a convenient wrapper to the [g.list]{.style-function}. The parameters are the same as for the [g.list]{.style-function}.
-3.  The [seed]{.style-parameter} parameter ensures that the random processes are reproducible. You can set any number.
+3.  The [seed]{.style-parameter} parameter ensures that the random processes are reproducible. You can set any number. If next time you run this with the same seed value, the function will use the same set of random points.
 
 ## {{< fa regular window-restore >}}
 
 In the menu, go to [settings → addon extensions → install extensions from addons]{.style-menu}, search for [r.vif]{.style-function} and install it.
 
-Now, we run the [r.vif]{.style-function}. Make sure to fill in the names of all 19 bioclim variables under the [maps]{.style-parameter} parameter.
+Now, we run the [r.vif]{.style-function}. Make sure to fill in the names of all 19 bioclim variables under the [maps]{.style-parameter} parameter. The module selects 10,000 points at random. To make the results reproducible, use the [seed]{.style-parameter} parameter. Repeating this step with the same seed value will yield identical results. If you prefer the function to select a different set of random points, use the [-s]{.style-parameter} flag instead of specifying the [seed]{.style-parameter} parameter.
 
 | Parameter | Value                                      |
 |-----------|--------------------------------------------|
 | maps      | bio_1,bio_2,bio_3 ... bio_17,bio_18,bio_19 |
 | n         | 100000                                     |
 | maxvif    | 10                                         |
+| seed      | 5                                          |
 
 : {tbl-colwidths="\[20,80\]"}
 :::
@@ -535,12 +543,12 @@ mkdir dataset01
 mkdir dataset01/envdat
 
 # Export the Maxent input data
-v.maxent.swd -t species=Erebia_alberganus_obs \                             # <1>
-  bgp=background_points \                                          # <2> 
-  evp_maps=bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9 \   # <3>
-  species_output=dataset01/species.swd \                          # <4>
-  bgr_output=dataset01/background_points.swd \                           # <5>
-  export_rasters=dataset01/envdat                                 # <6>
+v.maxent.swd -t species=Erebia_alberganus_obs \# <1>
+  bgp=background_points \# <2> 
+  evp_maps=bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9 \# <3>
+  species_output=dataset01/species.swd \# <4>
+  bgr_output=dataset01/background_points.swd \# <5>
+  export_rasters=dataset01/envdat # <6>
 ```
 
 1.  [species]{.style-parameter}: point layer with occurrences
@@ -560,11 +568,11 @@ os.makedirs("dataset01/envdat", exist_ok=True)                      # <1>
 gs.run_command(
     "v.maxent.swd",
     flags="t",
-    species="Erebia_alberganus_obs",                                          # <2>
-    bgp="background_points",                                         # <3>
+    species="Erebia_alberganus_obs",                                # <2>
+    bgp="background_points",                                        # <3>
     evp_maps="bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9",  # <4>
-    species_output="dataset01/species.swd",                          # <5>
-    bgr_output="dataset01/background_points.swd",                           # <6>
+    species_output="dataset01/species.swd",                         # <5>
+    bgr_output="dataset01/background_points.swd",                   # <6>
     export_rasters="dataset01/envdat",                              # <7>
 )
 ```
