@@ -1,4 +1,4 @@
-# Model Validation {#sec-modelvalidation}
+# Model evaluation {#sec-modelvalidation}
 
 So far we have discussed how to build a model and use it to predict the distribution of a species. However, it is equally important to understand how to interpret and evaluate the results of the model. A key step in this process is assessing the accuracy of the model's predictions - a process known as *model validation*.
 
@@ -79,12 +79,12 @@ We train the model as we did in @sec-modeltraining, but this time we ask Maxent 
 
 ``` bash
 r.maxent.train \
-  samplesfile=dataset01/species.swd \
-  environmentallayersfile=dataset01/background_points.swd \
-  outputdirectory=model_02 \ 
-  randomtestpoints=20 \
-  threads=4 memory=1000 \ 
-  -ybg
+samplesfile=dataset01/species.swd \
+environmentallayersfile=dataset01/background_points.swd \
+outputdirectory=model_02 \
+randomtestpoints=20 \
+threads=4 memory=1000 \
+-ybg
 ```
 
 ## {{< fa brands python >}}
@@ -106,7 +106,18 @@ gs.run_command(
 
 Open the [r.maxent.train]{.style-function} dialog and run the module with the following parameter settings:
 
-<br>Tip: if you are using the r.maxent.train dialog screen, keep it open after it finishes. That way, for our next run, you only need to adjust some parameter settings instead of typing in all again.
+| Parameter | Value |
+|----|----|
+| samplesfile | dataset01/species.swd |
+| environmentallayersfile | dataset01/background.swd |
+| outputdirectory | model_02 |
+| threads | 4 |
+| memory | 1000 |
+| Create a vector point layer from the sample predictions (y) | ✅ |
+| Create a vector point layer with predictions at backgr. points (b) | ✅ |
+| Create response curves (g) | ✅ |
+
+: {tbl-colwidths="\[63,37\]"}
 :::
 
 :::: {.panel-tabset .exercise}
@@ -169,19 +180,19 @@ Once the best model is selected, the next step is to rebuild it using all availa
 
 ### Description
 
-One limitation of the validation method described in the previous paragraph is that the results can vary significantly depending on which 20% of the points are selected for testing. A more robust and commonly used technique to estimate the accuracy of a predictive model is [cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). There are different types of cross-validation, but we'll focus on k-fold cross-validation here. In k-fold cross-validation, the original sample is randomly partitioned into **k** subsamples with an approximately equal number of records. For this tutorial, we carry out a 4-fold cross-validation.
+One limitation of the validation method described in the previous paragraph is that the results can vary depending on which 20% of the points are selected for testing. A more robust and commonly used technique to estimate the accuracy of a predictive model is [cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). There are different types of cross-validation, but we'll focus on k-fold cross-validation here. In k-fold cross-validation, the original sample is randomly partitioned into **k** subsamples with an approximately equal number of records, as further explained in @fig-vkgSx6qmBy.
 
 ![Schematic explanation of a 4-fold cross-validation. The presence data is randomly partitioned into 4 groups with an approximately equal number of records. Of these groups, a single group is set apart as the validation data for testing the model, and the remaining subsamples are combined to be used as training data to create the model. Next, the model is used to predict the presence of the locations of the validation subset. The results of the prediction are then compared with the known presence and background designations in the validation subset. The cross-validation process is repeated as many times as there are subsamples, whereby each of the subsamples is used exactly once as the validation data.](images/4-fold_cross-validation.svg){#fig-vkgSx6qmBy fig-align="left" width="600"}
 
 ### Model training
 
-To perform a cross-validation, we run [r.maxent.train]{.style-function} with the [replicatetype]{.style-parameter} and the [replicates]{.style-parameter} parameter to tell Maxent to run a 4-fold cross-validation. This means that Maxent will process trains four models in the background, calculates validation statistics for each model, and computes average statistics across the four sub-models.
+For this tutorial, we carry out a 4-fold cross-validation. To perform the cross-validation, we run [r.maxent.train]{.style-function} with the [replicatetype]{.style-parameter} and the [replicates]{.style-parameter} parameter to tell Maxent to run a 4-fold cross-validation. This means that Maxent will process trains four models in the background, calculates validation statistics for each model, and computes average statistics across the four sub-models.
 
 ::: {.callout-note appearance="simple"}
-We will henceforth refer to these as the "four models". However, these are not distinct, separate models but represent the four iterations of a 4-fold cross-validation process. Each iteration corresponds to training the model on a unique combination of three subsets of the data and testing it on the remaining subset. Thus, while the parameters and results may vary slightly across the iterations due to differences in the training and testing subsets, they are essentially iterations of the same underlying model, evaluated under different data splits.
+We will henceforth refer to these as the "four models". However, these are not distinct, separate models but represent the four iterations of a 4-fold cross-validation process. Each iteration corresponds to training the model on a unique combination of three subsets of the data and testing it on the remaining subset. Thus, while the results may vary slightly across the iterations due to differences in the training and testing subsets, they are essentially iterations of the same underlying model (same parameter settings), evaluated under different data splits.
 :::
 
-If both the option to create a sample prediction ([-y]{.style-parameter} flag) and k-fold cross-validation are selected, the sample prediction point layer's attribute table will include the average predicted probabilities and the range of predicted probabilities across the four models for each point. Note that the the [v.db.pyupdate](https://grass.osgeo.org/grass-stable/manuals/v.db.update.html) addon needs to be installed to do this.
+If both the option to create a sample prediction ([-y]{.style-parameter} flag) and k-fold cross-validation are selected, the sample prediction point layer's attribute table will include for each point the average predicted probabilities and the range of predicted probabilities across the four models. Note that the the [v.db.pyupdate](https://grass.osgeo.org/grass-stable/manuals/v.db.update.html) addon needs to be installed to do this.
 
 We furthermore specify the location of the folder with the input environmental raster layers using the [projectionlayers]{.style-parameter} parameter. This instructs Maxent to generate a raster prediction layer. When the k-fold cross-validation option is enabled, this raster shows the average predicted probability of species presence, calculated across all four model iterations. Additionally, three extra layers will be produced, showing the minimum, maximum, and standard deviation of the predictions across the four models.
 
@@ -202,14 +213,12 @@ g.region raster=bio_1@climate_current
 
 # Train
 r.maxent.train \
-  samplesfile=dataset01/species.swd \
-  environmentallayersfile=dataset01/background_points.swd \
-  projectionlayers=dataset01/envdat  \
-  outputdirectory=model_03 \ 
-  replicatetype=crossvalidate \
-  replicates=4 \
-  threads=4 memory=1000 \ 
-  -yg
+samplesfile=dataset01/species.swd \
+environmentallayersfile=dataset01/background_points.swd \
+projectionlayers=dataset01/envdat \
+outputdirectory=model_03 \
+replicatetype=crossvalidate \
+replicates=4 threads=4 memory=1000 -yg
 ```
 
 ## {{< fa brands python >}}
@@ -341,6 +350,8 @@ Open the [v.colors]() dialog and run it with:
 | use       | attr                                    |
 | column    | Cloglog_range                           |
 | color     | bcyr                                    |
+
+: {tbl-colwidths="\[50,50\]"}
 :::
 
 Now, go to the [data]{.style-menu} panel, and and open the various layers in the [Map display]{.style-menu} panel. Pay particular attention to the areas of disagreement. These highlight regions where the model predictions are less consistent, signaling the need for cautious interpretation of the results in these areas.
@@ -353,6 +364,104 @@ Now, go to the [data]{.style-menu} panel, and and open the various layers in the
 ## Range sample predictions
 
 ![The [Erebia_alberganus_obs_samplePredictions]{.style-data} vector layer with GBIF occurrence data. The colors represent the range of predicted probabilities (the difference between the maximum and minimum values) across the four models.](images/Erebia_alberganus_obs_samplePredictions2.png){#fig-samlepred_model_03b group="ytHc07Sg8P"}
+
+## Mean vs range
+
+![Density plot, with the redicted mean probabilities plotted against the range of predicted probabilities across the four iterations of model 3. The grey lines show the median mean and range values. See @exm-972VUKNJIx below for the code used to create this plot.](images/scatterplot_mean_range.png){#fig-meanvsrange fig-align="left"}
+:::
+
+Ideally, the four model iterations should result in high average scores for occurrence locations, indicating consistency and accuracy, and low range values, reflecting strong agreement between different model iterations. To identify locations with high average scores and low range values, or vice versa, we can create a scatterplot using the [v.scatterplot](https://grass.osgeo.org/grass-stable/manuals/addons/v.scatterplot.html) add-on.
+
+::: {#exm-972VUKNJIx .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+# Install v.scatterplot
+g.extension extension=v.scatterplot
+
+# Create a scatter/density plot
+v.scatterplot map=Erebia_alberganus_obs_samplePredictions \
+x=Cloglog_mean y=Cloglog_range type=density \
+quadrants=median
+```
+
+## {{< fa brands python >}}
+
+``` python
+# Install v.scatterplot
+gs.run_command("g.extension", extension="v.scatterplot")
+
+# Create a scatter/density plot
+gs.run_command(
+    "v.scatterplot",
+    map="Erebia_alberganus_obs_samplePredictions",
+    x="Cloglog_mean",
+    y="Cloglog_range",
+    type="density",
+    quadrants="median",
+)
+```
+
+## {{< fa regular window-restore >}}
+
+Install the [v.scatterplot]{.style-function} addon, and run it with the following parameters:
+
+| Parameter | Value                                   |
+|-----------|-----------------------------------------|
+| map       | Erebia_alberganus_obs_samplePredictions |
+| x         | Cloglog_mean                            |
+| y         | Cloglog_range                           |
+| type      | density                                 |
+| quadrants | median                                  |
+
+: {tbl-colwidths="\[40,60\]"}
+:::
+
+The resulting scatterplot (@fig-meanvsrange) shows that there are quite a few occurrence locations where the model iterations fairly consistently predict a low probability (false negatives), while there are a few locations where predictions vary more across the different iterations (less robust predictions). You can extract and plot outliers on the map with the [v.extract](https://grass.osgeo.org/grass-stable/manuals/v.extract.html) module (result not shown here). Alternatively, you can select and highlight them using the [SQL Query Builder]{.style-menu} of the [Attribute Table Manager]{.style-menu}.
+
+::: {#exm-NlC6SPkAy7 .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+# Extract outliers to new map
+v.extract input=Erebia_alberganus_obs_samplePredictions \
+where='"Cloglog_mean" < 0.3 AND "Cloglog_range" >= 0.09\' \
+output=outliers
+```
+
+## {{< fa brands python >}}
+
+``` python
+# Extract outliers to new map
+gs.run_command(
+    "v.extract",
+    input="Erebia_alberganus_obs_samplePredictions",
+    where='"Cloglog_mean" < 0.3 AND "Cloglog_range" >= 0.09',
+    output="outliers",
+)
+```
+
+## {{< fa regular window-restore >}}
+
+Extract outliers to new map using [v.extract](.style-function) with the following parameters:
+
+| Parameter | Value                                               |
+|-----------|-----------------------------------------------------|
+| input     | Erebia_alberganus_obs_samplePredictions             |
+| where     | `'"Cloglog_mean" < 0.3 AND "Cloglog_range" > 0.09'` |
+| output    | outliers                                            |
+
+: {tbl-colwidths="\[40,60\]"}
+
+Alternatively, use the [Attribute Table Manager]{.style-menu}:
+
+{{< video "https://ecodiv.earth/share/sdm_in_grassgis/select_outliers_in_attributetable2.mp4" >}}
 :::
 
 To get a better idea about the spatial patterns of agreement and disagreement among the models outside the areas where the species was observed, we can examine the prediction raster layers with the average and standard deviation of the values generated by the four models.
@@ -431,7 +540,7 @@ When using a species distribution model to make predictions under conditions tha
 
 The Multivariate Environmental Similarity (MES), as described by Elith et al. [@elith2010], can be used to evaluate if and where future conditions are outside the range of conditions observed during model training, and thus where model predictions might be less reliable. In GRASS, we can use the [r.mess](https://grass.osgeo.org/grass-stable/manuals/addons/r.mess.html) addon to calculate the MESS.
 
-We use [r.mess]{.style-function} to examine how different the climatic conditions in 2081 are to present conditions. For the present climate conditions, we use the same data and bioclimatic variables as we used to create our first model in [paragraph -@sec-4trainthemodel]. We only consider the conditions in the presence and background locations, as this is what we used to train the model. To do so, we combine and convert presence and background points into a new raster layer [referencelayer]{.style-data}, and use this as input for the [ref_rast]{.style-parameter} parameter.
+We use the [r.mess]{.style-function} module to examine how different the climatic conditions in 2081 are to present conditions. For the present climate conditions, we use the same data and bioclimatic variables as we used to create our first model in [paragraph -@sec-4trainthemodel]. We only consider the conditions in the presence and background locations, as this is what we used to train the model. To do so, we combine and convert presence and background points into a new raster layer [referencelayer]{.style-data}, and use this as input for the [ref_rast]{.style-parameter} parameter.
 
 ::: {#exm-dCCiaw6IUX .hiddendiv}
 :::
@@ -448,7 +557,7 @@ g.mapset mapset=model_01
 g.region raster=bio_1@climate_current # <1>
 
 # Combine the occurrence and background points
-v.patch input=E_alberganus_samplepred,E_alberganus_bgrdpred" \
+v.patch input=E_alberganus_samplepred,E_alberganus_bgrdpred \
 output=referencepoints
 
 # Convert the point layer to a raster layer # <2>
@@ -531,7 +640,7 @@ And convert the point layer to a raster with the [v.to.rast]{.style-function} mo
 In the next step, we use the [ref_rast]{.style-parameter} parameter to set the reference raster layer, which we create here, as the reference layer. Alternatively, we could use the [ref_vect]{.style-parameter} parameter with the [referencepoints]{.style-data} vector layer. However, the vector layer contains multiple point within some raster cells. The [r.mess]{.style-function} module will ignore all but one with a warning message. To avoid such message, we convert the point layer to a raster, effectively resolving the issue by eliminating duplicate points.
 :::
 
-To assess if and where future conditions are outside the range of conditions observed during model training, we use as projection layers the future climate data that we used as input to our model prediction in [paragraph -@sec-e8039LmOdu]. These are the projected bioclimatic data for the period 2081-2100, based on the SSP585 climate scenario from the EC-Earth3-Veg general circulation model.
+To assess if and where future conditions are outside the range of conditions observed during model training, we use the same future climate data that we used as input to our model prediction in [paragraph -@sec-e8039LmOdu]. These are the projected bioclimatic data for the period 2081-2100, based on the SSP585 climate scenario from the EC-Earth3-Veg general circulation model.
 
 ::: {#exm-lHWXJikKCV .hiddendiv}
 :::
@@ -589,6 +698,22 @@ We have now five new layers that provide more insight in where future conditions
 
 ### Results
 
-. A negative MESS value shows an environmental variable outside the training data range, indicating a novel climate.
+The main MESS map (@fig-messmap) shows the degree of environmental similarity between current conditions and projected conditions in 2081 at each location. Negative values (indicated in red on the map) means there are one or more environmental variables outside the range present in the training data, so predictions in those areas should be treated with strong caution.
 
-n MESS map areas in red have one or more environmental variables outside the range present in the training data, so predictions in those areas should be treated with strong caution. (For interpretation of the references to color in this figure legend, the reader is referred to the Web version of this article.)
+::: {.panel-tabset .exercise}
+## MESS
+
+![The MESS value at a location is determined by identifying the environmental variable that deviates the most in 2081 compared to its current range. <u>Negative MESS</u> values (indicated in red on the map) highlight areas with novel climate conditions, meaning that the projected 2081 climate variables fall outside the range observed under current conditions. This is expressed as a fraction of the variable’s current range (e.g., how far outside the known range the projected value lies). <u>Positive MESS</u> values (shown in blue) indicate areas where future conditions are not novel. A MESS value of 100 represents locations where the projected conditions in 2081 are identical to the median values of the corresponding variables in the current data. Lower positive values (closer to 0) are further from the median of the current conditions, but still within the observed range.](images/mess_MES.png){#fig-messmap fig-align="left" group="mcLze6OQc6"}
+
+## MOB
+
+![The analysis identifies the most novel variable at each point, revealing that bio_8 (mean temperature of the wettest quarter) and bio_9 (mean temperature of the driest quarter) are the most frequently novel variables overall. However, within the regions where the species has been observed, the results are more divers. In these areas, a variety of variables are projected to be the most novel for 2081 in small, localized regions, which probably reflects the highly topographically heterogeneous conditions.](images/mess_MoD.png){#fig-modmap fig-align="left" group="mcLze6OQc6"}
+
+## Count Negative
+
+![The number of variables with a negative MESS values, i.e., for each location, it shows the number of variables that are projected to have a value outside the range of values in the training data.](images/mess_CountNeg.png){#fig-countneg fig-align="left" group="mcLze6OQc6"}
+:::
+
+You can compare the MESS map with the occurrence point map (@fig-samlepred_model_01), the predicted probability map under future climate conditions (@fig-futdistr_01) and the presence-absence map (@fig-r_cross_01) to assess the reliability of the predictions. If you zoom in, you'll notice that for most locations where the species has been observed, conditions in 2081 are projected to remain within the range of observed values under current conditions.
+
+Unfortunately, for our species, in some areas where the model predicts the species to be absent under current conditions but present under future conditions, the environmental conditions supporting such predictions fall outside the range of observed values. These predictions of increased suitability in these regions should therefore be interpreted with caution.

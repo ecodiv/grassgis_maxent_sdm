@@ -74,10 +74,10 @@ cd path_to_working_directory
 
 # Create the future potential distribution map
 r.maxent.predict \
-  lambda=model_01/Erebia_alberganus_obs.lambdas \
-  rasters=bio.1,bio.13,bio.14,bio.15,bio.19,bio.2,bio.4,bio.8,bio.9 \
-  variables=bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9 \ # <1>
-  output=E_alberganus_futprob
+lambda=model_01/Erebia_alberganus_obs.lambdas \
+rasters=bio.1,bio.13,bio.14,bio.15,bio.19,bio.2,bio.4,bio.8,bio.9 \
+variables=bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9 \ # <1>
+output=E_alberganus_futprob
 ```
 
 1.  The names of the future bioclim layers differ from the variables, so we need to provided the variable names. Be careful, they need to be given in the same order as the corresponding raster layers.
@@ -111,7 +111,7 @@ Open the [r.maxent.predict]{.style-function} dialog and run it with the followin
 | variables [^5_model_prediction-2] | bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9 |
 | output | E_alberganus_futprob |
 
-: {tbl-colwidths="\[50,50\]"}
+: {tbl-colwidths="\[35,65\]"}
 :::
 
 [^5_model_prediction-2]: The names of the future bioclim layers differ from the variables, so we need to provided the variable names. Be careful, they need to be given in the same order as the corresponding raster layers.
@@ -149,7 +149,7 @@ Open the [r.colors]{.style-function} dialog and run it with the following parame
 | map       | E_alberganus_futprob     |
 | raster    | E_alberganus_probability |
 
-: {tbl-colwidths="\[50,50\]"}
+: {tbl-colwidths="\[35,65\]"}
 :::
 
 Examining the resulting map reveals that by 2081, the potential distribution area of the Almond-eyed Ringlet is projected to decrease significantly under SSP585 (@fig-futdistr_01). In the Alps, its range is expected to shift to higher altitudes, while in other areas, the species may dissapear entirely.
@@ -175,7 +175,7 @@ To highlight areas where the changes are expected to happen, we can create a cha
 ``` bash
 # Calculate the change map
 r.mapcalc \
-  expression="E_alb_diff = E_alberganus_futprob - E_alberganus_probability"
+expression="E_alb_diff = E_alberganus_futprob - E_alberganus_probability"
 
 # Assign a color table that emphasize differences
 r.colors map=E_alb_diff color=differences
@@ -208,7 +208,7 @@ Next, open the [r.colors]{.style-function} module, and run it with the following
 | map       | E_alb_diff  |
 | color     | differences |
 
-: {tbl-colwidths="\[50,50\]"}
+: {tbl-colwidths="\[35,65\]"}
 :::
 
 Open the change map tab above to view the resulting map (@fig-changemap01). This map reinforces our earlier observations: in most areas, climate conditions are predicted to become less suitable, while at higher elevations in the Alps, climate conditions may become more favorable[^5_model_prediction-3]
@@ -312,8 +312,8 @@ Now we can compare the two maps to identify areas where the species is present b
 
 ``` bash
 r.cross -z \
-  input=E_alberganus_presabs,E_alberganus_presabsfut \
-  output=E_alberganus_presabschange # <1>
+input=E_alberganus_presabs,E_alberganus_presabsfut \
+output=E_alberganus_presabschange # <1>
 ```
 
 1.  The [-z]{.style-parameter} flag tells r.cross to ignore raster cells with no data.
@@ -340,6 +340,8 @@ Open the [r.cross]{.style-menu} module and run it with the following parameters.
 | input | E_alberganus_presabs,E_alberganus_presabsfut |
 | output | E_alberganus_presabschange |
 | Non-NULL data only (z) [^5_model_prediction-6] | ✅ |
+
+: {tbl-colwidths="\[35,65\]"}
 :::
 
 [^5_model_prediction-6]: The [-z]{.style-parameter} flag tells r.cross to ignore raster cells with no data.
@@ -353,8 +355,8 @@ To gain a more quantitative perspective on the predicted changes, we can use the
 ## {{< fa solid terminal >}}
 
 ``` bash
-r.report -n map=E_alberganus_presabschange \  # <1>
-  units=kilometers,percent                    # <2>
+r.report -n map=E_alberganus_presabschange \# <1>
+units=kilometers,percent # <2>
 ```
 
 1.  The [-n]{.style-parameter} flag tells r.report to not report on no data values.
@@ -383,6 +385,8 @@ Open the [r.report]{.style-menu} module and run it with the following parameters
 | map | E_alberganus_presabschange |
 | units [^5_model_prediction-7] | kilometers,percent |
 | Do not report no data value (n) [^5_model_prediction-8] | ✅ |
+
+: {tbl-colwidths="\[35,65\]"}
 :::
 
 [^5_model_prediction-7]: You can choose in what unit(s) [r.report]{.style-function} should report the area statistics.

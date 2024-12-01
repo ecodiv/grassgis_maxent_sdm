@@ -544,11 +544,11 @@ mkdir dataset01/envdat
 
 # Export the Maxent input data
 v.maxent.swd -t species=Erebia_alberganus_obs \# <1>
-  bgp=background_points \# <2> 
-  evp_maps=bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9 \# <3>
-  species_output=dataset01/species.swd \# <4>
-  bgr_output=dataset01/background_points.swd \# <5>
-  export_rasters=dataset01/envdat # <6>
+bgp=background_points \# <2>
+evp_maps=bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9 \# <3>
+species_output=dataset01/species.swd \# <4>
+bgr_output=dataset01/background_points.swd \# <5>
+export_rasters=dataset01/envdat # <6>
 ```
 
 1.  [species]{.style-parameter}: point layer with occurrences

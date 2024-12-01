@@ -228,8 +228,8 @@ We'll get the vector layer with urban areas from Natural Earth as well. Download
 
 ``` bash
 v.in.ogr -r \
-  input=ne_10m_urban_areas.shp \
-  output=tmp
+input=ne_10m_urban_areas.shp \
+output=tmp
 ```
 
 ## {{< fa brands python >}}
@@ -303,9 +303,9 @@ The vector data includes line features representing roads and ferry routes. Whet
 
 ``` bash
 v.in.ogr -r \
-  input=ne_10m_roads.shp \
-  where="featurecla='Road'" \
-  output=tmp
+input=ne_10m_roads.shp \
+where="featurecla='Road'" \
+output=tmp
 ```
 
 ## {{< fa brands python >}}
@@ -835,14 +835,14 @@ Note that, if the region and the raster layer are not perfectly aligned, the are
 
 ``` bash
 g.mapset -c mapset=climate_current
- n=54 s=36 w=-10 e=32 res=0.00833
+g.region n=54 s=36 w=-10 e=32 res=0.00833
 ```
 
 ## {{< fa brands python >}}
 
 ``` python
 gs.run_command("g.mapset", flags="c", mapset="climate_current")
-gs.run_command("", n=54, s=36, w=-10, e=32, res=0.0083)
+gs.run_command("g.region", n=54, s=36, w=-10, e=32, res=0.0083)
 ```
 
 ## {{< fa regular window-restore >}}
@@ -856,7 +856,7 @@ Type in [g.mapset]{.style-function} in the console to open the dialog, and use t
 
 : {tbl-colwidths="\[50,50\]"}
 
-Next, run the module with the following settings below. Alternatively, you can define the region's bounds manually in the [Map display]{.style-menu}, as explained in @sec-computationalregion.
+Next, run the [g.region]{.style-function} module with the following settings below. Alternatively, you can define the region's bounds manually in the [Map display]{.style-menu}, as explained in @sec-computationalregion.
 
 | Parameter                       | Value   |
 |---------------------------------|---------|

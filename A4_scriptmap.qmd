@@ -850,3 +850,217 @@ gs.run_command(
 
 gs.run_command("g.remove", flags="f", type="raster", name="tmp01")
 ```
+
+## Code for @fig-messmap {#sec-mess01 .unnumbered}
+
+``` python
+# Import libraries
+import grass.script as gs
+import os
+
+os.chdir("/home/paulo/Desktop")
+
+# Variable
+variable = "mess_MES"
+name = "mess_MES"
+
+# Set region
+gs.run_command("g.region", raster=variable)
+
+# Output settings
+width_image = 1200
+title = "-"
+
+# Get width/height ratio of image
+region_settings = gs.region()
+height = float(region_settings["n"]) - float(region_settings["s"])
+width = float(region_settings["e"]) - float(region_settings["w"])
+height_image = width_image / (width / height)
+
+# Set environmental variables
+os.environ["GRASS_RENDER_IMMEDIATE"] = "cairo"
+os.environ["GRASS_RENDER_HEIGHT"] = str(height_image)
+os.environ["GRASS_RENDER_WIDTH"] = str(width_image)
+os.environ["GRASS_RENDER_BACKGROUNDCOLOR"] = "#e7f7fe"
+os.environ["GRASS_RENDER_FILE_READ"] = "TRUE"
+os.environ["GRASS_FONT"] = "DejaVuSansCondensed"
+
+outputfile = f"{name}.png"
+os.remove(outputfile)
+os.environ["GRASS_RENDER_FILE"] = outputfile
+
+gs.run_command(
+    "d.rast",
+    map=variable,
+)
+
+gs.run_command(
+    "d.vect",
+    map="countries",
+    type="area",
+    color="195:195:195",
+    fill_color="none",
+    width=1,
+)
+
+gs.run_command(
+    "d.legend",
+    flags="bt",
+    title="MESS",
+    raster=variable,
+    font="Arial:Regular",
+    fontsize=16,
+    label_values="-40,-20,0,20,40,60",
+    at=[50, 88, 93, 95],
+)
+```
+
+## Code for @fig-modmap {#sec-mess02 .unnumbered}
+
+``` python
+# Import libraries
+import grass.script as gs
+import os
+
+# Set working directory
+os.chdir("/home/paulo/Desktop")
+
+# Variable
+variable = "mess_MoD"
+name = "mess_MoD"
+
+# Change color table
+COLORS_MOB = """\
+0 166:206:227
+1 31:120:180
+2 178:223:138
+3 51:160:44
+4 251:154:153
+5 227:26:28
+6 253:191:111
+7 255:127:0
+8 202:178:214
+"""
+
+gs.write_command(
+    "r.colors",
+    map="mess_MoD@model_01",
+    rules="-",
+    stdin=COLORS_MOB,
+)
+
+# Set region
+gs.run_command("g.region", raster=variable)
+
+# Output settings
+width_image = 1200
+title = "-"
+
+# Get width/height ratio of image
+region_settings = gs.region()
+height = float(region_settings["n"]) - float(region_settings["s"])
+width = float(region_settings["e"]) - float(region_settings["w"])
+height_image = width_image / (width / height)
+
+# Set environmental variables
+os.environ["GRASS_RENDER_IMMEDIATE"] = "cairo"
+os.environ["GRASS_RENDER_HEIGHT"] = str(height_image)
+os.environ["GRASS_RENDER_WIDTH"] = str(width_image)
+os.environ["GRASS_RENDER_BACKGROUNDCOLOR"] = "#e7f7fe"
+os.environ["GRASS_RENDER_FILE_READ"] = "TRUE"
+os.environ["GRASS_FONT"] = "DejaVuSansCondensed"
+
+outputfile = f"{name}.png"
+os.remove(outputfile)
+os.environ["GRASS_RENDER_FILE"] = outputfile
+
+gs.run_command(
+    "d.rast",
+    map=variable,
+)
+
+gs.run_command(
+    "d.legend",
+    flags="btc",
+    raster=variable,
+    font="Arial:Regular",
+    fontsize=16,
+    title_fontsize=18,
+    title="MOD",
+    at=[50, 85, 90, 95],
+)
+```
+
+## Code for @fig-countneg {#sec-mess03 .unnumbered}
+
+``` python
+# Import libraries
+import grass.script as gs
+import os
+
+os.chdir("/home/paulo/Desktop")
+
+# Variable
+variable = "mess_CountNeg"
+name = "mess_CountNeg"
+
+# Set region
+gs.run_command("g.region", raster=variable)
+
+# Output settings
+width_image = 1200
+title = "-"
+
+# Get width/height ratio of image
+region_settings = gs.region()
+height = float(region_settings["n"]) - float(region_settings["s"])
+width = float(region_settings["e"]) - float(region_settings["w"])
+height_image = width_image / (width / height)
+
+# Set environmental variables
+os.environ["GRASS_RENDER_IMMEDIATE"] = "cairo"
+os.environ["GRASS_RENDER_HEIGHT"] = str(height_image)
+os.environ["GRASS_RENDER_WIDTH"] = str(width_image)
+os.environ["GRASS_RENDER_BACKGROUNDCOLOR"] = "#e7f7fe"
+os.environ["GRASS_RENDER_FILE_READ"] = "TRUE"
+os.environ["GRASS_FONT"] = "DejaVuSansCondensed"
+
+outputfile = f"{name}.png"
+os.remove(outputfile)
+os.environ["GRASS_RENDER_FILE"] = outputfile
+
+gs.run_command(
+    "d.vect",
+    map="countries",
+    type="area",
+    color="none",
+    fill_color="white",
+    width=1,
+)
+
+gs.run_command(
+    "d.rast",
+    map=variable,
+    value=0,
+    flags="i",
+)
+
+gs.run_command(
+    "d.vect",
+    map="countries",
+    type="area",
+    color="195:195:195",
+    fill_color="none",
+    width=1,
+)
+
+gs.run_command(
+    "d.legend",
+    flags="bt",
+    raster=variable,
+    font="Arial:Regular",
+    fontsize=16,
+    at=[50, 88, 93, 95],
+    range="1,4",
+)
+```

@@ -201,7 +201,11 @@ font-size: 2.2rem !important;
 
 h2 {
   margin-top: 1.5rem !important;
-  color: #6c6c6c;
+  color: $ecodivblue;
+}
+
+H2 > .header-section-number {
+  color: $ecodivblue;
 }
 
 h3 {
