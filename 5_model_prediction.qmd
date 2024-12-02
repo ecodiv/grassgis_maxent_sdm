@@ -393,7 +393,7 @@ Open the [r.report]{.style-menu} module and run it with the following parameters
 
 [^5_model_prediction-8]: The [-n]{.style-parameter} flag tells r.report to not report on no data values.
 
-The map we created in @exm-ZRtKwPOjl3 shows the predicted presence and absence of *Erebia_alberganus* under current and future conditions (@fig-r_cross_01). According to the statistics we calculated in @exm-fY8ZAeGbFo, about 98% of the study area is and will remain unsuitable for our species. Currently, 2.15% of the area is classified as suitable for the species. However, projections suggest that this suitability will significantly decrease, with only 0.1% remaining suitable by 2081-2100. Additionally, 0.07% of the area may become newly suitable for the species over this period (@fig-r_cross_report_01).
+The map we created in @exm-ZRtKwPOjl3 shows the predicted presence and absence of *Erebia_alberganus* under current and future conditions (@fig-r_cross_01). According to the statistics we calculated in @exm-fY8ZAeGbFo, about 98% of the study area is and will remain unsuitable for our species. Currently, 2.15% of the area is classified as suitable for the species. However, projections suggest that the surface area with suitable conditions will significantly decrease, with only 0.1% remaining suitable by 2081-2100. Additionally, 0.07% of the area may become newly suitable for the species over this period (@fig-r_cross_report_01).
 
 ::: {.panel-tabset .exercise}
 ## The map
