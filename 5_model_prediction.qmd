@@ -211,7 +211,7 @@ Next, open the [r.colors]{.style-function} module, and run it with the following
 : {tbl-colwidths="\[35,65\]"}
 :::
 
-Open the change map tab above to view the resulting map (@fig-changemap01). This map reinforces our earlier observations: in most areas, climate conditions are predicted to become less suitable, while at higher elevations in the Alps, climate conditions may become more favorable[^5_model_prediction-3]
+The resulting map (@fig-changemap01) reinforces our earlier observations: in most areas, climate conditions are predicted to become less suitable, while at higher elevations in the Alps, climate conditions may become more favorable[^5_model_prediction-3]
 
 [^5_model_prediction-3]: These maps should be interpreted with caution, as they reflect only projected changes in climate conditions and do not account for other potentially important factors.
 
