@@ -22,30 +22,7 @@ Undersampling, on the other hand, is more difficult to address, especially when 
 
 ### Point densities
 
-Before proceeding, let's check whether our GBIF occurrence dataset shows any signs of bias by analyzing how the density of occurrences varies across the study area. We can do this by counting the number of observations within each grid cell. To accomplish this, we will use the [r.vect.stats](https://grass.osgeo.org/grass-stable/manuals/addons/r.vect.stats.html) module, which allows us to perform statistical analysis on raster-vector combinations. Since this is an addon, we will need to install it first.
-
-::: {#exm-upfOO5Bwjm .hiddendiv}
-:::
-
-::: {.panel-tabset group="interface"}
-## {{< fa solid terminal >}}
-
-``` bash
-g.extension extension=r.vect.stats
-```
-
-## {{< fa brands python >}}
-
-``` python
-gs.run_command("g.extension", extension="r.vect.stats")
-```
-
-## {{< fa regular window-restore >}}
-
-In the menu, select [Settings → Addon extensions → Install extension from addons \[g.extension\]]{.style-menu}. This opens a new window (see below).
-
-![Use the search bar to look for [r.vect.stats]{.style-function} and hit [Enter]{.style-menu}](images/g_extension_install_rvectstats.png){#fig-installrvectstats fig-align="left" width="80%"}
-:::
+Before proceeding, let's check whether our GBIF occurrence dataset shows any signs of bias by analyzing how the density of occurrences varies across the study area. We can do this by counting the number of observations within each grid cell. To accomplish this, we will use the [r.vect.stats](https://grass.osgeo.org/grass-stable/manuals/addons/r.vect.stats.html) module, which allows us to perform statistical analysis on raster-vector combinations. It is one of the addons installed in @sec-addons.
 
 We want to create the layer in the [Erebia_alberganus]{.style-db} mapset, so we need to switch to that mapset first.
 
@@ -190,8 +167,7 @@ We use [r.univar](https://grass.osgeo.org/grass-stable/manuals/r.univar.html) to
 # Compute raster statistics
 r.univar -e map=pointdensities # <1>
 
-# Install and run r.boxplot
-g.extension extension=r.boxplot
+# Run r.boxplot
 r.boxplot -o -h input=pointdensities
 ```
 
@@ -203,8 +179,7 @@ r.boxplot -o -h input=pointdensities
 # Compute raster statistics
 gs.run_command("r.univar", flags="e", map="pointdensities")  # <1>
 
-# Install and run r.boxplot
-gs.run_command("g.extension", extension="r.boxplot")
+# Run r.boxplot
 gs.run_command("r.boxplot", flags="o", input="pointdensities")
 ```
 
@@ -452,39 +427,29 @@ We'll use the stepwise VIF procedure to select the minimum set of bioclimatic va
 ## {{< fa solid terminal >}}
 
 ``` bash
-# Install the r.vif addon
-g.extension extension=r.vif # <1>
-
 # Select the input variable
-layers=`g.list -m type=raster pattern=bio* sep="," mapset=climate_current`  # <2>
-r.vif maps=$layers seed=5 n=100000 maxvif=10 # <3>
+layers=`g.list -m type=raster pattern=bio* sep="," mapset=climate_current`  # <1>
+r.vif maps=$layers seed=5 n=100000 maxvif=10 # <2>
 ```
 
-1.  Installs the r.vif add-on in GRASS GIS if it is not already installed.
-2.  This line creates a comma separated list of raster layers in the mapset 'climate_current' whose names start with 'bio'. The resulting list is stored in the variable 'layers'. With the *-m* flag, the mapset is included in the layers names.
-3.  **maps=\$layers**: Uses the list of raster layers stored in the 'layers' variable as input for the VIF analysis. You can, alternatively, skip the previous line, and type in the names of each of the layers. The [seed]{.style-parameter} parameter ensures that the random processes are reproducible. You can set any number. If next time you run this with the same seed value, the function will use the same set of random points.
+1.  This line creates a comma separated list of raster layers in the mapset 'climate_current' whose names start with 'bio'. The resulting list is stored in the variable 'layers'. With the *-m* flag, the mapset is included in the layers names.
+2.  **maps=\$layers**: Uses the list of raster layers stored in the 'layers' variable as input for the VIF analysis. You can, alternatively, skip the previous line, and type in the names of each of the layers. The [seed]{.style-parameter} parameter ensures that the random processes are reproducible. You can set any number. If next time you run this with the same seed value, the function will use the same set of random points.
 
 ## {{< fa brands python >}}
 
 ``` python
-# Install the r.vif addon
-gs.run_command("g.extension", extension="r.vif")  # <1>
-
 # Select the input variable
 layers = gs.list_strings(pattern="bio*", mapset="climate_current",
-                         type="raster")  # <2>
-gs.run_command("r.vif", maps=layers, n=100000, maxvif=10, seed=5) # <3>
+                         type="raster")  # <1>
+gs.run_command("r.vif", maps=layers, n=100000, maxvif=10, seed=5) # <2>
 ```
 
-1.  Installs the r.vif add-on in GRASS GIS if it is not already installed.
-2.  The [list_strings]{.style-function} module provides a convenient wrapper to the [g.list]{.style-function}. The parameters are the same as for the [g.list]{.style-function}.
-3.  The [seed]{.style-parameter} parameter ensures that the random processes are reproducible. You can set any number. If next time you run this with the same seed value, the function will use the same set of random points.
+1.  The [list_strings]{.style-function} module provides a convenient wrapper to the [g.list]{.style-function}. The parameters are the same as for the [g.list]{.style-function}.
+2.  The [seed]{.style-parameter} parameter ensures that the random processes are reproducible. You can set any number. If next time you run this with the same seed value, the function will use the same set of random points.
 
 ## {{< fa regular window-restore >}}
 
-In the menu, go to [settings → addon extensions → install extensions from addons]{.style-menu}, search for [r.vif]{.style-function} and install it.
-
-Now, we run the [r.vif]{.style-function}. Make sure to fill in the names of all 19 bioclim variables under the [maps]{.style-parameter} parameter. The module selects 10,000 points at random. To make the results reproducible, use the [seed]{.style-parameter} parameter. Repeating this step with the same seed value will yield identical results. If you prefer the function to select a different set of random points, use the [-s]{.style-parameter} flag instead of specifying the [seed]{.style-parameter} parameter.
+We run the [r.vif]{.style-function}. Make sure to fill in the names of all 19 bioclim variables under the [maps]{.style-parameter} parameter. The module selects 10,000 points at random. To make the results reproducible, use the [seed]{.style-parameter} parameter. Repeating this step with the same seed value will yield identical results. If you prefer the function to select a different set of random points, use the [-s]{.style-parameter} flag instead of specifying the [seed]{.style-parameter} parameter.
 
 | Parameter | Value                                      |
 |-----------|--------------------------------------------|
@@ -504,32 +469,9 @@ The VIF algorithm offers a data-driven method for selecting variables. However, 
 
 ## Export data {#sec-maxentswd}
 
-The last step before we, finally, can start with the actual modeling, is to prepare and export the input dataset for the Maxent model. We'll use the module [v.maxent.swd](https://grass.osgeo.org/grass-stable/manuals/addons/v.maxent.swd.html) for this. The module exports the different layers in the right format for Maxent. The presence and background point layers are exported as so-called [swd]{.style-data} files. Raster layers are exported as [ascii]{.style-data} files. Let's first install the addon.
+The last step before we, finally, can start with the actual modeling, is to prepare and export the input dataset for the Maxent model. We'll use the module [v.maxent.swd](https://grass.osgeo.org/grass-stable/manuals/addons/v.maxent.swd.html) for this. The module exports the different layers in the right format for Maxent. The presence and background point layers are exported as so-called [swd]{.style-data} files. Raster layers are exported as [ascii]{.style-data} files.
 
-::: {#exm-Cb1zDqdZuC .hiddendiv}
-:::
-
-::: {.panel-tabset group="interface"}
-## {{< fa solid terminal >}}
-
-``` bash
-g.extension extension=v.maxent.swd
-```
-
-## {{< fa brands python >}}
-
-``` python
-gs.run_command("g.extension", extension="v.maxent.swd")
-```
-
-## {{< fa regular window-restore >}}
-
-Follow the steps in the video below, but instead of [r.maxent.train]{.style-function}, install [v.maxent.swd]{.style-function}.
-
-{{< video "https://ecodiv.earth/share/sdm_in_grassgis/install_addons.mp4" >}}
-:::
-
-Now, we create a new folder in the working directory. Let's call it [dataset01]{.style-db}. And in that folder, we create a sub-folder called [envdat]{.style-db}. We'll export the [swd]{.style-data} files to the first folder, and the [ascii]{.style-data} raster files to the second folder using [v.maxent.swd]{.style-function}. Note, this make take some time, so be patient.
+First, we create a new folder in the working directory. Let's call it [dataset01]{.style-db}. And in that folder, we create a sub-folder called [envdat]{.style-db}. We'll export the [swd]{.style-data} files to the first folder, and the [ascii]{.style-data} raster files to the second folder using [v.maxent.swd]{.style-function}. Note, this make take some time, so be patient.
 
 ::: {#exm-ddddddwdr .hiddendiv}
 :::
@@ -587,7 +529,7 @@ gs.run_command(
 
 ## {{< fa regular window-restore >}}
 
-Create the folder [dataset01]{.style-db} and sub-folder [envdat]{.style-db} using your favorite file browser. Next, open the [v.maxent.swd]{.style-function} dialog and run it with the following parameter settings:
+Create the folder [dataset01]{.style-db} and sub-folder [envdat]{.style-db} using your favorite file manager/explorer. Next, open the [v.maxent.swd]{.style-function} dialog and run it with the following parameter settings:
 
 | Parameter | Value |
 |----|----|

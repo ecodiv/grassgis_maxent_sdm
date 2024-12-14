@@ -1,6 +1,8 @@
 # Introduction {#sec-introduction}
 
-This tutorial introduces a GRASS GIS tool set for species distribution modeling, and shows how to use it effectively in combination with other core modules and add-ons to predict the future potential distribution of the almond-eyed ringlet butterfly. The first part focuses on the essential building blocks of creating a species distribution model, from data collection to prediction. In the second part, we’ll dive deeper into the options, choices, and parameter settings to validate and fine-tune the model.
+This tutorial introduces a GRASS GIS tool set for species distribution modeling, and shows how to use it effectively in combination with other core modules and add-ons to predict the future potential distribution of the almond-eyed ringlet butterfly. It also includes a few examples illustrating how the GRASS GIS environment facilitates the exploration and interpretation of model results within their geographic context.
+
+The first part focuses on the essential building blocks of creating a species distribution model, from data collection to prediction. In the second part, we’ll dive deeper into the options, choices, and parameter settings to validate and fine-tune the model.
 
 ![Potential habitat of the Almond-eyed Ringlet (*Erebia alberganus*) in the Alps. Source: Paulo van Breugel](images/habitat.jpg){#fig-habitatalps fig-align="left"}
 
@@ -39,9 +41,68 @@ For Windows users, the [download page](https://grass.osgeo.org/download/windows/
 
 Note that if you already have QGIS installed on your Windows system, there’s a good chance you also have GRASS GIS installed. In that case, simply check whether you’re using the latest version.
 
+### GRASS GIS addons {#sec-addons}
+
+GRASS addons are modules that are not (yet) part of the core software package and therefore need to be installed separately. This can be done using the [wxGUI Extension Manager]{.style-menu} or using the command line. See @sec-usingaddons for details. In this tutorials, we'll use a number of addons, which we will install first.
+
+::: {#exm-JWByktRMjx .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+# Maxent addons
+g.extension extension=r.maxent.setup
+g.extension extension=r.maxent.train
+g.extension extension=r.maxent.predict
+g.extension extension=v.maxent.swd
+
+# Data import and processing
+g.extension extension=v.in.gbif
+g.extension extension=r.vif
+g.extension extension=r.mess
+g.extension extension=r.vect.stats
+g.extension extension=v.db.pyupdate
+
+# Stats and data visualisation
+g.extension extension=r.vect.stats
+g.extension extension=r.boxplot
+g.extension extension=v.scatterplot
+```
+
+## {{< fa brands python >}}
+
+``` python
+# Maxent addons
+gs.run_command("g.extension", extension="r.maxent.setup")
+gs.run_command("g.extension", extension="r.maxent.train")
+gs.run_command("g.extension", extension="r.maxent.predict")
+gs.run_command("g.extension", extension="v.maxent.swd")
+
+# Data import and processing
+gs.run_command("g.extension", extension="v.in.gbif")
+gs.run_command("g.extension", extension="r.vif")
+gs.run_command("g.extension", extension="r.mess")
+gs.run_command("g.extension", extension="r.vect.stats")
+gs.run_command("g.extension", extension="v.db.pyupdate")
+
+# Stats and data visualisation
+gs.run_command("g.extension", extension="r.vect.stats")
+gs.run_command("g.extension", extension="r.boxplot")
+gs.run_command("g.extension", extension="v.scatterplot")
+```
+
+## {{< fa regular window-restore >}}
+
+Follow the steps in the video below to install the [r.maxent.train]{.style-function} addon. Repeat this for the other addons.
+
+{{< video "https://ecodiv.earth/share/sdm_in_grassgis/install_addons.mp4" >}}
+:::
+
 ### Maxent {#sec-maxentsoftware}
 
-For the species distribution modeling, we'll use two addons, [r.maxent.train](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.train.html) and [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html), that use the Maxent software in the background. Download the Maxent software from the [Maxent website](https://biodiversityinformatics.amnh.org/open_source/maxent/) and extract the [Maxent.jar]{.style-apps} file. Install it into the GRASS GIS add-on directory using the [r.maxent.setup](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.setup.html) module. This will allow the other add-ons to find and use it automatically.
+Two of the addons we just installed ([r.maxent.train]{.style-function} and [r.maxent.predict]{.style-function}) use the Maxent software in the background. Download the Maxent software from the [Maxent website](https://biodiversityinformatics.amnh.org/open_source/maxent/) and extract the [Maxent.jar]{.style-apps} file. Install it into the GRASS GIS add-on directory using the [r.maxent.setup]{.style-function} module. This will allow the other add-ons to find and use it automatically.
 
 ::: {#exm-l4ovVBumNL .hiddendiv}
 :::

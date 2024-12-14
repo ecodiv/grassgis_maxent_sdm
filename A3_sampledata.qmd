@@ -1,6 +1,6 @@
 # Sample data {#sec-sampledata}
 
-The table below provides an overview of the raster and vector data used in this tutorial, including a link to source. In addition, a few potentially useful data sources are provided. For a list of curated list of public data sets, see [this link](https://github.com/awesomedata/awesome-public-datasets).
+The table below provides an overview of the raster and vector data used in this tutorial, including a link to source. In addition, a few potentially useful data sources are provided. For a much more extensive list of curated list of public data sets, see [this link](https://github.com/awesomedata/awesome-public-datasets).
 
 ### Data in this tutorial {.unnumbered}
 
@@ -17,6 +17,7 @@ The table below provides an overview of the data used in this tutorial.
 | @sec-occurrence | [GBIF *Erebia alberganus* occurrence data](https://www.gbif.org/species/5134543) | vector |
 | @sec-climatedata | [Worldclim historical climate data](https://www.worldclim.org/data/worldclim21.html#) | raster |
 | @sec-obtainfutureclimatelayers | [Worldclim future climate data](https://www.worldclim.org/data/cmip6/cmip6climate.html) | raster |
+| @sec-landcover | Land cover and use | [CORINE Land cover](https://land.copernicus.eu/en/products/corine-land-cover) |
 
 : {tbl-colwidths="\[20,60,20\]"}
 
@@ -28,13 +29,12 @@ The list below provide a few potentially useful data sources.
 
 | Variable | Name + link |
 |----|----|
-| Altitude | [EU DEM](https://ec.europa.eu/eurostat/web/gisco/geodata/digital-elevation-model/eu-dem#DD) |
+| Altitude | [Copernicus DEM](https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM) |
 | Climate data | [ClimateEU: historical and projected climate data for Europe](https://sites.ualberta.ca/~ahamann/data/climateeu.html) |
 | Climate data | [Statistical Downscaling (Climgen)](https://www.ccafs-climate.org/statistical_downscaling_climgen/) |
 | Climate data | [The ECLIPS-2.0 dataset, High-resolution gridded climate data for Europe](https://zenodo.org/records/3952159) |
 | Climate data | [Are there better climate data than Worldclim for Europe?](https://gis.stackexchange.com/questions/82186/are-there-better-climate-data-than-worldclim-for-europe) |
 | Climate data | [Climate Data Store](https://cds.climate.copernicus.eu/datasets) |
-| Land cover and use | [CORINE Land cover](https://land.copernicus.eu/en/products/corine-land-cover) |
 | Land cover and use | [Landelijk grondgebruik Nederland](https://lgn.nl/) |
 
 : {tbl-colwidths="\[30,70\]"}

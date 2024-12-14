@@ -1,0 +1,7 @@
+spatial cross validation
+
+v.mkgrid -h map=aa grid=10,10
+v.overlay ainput=aa@AHN binput=LandvanCuijk@AHN operator=and output=bb
+v.db.addcolumn map=bb@AHN columns="groups INT"
+db.execute sql="UPDATE bb SET groups = ABS(RANDOM() % 5) + 1"
+v.to.rast input=bb@AHN output=bb use=attr attribute_column=groups

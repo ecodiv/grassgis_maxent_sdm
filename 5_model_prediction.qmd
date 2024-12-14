@@ -2,13 +2,103 @@
 
 A species distribution model trained on one set of environmental variables can be projected onto future climate scenarios to forecast potential shifts in habitat suitability over time (@fig-Flowchart_model_predict2). Similarly, models based on a species' native distribution can help predict its potential range in new areas outside its current habitat. This approach is valuable for assessing the potential risk of species becoming invasive in new regions.
 
-![A) The developing of a species distribution model. B) Usig the model to predict the potential distribution of a species under future climate conditions.](images/Flowchart_model_predict2.png){#fig-Flowchart_model_predict2 width="450" fig-align="left"}
+![A) The developing of a species distribution model. B) Usig the model to predict the potential distribution of a species under future climate conditions. Step B is the focus of this chapter.](images/Flowchart_model_predict2.png){#fig-Flowchart_model_predict2 width="450" fig-align="left"}
 
-In this section, we’ll use the model developed in @sec-4trainthemodel to project the future potential distribution of the Almond-eyed Ringlet for the period 2081-2100. This projection will use the SSP585 climate scenario from the *EC-Earth3-Veg* general circulation model.
+In this section, we’ll use the model developed in @sec-4trainthemodel to project the current and the future potential distribution of the Almond-eyed Ringlet.
 
-## Creating a future distribution map {#sec-e8039LmOdu}
+## Current distribution {#sec-WZPnHz9gkh}
 
-We already downloaded the climate layers for the above-mentioned SSP and GCM in @sec-obtainfutureclimatelayers, and saved them in the mapset [climate_EC_Earth3_Veg]{.style-db}. Let's first make sure we have access to this mapset from the current mapset. As you might remember, we can use the [g.mapsets](https://grass.osgeo.org/grass-stable/manuals/g.mapsets.html) module for that.
+When we ran the [r.maxent.train]{.style-function} in @sec-4trainthemodel, we used the [predictionlayer]{.style-parameter} parameter to instruct the function to create a probability distribution map of our species under current conditions. Alternatively, we could use the [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html) addon to achieve the same result. Let's try it out.
+
+The minimum input requirements of [r.maxent.predict]{.style-function} are the names of the input raster layers, the [lambdas]{.style-output} file and the raster layers corresponding to the predictor variables described in the lambdas file. The [lambdas]{.style-output} file, one of the outputs from the [r.maxent.train]{.style-function} module, can be found in the output folder [model_01]{.style-output}. It has the extension *.lambdas* and describes the Maxent model.
+
+::: {#exm-VwlODGvXBe .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+# Make sure you are working in the working directory
+cd path_to_working_directory
+
+# Create the future potential distribution map
+r.maxent.predict \
+lambda=model_01/Erebia_alberganus_obs.lambdas \
+rasters=bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9 \
+output=E_alberganus_probability2 \
+memory=1000
+```
+
+## {{< fa brands python >}}
+
+``` python
+# Make sure you are working in the working directory
+os.chdir("replace-for-path-to-working-directory")
+
+# Create the future potential distribution map
+gs.run_command(
+    "r.maxent.predict",
+    lambdafile="model_01/Erebia_alberganus_obs.lambdas",
+    rasters="bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9",
+    output="E_alberganus_probability2",
+)
+```
+
+## {{< fa regular window-restore >}}
+
+Open the [r.maxent.predict]{.style-function} dialog and run it with the following parameter settings:
+
+| Parameter  | Value                                                     |
+|------------|-----------------------------------------------------------|
+| lambdafile | model_01/Erebia_alberganus_obs.lambdas                    |
+| rasters    | bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9 |
+| output     | E_alberganus_probability2                                 |
+
+: {tbl-colwidths="\[35,65\]"}
+:::
+
+To confirm that the resulting map [E_alberganus_probability2]{.style-data} is identical to the map [E_alberganus_probability]{.style-data} that we created earlier in @sec-4trainthemodel, we compute the difference between the two maps using the [r.mapcalc]{.style-function} module.
+
+::: {#exm-iZAJ53ha7v .hiddendiv}
+:::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+r.mapcalc expression="diff = E_alberganus_probability-E_alberganus_probability"
+```
+
+## {{< fa brands python >}}
+
+``` python
+gs.run_command(
+    "r.mapcalc",
+    flags="r",
+    expression="diff = E_alberganus_probability-E_alberganus_probability",
+)
+```
+
+## {{< fa regular window-restore >}}
+
+Run the \[r.mapcalc{.style-function} function with the following parameters:
+
+| Parameter  | Value                                             |
+|------------|---------------------------------------------------|
+| Output     | diff                                              |
+| Expression | E_alberganus_probability-E_alberganus_probability |
+
+: {tbl-colwidths="\[35,65\]"}
+:::
+
+Next, verify that all raster cells in the diff map are zero using the [r.univar](https://grass.osgeo.org/grass-stable/manuals/r.univar.html). Alternatively, check the metadata by right-clicking the layer in the [layer window]{.style-menu} and selecting [metadata]{.style-menu}).
+
+## Future distribution {#sec-e8039LmOdu}
+
+We will now use the same model that we used in the previous paragraph, and which we created in @sec-4trainthemodel, to project the future potential distribution of the almond-eyed ringlet butterfly for the period 2081–2100. This projection will be based on the *SSP585* climate scenario from the *EC-Earth3-Veg* general circulation model (GCM).
+
+In @sec-obtainfutureclimatelayers, we downloaded the climate layers for the above-mentioned SSP and GCM and saved them in the mapset [climate_EC_Earth3_Veg]{.style-db}. Let's first make sure we have access to this mapset from the current mapset. As you might remember, we can use the [g.mapsets](https://grass.osgeo.org/grass-stable/manuals/g.mapsets.html) module for that.
 
 ::: {#exm-HXKf6KsqSt .hiddendiv}
 :::
@@ -33,32 +123,7 @@ gs.run_command(
 In the menu, go to [Settings → GRASS working environment → Mapset access]{.style-menu} and select the mapsets [climate_EC_Earth3_Veg]{.style-db}.
 :::
 
-We can now use the [r.maxent.predict](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.predict.html) to apply the previously created Maxent model to this set of climate raster data. It is an addon, so we first need to install it.
-
-::: {#exm-q52222b .hiddendiv}
-:::
-
-::: {.panel-tabset group="interface"}
-## {{< fa solid terminal >}}
-
-``` bash
-g.extension extension=r.maxent.predict
-```
-
-## {{< fa brands python >}}
-
-``` python
-gs.run_command("g.extension", extension="r.maxent.predict")
-```
-
-## {{< fa regular window-restore >}}
-
-Open the [g.extension]{.style-function} module from the menu: [Settings → addon extensions → install extensions from addons]{.style-menu}, search for the name of the addon and install it.
-:::
-
-The minimum input requirements of [r.maxent.predict]{.style-function} are the names of the input raster layers, the [lambdas]{.style-output} file and the raster layers for the predictor variables described in the lambdas file. The [lambdas]{.style-output} file was one of the outputs from [r.maxent.train]{.style-function} and can be found in the output folder [model_01]{.style-output}. It has the extension *.lambdas* and describes the Maxent model.
-
-The names of the raster layers need to be the same as the variable names used to create the Maxent model. If you are not sure, you can check the file [maxent_explanatory_variable_names.csv]{.style-file} in folder with the model out. This file is automatically created by the [r.maxent.train]{.style-function} module and can be found in the [model_01]{.style-output} folder. If the raster names are not the same as the variables used to create the Maxent model, the [variables]{.style-parameter} parameter can be used to provide the right variable names[^5_model_prediction-1].
+We now use the [r.maxent.predict]{.style-function} addon to apply the Maxent model to this set of climate raster data. The settings are similar to those used in the previous paragraph, with one exception: the raster names of the future climate layers do not match the variable names used to create the Maxent model. To address this, we use the [variables]{.style-parameter} parameter to provide the corresponding variable names[^5_model_prediction-1].
 
 [^5_model_prediction-1]: Alternatively, the [alias_file]{.style-parameter} parameter can be used to provide a CSV file with the names of the explanatory variables (first column) and the names of the corresponding raster layers (second column).
 
@@ -115,6 +180,8 @@ Open the [r.maxent.predict]{.style-function} dialog and run it with the followin
 :::
 
 [^5_model_prediction-2]: The names of the future bioclim layers differ from the variables, so we need to provided the variable names. Be careful, they need to be given in the same order as the corresponding raster layers.
+
+We have now projected both the current and future potential distribution of the Almond-eyed Ringlet butterfly under different climate scenarios. Next step is to compare them.
 
 ## Current vs future distribution
 
@@ -185,7 +252,6 @@ r.colors map=E_alb_diff color=differences
 
 ``` python
 # Calculate the change map
-# Calculate the change map
 gs.run_command(
     "r.mapcalc",
     expression="E_alb_diff = E_alberganus_futprob - E_alberganus_probability",
@@ -225,7 +291,7 @@ The resulting map (@fig-changemap01) reinforces our earlier observations: in mos
 
 While the change map is useful for highlighting areas of change, it doesn’t indicate where conditions are, and will remain, unsuitable - or conversely, where they are and will remain suitable. Another way to approach this is to convert the probability maps to presence-absence maps, and subsequently compare these.
 
-For the first step we need to select a threshold value. Raster cells with a probably \> threshold value will be converted to 1 (presence), and the other raster cells will be converted to 0 (absence). We'll use the threshold value that balances the sensitivity[^5_model_prediction-4] and specificity[^5_model_prediction-5]. In @tbl-relativeimportance, we can see that for our model, this is 0.6. After creating the presence-absence map, we assign it a color table using the [r.colors](https://grass.osgeo.org/grass-stable/manuals/r.colors.html) module.
+For the first step we need to select a threshold value. Raster cells with a probably \> threshold value will be converted to 1 (presence), and the other raster cells will be converted to 0 (absence). We'll use the threshold value that balances the sensitivity[^5_model_prediction-4] and specificity[^5_model_prediction-5]. In @tbl-tresholdvalues_model01, we can see that for our model, this is 0.6. After creating the presence-absence map, we assign it a color table using the [r.colors](https://grass.osgeo.org/grass-stable/manuals/r.colors.html) module.
 
 [^5_model_prediction-4]: The ability of the model to correctly identify presence locations, or true positives.
 
