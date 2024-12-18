@@ -368,7 +368,7 @@ But what if we want to use the selected parameter settings to predict species di
 
 ## Novel climates {#sec-novelclimates}
 
-When using a species distribution model to make predictions under conditions that are outside the range of conditions observed during model training (novel conditions), predictions may be less reliable. This is because the model is based on relationships learned from the training data. And these relationships may be very different in other areas or under future conditions.
+Predictions from a species distribution model can be less reliable when applied to novel conditions—situations outside the range of conditions observed during model training. This happens because the model relies on relationships it learned from the training data, which may not hold true in different areas or future scenarios.
 
 ### MES statistics
 

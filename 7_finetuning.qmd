@@ -1,13 +1,65 @@
 # Model fine-tuning {#sec-modelfinetuning}
 
-In the first part of this tutorial, you were introduced to the basic steps of species distribution modeling. In @sec-modelvalidation, we explored various options for model validation, which allow us to evaluate and compare different models or iterations. In this section, we’ll build on that foundation by examining how changes in parameters can influence model outcomes.
+In the first part of this tutorial, you were introduced to the basic steps of species distribution modeling. And in @sec-modelvalidation, we learned how to use cross-validation to evaluate a model. In this section, we’ll build on that foundation by examining how changes in parameters can influence model outcomes, using cross-validation to evaluate the results.
 
 Questions we’ll touch on here are e.g., what parameters can we adjust, and how do these changes impact the results? Which model should we ultimately select? Or could we even combine multiple models?
 
-Note that we’ll assume you are already familiar with the basic steps of modeling. In this section, the focus will be on experimenting with alternative parameter settings. In practice, modeling involves testing different combinations of parameters, validating the outcomes, and ultimately selecting the model that performs best.
+By now, you should be familiar with the basic steps of modeling. Since testing different parameter combinations, validating outcomes, and selecting the best-performing model can involve many steps that are easy to lose track of, it is recommended to use Bash or Python scripts during this phase. The steps will be demonstrated using Python and Bash code. If you prefer using the GUI, you should be able to follow along based on the provided scripts.
 
-::: callout-warning
-## Work in progress
+## Organize outputs.
 
-The chapters of this sections are being prepared and will be available in the coming weeks, so stay tuned!
+As we did previously, we we'll first create a separate sub-folder in our working directory for the new models we are going to create. Similarly, we will create a new mapset in our GRASS database for these models.
+
+::: {#exm-DXBuP8nUXR .hiddendiv}
 :::
+
+::: {.panel-tabset group="interface"}
+## {{< fa solid terminal >}}
+
+``` bash
+# Folders to store data
+mkdir model_04
+
+# Create a new mapset and switch to it
+g.mapset -c mapset=model_014
+
+# Define the region and set the MASK
+g.region raster=bio_1@climate_current 
+```
+
+## {{< fa brands python >}}
+
+``` python
+# Set working directory and create a new folder in the working directory
+os.chdir("replace-for-path-to-working-directory")
+os.makedirs("model_04", exist_ok=True)
+
+# Create a new mapset and switch to it
+gs.run_command("g.mapset", flags="c", mapset="model_04")
+
+# Set the region and create a MASK
+gs.run_command("g.region", raster="bio_1@climate_current") 
+```
+:::
+
+## Model training
+
+Maxent offers a number of options to fine-tune the model (@fig-UOU9jFNrtR). To test these options, we follow an iterative process - each time you change some options, you have to rerun the model and evaluate the outcomes, like we did in @sec-4examinetheresults.
+
+:::::: grid
+::: {.g-col-md-7 .g-col-12}
+![](images/r_maxent_train_parameteroptions.png)
+:::
+
+:::: {.g-col-md-5 .g-col-12}
+::: removespace
+![Under the tabs [Parameters]{.style-menu} and [Advanced]{.style-menu}, you'll find the various options to fine-tune the model. As a reminder, in each function dialog, the parameter (or flag) name is visible on the right side of each input field so that it is simple to understand how the module dialog corresponds to the command representation. The other way around, each parameter setting you change is reflected in the corresponding bash code at the bottom of the dialog.](images/r_maxent_train_parameteroptions_blank.png){#fig-UOU9jFNrtR}
+:::
+::::
+::::::
+
+In this section, the focus will be on experimenting with alternative parameter settings. In practice, modeling involves testing different combinations of parameters, validating the outcomes, and ultimately selecting the model that performs best.
+
+To be able to compare results later on, it is best to define a different output folder each time you rerun the model.
+
+Note that there are more ways to fine-tune and automate the creation of models, and to further evaluate the models using cross-validation. See the original tutorial and the materials on the Maxent website for more examples and explanations.

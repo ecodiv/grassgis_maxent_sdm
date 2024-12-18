@@ -770,8 +770,13 @@ details, theorem.exercise {
 }
 
 /*==============================================================================
-Create links to code steps
+Hacks
 ==============================================================================*/
+
+.removespace {
+  margin-top: -20px;
+  padding-top: 0;
+}
 
 .hiddendiv {
   /* position: absolute;  Keep it in the flow of the document */
@@ -803,4 +808,10 @@ Create links to code steps
   .hidefootnotes, .footnotes {
     display: block; /* Makes footnotes visible on mobile */
   }
+
+  .removespace {
+    margin-top: -40px;
+    padding-top: 0;
+  }
+
 }
