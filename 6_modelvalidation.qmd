@@ -1,6 +1,6 @@
 # Model evaluation {#sec-modelvalidation}
 
-So far, we have discussed how to build a model and use it to predict the distribution of a species. However, understanding how to interpret and evaluate the results of the model is equally important. A critical step in this process is assessing the accuracy of the model’s predictions—a procedure known as *model validation*.
+So far, we have discussed how to build a model and use it to predict the distribution of a species. However, understanding how to interpret and evaluate the results of the model is equally important. A critical step in this process, known as *model validation*, is assessing the accuracy of the model’s predictions.
 
 In @sec-4evalstats, we introduced the AUC-ROC, a statistic that provides a measure of model performance. However, evaluating a model on the same data it was trained on often leads to overly optimistic assessments, as models tend to perform worse on new, unseen data. To truly assess a model's predictive power under new conditions or in untested areas, it must be tested on a separate dataset that wasn't used during training (paragraph [-@sec-crossvalidation]).
 
@@ -16,15 +16,15 @@ While this approach is straightforward, it has one drawback: the results can var
 
 By employing k-fold cross-validation, you can obtain a more reliable estimate of model accuracy, as it reduces the variability associated with a single random data split and leverages the entire dataset for both training and validation.
 
-### Model training
+### Model training {#sec-611}
 
-For this tutorial, we carry out a 4-fold cross-validation. To perform the cross-validation, we run [r.maxent.train]{.style-function} with the [replicatetype]{.style-parameter} and the [replicates]{.style-parameter} parameter to tell Maxent to run a 4-fold cross-validation. This means that Maxent will train four models in the background, calculates validation statistics for each model, and computes average statistics across the four sub-models.
+For this tutorial, we carry out a 4-fold cross-validation. To perform the cross-validation, we run [r.maxent.train]{.style-function} with the [replicatetype]{.style-parameter} and the [replicates]{.style-parameter} parameter to tell Maxent to run a 4-fold cross-validation. This means that Maxent will train four models in the background, calculate validation statistics for each model, and compute average statistics across the four sub-models.
 
 ::: {.callout-note appearance="simple"}
 In cross-validation, multiple models are created, each trained on slightly different subsets of the data. These models may produce slightly different predictions, reflecting the variability in the data. Technically, they are separate models. However, conceptually, they are not entirely "separate" in the same way models trained with different algorithms. Instead, they can be considered iterations of the same model created to assess its robustness and generalizability. We will therefore henceforth refer to these as the "four sub-models".
 :::
 
-If both the option to create a sample prediction ([-y]{.style-parameter} flag) and k-fold cross-validation are selected, the sample prediction point layer's attribute table will include for each point the average predicted probabilities and the range of predicted probabilities across the four sub-models. Note that the the [v.db.pyupdate](https://grass.osgeo.org/grass-stable/manuals/v.db.update.html) addon needs to be installed to do this.
+If both the option to create a sample prediction ([-y]{.style-parameter} flag) and k-fold cross-validation are selected, the sample prediction point layer's attribute table will include for each point the average predicted probabilities and the range of predicted probabilities across the four sub-models. Note that the [v.db.pyupdate](https://grass.osgeo.org/grass-stable/manuals/v.db.update.html) addon needs to be installed to do this.
 
 We furthermore specify the location of the folder with the input environmental raster layers using the [projectionlayers]{.style-parameter} parameter. This instructs Maxent to generate a raster prediction layer. When the k-fold cross-validation option is enabled, this raster shows the average predicted probability of species presence, calculated across all four model iterations. Additionally, three extra layers will be produced, showing the minimum, maximum, and standard deviation of the predictions across the four models.
 
@@ -47,7 +47,7 @@ environmentallayersfile=dataset01/background_points.swd \
 projectionlayers=dataset01/envdat \
 outputdirectory=model_03 \
 replicatetype=crossvalidate \
-replicates=4 threads=4 memory=1000 -yg
+replicates=4 threads=4 memory=1000 -ygb
 ```
 
 ## {{< fa brands python >}}
@@ -70,7 +70,7 @@ gs.run_command(
     replicates=4,
     threads=4,
     memory=1000,
-    flags="yg", 
+    flags="ybg", 
 )  
 ```
 
@@ -107,6 +107,7 @@ Create the folder [model_03]{.style-db} in your working directory using your fav
 | memory | 1000 |
 | Create a vector point layer from the sample predictions (y) | ✅ |
 | Create response curves (g) | ✅ |
+| Create a vector point layer with predictions at backgr. points (b) | ✅ |
 
 : {tbl-colwidths="\[60,40\]"}
 :::
@@ -120,15 +121,15 @@ To examine how well the model performed, we take a look at the model statistics.
 ::: {.panel-tabset .exercise}
 ## AUC-ROC
 
-Figure [-@fig-roc-auc_model3] shows the receiver operating characteristic (ROC) curve, averaged over the four sub-models (red line). The standard deviation is represented by the blue band around the red line.
+Figure [-@fig-rocaucmodel3] shows the receiver operating characteristic (ROC) curve, averaged over the four sub-models (red line). The standard deviation is represented by the blue band around the red line.
 
-![ROC curve and the area under the curve statistics for model_03.](share/model_03/plots/Erebia_alberganus_obs_roc.png){#fig-roc-auc_model3 fig-align="left" group="corcom"}
+![ROC curve and the area under the curve statistics for model_03.](share/model_03/plots/Erebia_alberganus_obs_roc.png){#fig-rocaucmodel3 fig-align="left" group="corcom"}
 
 ## Omission graph
 
-Figure [-@fig-omission_model3] shows the test omission rate (green line) and predicted area (red line) as a function of the cumulative threshold, averaged over the four sub-models. The standard deviation of the omission rate and predicted area are illustrated by respectively the yellow and blue bands.
+Figure [-@fig-omissionmodel3] shows the test omission rate (green line) and predicted area (red line) as a function of the cumulative threshold, averaged over the four sub-models. The standard deviation of the omission rate and predicted area are illustrated by respectively the yellow and blue bands.
 
-![The omission/commission graph for model_03.](share/model_03/plots/Erebia_alberganus_obs_omission.png){#fig-omission_model3 fig-align="left" group="corcom"}
+![The omission/commission graph for model_03.](share/model_03/plots/Erebia_alberganus_obs_omission.png){#fig-omissionmodel3 fig-align="left" group="corcom"}
 :::
 
 The validation diagnostics from each individual sub-model help indicate how the model will perform when estimating presence in unknown locations. If the model performs well for some groups, but poorly for others, we should be careful when interpreting the model outcomes. In this case, differences are fairly small (resulting in a small standard deviation).
@@ -145,11 +146,11 @@ If you compare the training and test AUC, you'll notice that for some of the sub
 A possible explanation is that the test data represents a smaller set of presence points, which results in a much smaller prevalence — the ratio of presence points to background points — in the test set compared to the training dataset. Background points are typically easier to classify as absence, especially if they are situated in environmentally distinct areas that are far from the species' known occurrences. This can lead to a higher true negative rate (specificity) because the model more confidently identifies absence areas. Since AUC (area under the ROC curve) reflects both sensitivity (true positive rate) and specificity (true negative rate), an improvement in specificity is likely to result in a higher AUC.
 ::::
 
-### Probability maps
+### Probability maps {#sec-6probabilitymaps}
 
-The sample prediction layer and the various raster prediction layers generated by Maxent offer further understanding of the spatial patterns of agreement and disagreement across the cross-validation iterations.
+The sample prediction layer and the various raster prediction layers generated by Maxent can help us to examine the spatial patterns of agreement and disagreement across the cross-validation iterations.
 
-The default color scheme of the [Erebia_alberganus_obs_samplePredictions]{.style-data} represents the average predicted probabilities, based on the four models (Figure @fig-samlepred_model_03a). To visualizing the variability in predictions across the four models, we use the values in the [Cloglog_range]{.style-data} column of the attribute table. These values represent the range (difference between the maximum and minimum predicted probabilities) across the four models (@fig-samlepred_model_03b).
+The default color scheme of the [Erebia_alberganus_obs_samplePredictions]{.style-data} represents the average predicted probabilities, based on the four models (Figure @fig-samlepredmodel03a). To visualizing the variability in predictions across the four models, we use the values in the [Cloglog_range]{.style-data} column of the attribute table. These values represent the range (difference between the maximum and minimum predicted probabilities) across the four models (@fig-samlepredmodel03b).
 
 To create the new color table, we use the [r.colors](https://grass.osgeo.org/grass-stable/manuals/r.colors.html) function.
 
@@ -197,11 +198,11 @@ Now, go to the [data]{.style-menu} panel, and and open the various layers in the
 ::: {.panel-tabset .exercise}
 ## Average sample predictions
 
-![The [Erebia_alberganus_obs_samplePredictions]{.style-data} vector layer with the GBIF occurrences. The colors represent the predicted probability that the species occurs at these locations, averaged over the four models.](images/Erebia_alberganus_obs_samplePredictions1.png){#fig-samlepred_model_03a group="ytHc07Sg8P"}
+![The [Erebia_alberganus_obs_samplePredictions]{.style-data} vector layer with the GBIF occurrences. The colors represent the predicted probability that the species occurs at these locations, averaged over the four models.](images/Erebia_alberganus_obs_samplePredictions1.png){#fig-samlepredmodel03a group="ytHc07Sg8P"}
 
 ## Range sample predictions
 
-![The [Erebia_alberganus_obs_samplePredictions]{.style-data} vector layer with GBIF occurrence data. The colors represent the range of predicted probabilities (the difference between the maximum and minimum values) across the four models.](images/Erebia_alberganus_obs_samplePredictions2.png){#fig-samlepred_model_03b group="ytHc07Sg8P"}
+![The [Erebia_alberganus_obs_samplePredictions]{.style-data} vector layer with GBIF occurrence data. The colors represent the range of predicted probabilities (the difference between the maximum and minimum values) across the four models.](images/Erebia_alberganus_obs_samplePredictions2.png){#fig-samlepredmodel03b group="ytHc07Sg8P"}
 
 ## Mean vs range
 
@@ -301,11 +302,11 @@ To get a better idea about the spatial patterns of agreement and disagreement am
 ::: {.panel-tabset .exercise}
 ## Average predictions
 
-![The [Erebia_alberganus_obs_envdat_avg]{.style-data} raster layer. The colors represent the predicted probability, averaged over the four models.](images/Erebia_alberganus_obs_envdat_avg.png){#fig-predlay_model_03a group="ytHc07Sg8P"}
+![The [Erebia_alberganus_obs_envdat_avg]{.style-data} raster layer. The colors represent the predicted probability, averaged over the four models.](images/Erebia_alberganus_obs_envdat_avg.png){#fig-predlaymodel03a group="ytHc07Sg8P"}
 
 ## Standard deviation of predictions
 
-![The [Erebia_alberganus_obs_envdata_stddev]{.style-data} raster layer. The colors represent the standard deviation of predicted probabilities across the four models.](images/Erebia_alberganus_obs_envdat_stddev.png){#fig-predlay_model_03b group="ytHc07Sg8P"}
+![The [Erebia_alberganus_obs_envdata_stddev]{.style-data} raster layer. The colors represent the standard deviation of predicted probabilities across the four models.](images/Erebia_alberganus_obs_envdat_stddev.png){#fig-predlaymodel03b group="ytHc07Sg8P"}
 :::
 
 Besides the prediction layers with the average and standard deviation of the four model runs, maps with the median, maximum and minimum values are created. It could be useful to examine these as well.
@@ -317,44 +318,44 @@ The response curves in the HTML file [Erebia_alberganus_obs.html]{.style-file} s
 ::::: {.panel-tabset .exercise}
 ## Marginal response curves
 
-::: {#fig-responsecurves1 layout-ncol="4"}
-![](share/model_03/plots/Erebia_alberganus_obs_bio_1.png){group="4foldresponse"}
+::: {#fig-QB4dnXf8U3 layout-ncol="4"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_1.png){group="QB4dnXf8U3a"}
 
-![](share/model_03/plots/Erebia_alberganus_obs_bio_2.png){group="4foldresponse"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_2.png){group="QB4dnXf8U3a"}
 
-![](share/model_03/plots/Erebia_alberganus_obs_bio_4.png){group="4foldresponse"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_4.png){group="QB4dnXf8U3a"}
 
-![](share/model_03/plots/Erebia_alberganus_obs_bio_8.png){group="4foldresponse"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_8.png){group="QB4dnXf8U3a"}
 
-![](share/model_03/plots/Erebia_alberganus_obs_bio_9.png){group="4foldresponse"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_9.png){group="QB4dnXf8U3a"}
 
-![](share/model_03/plots/Erebia_alberganus_obs_bio_13.png){group="4foldresponse"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_13.png){group="QB4dnXf8U3a"}
 
-![](share/model_03/plots/Erebia_alberganus_obs_bio_14.png){group="4foldresponse"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_14.png){group="QB4dnXf8U3a"}
 
-![](share/model_03/plots/Erebia_alberganus_obs_bio_15.png){group="4foldresponse"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_15.png){group="QB4dnXf8U3a"}
 
 Response curves created by varying the specific variable, while keeping all other variables fixed at their average sample value
 :::
 
 ## single-variable response curves
 
-::: {#fig-responsecurves2 layout-ncol="4"}
-![](share/model_03/plots/Erebia_alberganus_obs_bio_1_only.png){group="4foldresponse2"}
+::: {#fig-nCjTprfaAr layout-ncol="4"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_1_only.png){group="nCjTprfaAra"}
 
-![](share/model_03/plots/Erebia_alberganus_obs_bio_2_only.png){group="4foldresponse2"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_2_only.png){group="nCjTprfaAra"}
 
-![](share/model_03/plots/Erebia_alberganus_obs_bio_4_only.png){group="4foldresponse2"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_4_only.png){group="nCjTprfaAra"}
 
-![](share/model_03/plots/Erebia_alberganus_obs_bio_8_only.png){group="4foldresponse2"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_8_only.png){group="nCjTprfaAra"}
 
-![](share/model_03/plots/Erebia_alberganus_obs_bio_9_only.png){group="4foldresponse2"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_9_only.png){group="nCjTprfaAra"}
 
-![](share/model_03/plots/Erebia_alberganus_obs_bio_13_only.png){group="4foldresponse2"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_13_only.png){group="nCjTprfaAra"}
 
-![](share/model_03/plots/Erebia_alberganus_obs_bio_14_only.png){group="4foldresponse2"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_14_only.png){group="nCjTprfaAra"}
 
-![](share/model_03/plots/Erebia_alberganus_obs_bio_15_only.png){group="4foldresponse2"}
+![](share/model_03/plots/Erebia_alberganus_obs_bio_15_only.png){group="nCjTprfaAra"}
 
 Response curves created by running a model based on only the specific variable as explanatory variable.
 :::
@@ -448,7 +449,7 @@ To combine the occurrence and background points, open the [v.patch]{.style-funct
 
 : {tbl-colwidths="\[40,60\]"}
 
-And convert the point layer to a raster with the [v.to.rast]{.style-function} module. Open it and run it with the following parameters:
+Convert the point layer to a raster with the [v.to.rast]{.style-function} module[^6_modelvalidation-1]. Open it and run it with the following parameters:
 
 | Parameter | Value           |
 |-----------|-----------------|
@@ -456,9 +457,9 @@ And convert the point layer to a raster with the [v.to.rast]{.style-function} mo
 | output    | referencepoints |
 
 : {tbl-colwidths="\[40,60\]"}
-
-In the next step, we use the [ref_rast]{.style-parameter} parameter to set the reference raster layer, which we create here, as the reference layer. Alternatively, we could use the [ref_vect]{.style-parameter} parameter with the [referencepoints]{.style-data} vector layer. However, the vector layer contains multiple point within some raster cells. The [r.mess]{.style-function} module will ignore all but one with a warning message. To avoid such message, we convert the point layer to a raster, effectively resolving the issue by eliminating duplicate points.
 :::
+
+[^6_modelvalidation-1]: In the next step, we use the [ref_rast]{.style-parameter} parameter to set the reference raster layer, which we create here, as the reference layer. Alternatively, we could use the [ref_vect]{.style-parameter} parameter with the [referencepoints]{.style-data} vector layer. However, the vector layer contains multiple point within some raster cells. The [r.mess]{.style-function} module will ignore all but one with a warning message. To avoid such message, we convert the point layer to a raster, effectively resolving the issue by eliminating duplicate points.
 
 To assess if and where future conditions are outside the range of conditions observed during model training, we use the same future climate data that we used as input to our model prediction in [paragraph -@sec-e8039LmOdu]. These are the projected bioclimatic data for the period 2081-2100, based on the SSP585 climate scenario from the EC-Earth3-Veg general circulation model.
 
@@ -534,6 +535,6 @@ The main MESS map (@fig-messmap) shows the degree of environmental similarity be
 ![The number of variables with a negative MESS values, i.e., for each location, it shows the number of variables that are projected to have a value outside the range of values in the training data.](images/mess_CountNeg.png){#fig-countneg fig-align="left" group="mcLze6OQc6"}
 :::
 
-You can compare the MESS map with the occurrence point map (@fig-samlepred_model_01), the predicted probability map under future climate conditions (@fig-futdistr_01) and the presence-absence map (@fig-r_cross_01) to assess the reliability of the predictions. If you zoom in, you'll notice that for most locations where the species has been observed, conditions in 2081 are projected to remain within the range of observed values under current conditions.
+You can compare the MESS map with the occurrence point map (@fig-samlepredmodel01), the predicted probability map under future climate conditions (@fig-futdistr01) and the presence-absence map (@fig-changemap02) to assess the reliability of the predictions. If you zoom in, you'll notice that for most locations where the species has been observed, conditions in 2081 are projected to remain within the range of observed values under current conditions.
 
 Unfortunately, for our species, in some areas where the model predicts the species to be absent under current conditions but present under future conditions, the environmental conditions supporting such predictions fall outside the range of observed values. These predictions of increased suitability in these regions should therefore be interpreted with caution.

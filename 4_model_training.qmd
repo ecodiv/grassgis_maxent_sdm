@@ -2,7 +2,7 @@
 
 In this chapter, we’ll go through the basic steps for creating a species distribution model. The goal is to familiarize you with the essential modules and workflows involved. To keep things straightforward, we will primarily use default parameter settings. Later chapters will explore more advanced topics, including methods for validating model results (paragraph [-@sec-modelvalidation]) and fine-tuning model options (paragraph [-@sec-modelfinetuning]).
 
-![This chapter focuses on developing a species distribution model (A). In the next chapter, we'll use this model to predict the potential distribution of a species under future climate conditions (B). Note that while we will generate some prediction layers in pararaph [-@sec-4probabilitymaps]. These are intended primarily for evaluating the model's performance.](images/Flowchart_model_predict1.png){#fig-Flowchart_model_predict width="450" fig-align="left"}
+![This chapter focuses on developing a species distribution model (A). In the next chapter, we'll use this model to predict the potential distribution of a species under future climate conditions (B). Note that while we will generate some prediction layers in pararaph [-@sec-4probabilitymaps]. These are intended primarily for evaluating the model's performance.](images/Flowchart_model_predict1.png){#fig-Flowchartmodelpredict width="450" fig-align="left"}
 
 In this chapter, we'll use the [r.maxent.train](https://grass.osgeo.org/grass-stable/manuals/addons/r.maxent.train.html) addon to create several species distribution models based on different input data and parameter settings. It is good to reiterate that [r.maxent.train]{.style-function} runs the [Maxent]{.style-apps} application in the background. In this tutorial, we cover some of the results, but for a deeper understanding, refer to the tutorial and other essential resources available on the [Maxent website](https://biodiversityinformatics.amnh.org/open_source/maxent/).
 
@@ -90,13 +90,13 @@ threads=4 memory=1000 \# <8>
 
 1.  The (relative) path to the [species swd]{.style-data} file.
 2.  The (relative) path to the [background swd]{.style-data} file.
-3.  The (relative) path to the folder that holds the ascii raster layers of the input environmental variables. If you select these, Maxent will first create the model, and than use the ascii layers as input in the model to create a prediction raster layer. See also point 8.
-4.  The (relative) path to the folder that where Maxent should write the results.
+3.  The (relative) path to the folder that holds the ascii raster layers of the input environmental variables. If you select these, Maxent will first create the model, and then use the ascii layers as input in the model to create a prediction raster layer. See also point 8.
+4.  The (relative) path to the folder where Maxent should write the results.
 5.  The module will create a point layer with the locations of species occurrences used for the model. The attribute table contains the predicted probability scores. With this parameter, you can specify a custom name for this point layer. If left empty, a default name will be used, based on the species name, with as suffix *samplePredictions*
 6.  The module will create a vector layer with background points used as input for this model. The attribute table contains the predicted probability scores. With this parameter, you can specify a custom name for the layer. If left empty, a default name will be used, based on the species name, with as suffix *backgroundPredictions*.
 7.  If the [projectionlayers]{.style-parameter} is set, a raster prediction layer will be created that reflects the potential distribution based on the projection layers. With the parameter [predictionlayer]{.style-parameter}, you can set the name of this output layers. If left empty, a default name will be used, based on the species name, with as suffix the name of the folder with the environmental raster layers. In this case, that would have been *Erebia_alberganus_obs_envdat*.
 8.  To improve the performance, you can increase the number of [threads]{.style-parameter} and allocate more [memory]{.style-parameter}. However, before making adjustments, check your system specifications and adjust the settings based on your system’s capabilities.
-9.  The first three flags will create extra output that helps you to evaluate the model: **y**: Create a point feature layer with for each occurrence point the predicted probability score. This can be useful to identify discrepancies between the observed and predicted distribution. **b**: Create a vector point layer with predicted probability scores at the background point locations. This is useful to identify discrepancies between the observed and predicted distribution. **g**: Create response curves, which visualize the (marginal) effect of each explanatory variable on the predicted probability.
+9.  The first three flags will create extra output that helps you to evaluate the model: **y**: Create a point feature layer with for each occurrence point the predicted probability score. This can be useful to identify discrepancies between the observed and predicted distribution. **b**: Create a vector point layer with predicted probability scores for the background point locations. This is useful to identify discrepancies between the observed and predicted distribution. **g**: Create response curves, which visualize the (marginal) effect of each explanatory variable on the predicted probability.
 
 ## {{< fa brands python >}}
 
@@ -118,14 +118,14 @@ gs.run_command(
 
 1.  The (relative) path to the [species swd]{.style-data} file.
 2.  The (relative) path to the [background swd]{.style-data} file.
-3.  The (relative) path to the folder that holds the ascii raster layers of the input environmental variables. If you select these, Maxent will first create the model, and than use the ascii layers as input in the model to create a prediction raster layer. See also point 8.
-4.  The (relative) path to the folder that where Maxent should write the results.
+3.  The (relative) path to the folder that holds the ascii raster layers of the input environmental variables. If you select these, Maxent will first create the model, and then use the ascii layers as input in the model to create a prediction raster layer. See also point 8.
+4.  The (relative) path to the folder where Maxent should write the results.
 5.  The module will create a point layer with the locations of species occurrences used for the model. The attribute table contains the predicted probability scores. With this parameter, you can specify a custom name for this point layer. If left empty, a default name will be used, based on the species name, with as suffix *samplePredictions*
 6.  The module will create a vector layer with background points used as input for this model. The attribute table contains the predicted probability scores. With this parameter, you can specify a custom name for the layer. If left empty, a default name will be used, based on the species name, with as suffix *backgroundPredictions*.
 7.  If the [projectionlayers]{.style-parameter} is set, a raster prediction layer will be created that reflects the potential distribution based on the projection layers. With the parameter [predictionlayer]{.style-parameter}, you can set the name of this output layers. If left empty, a default name will be used, based on the species name, with as suffix the name of the folder with the environmental raster layers. In this case, that would have been *Erebia_alberganus_obs_envdat*.
 8.  To improve the performance, you can increase the number of [threads]{.style-parameter}. However, before making adjustments, check your system specifications and adjust the settings based on your system’s capabilities.
 9.  To improve the performance, you can allocate more [memory]{.style-parameter}. However, before making adjustments, check your system specifications and adjust the settings based on your system’s capabilities.
-10. The first three flags will create extra output that helps you to evaluate the model: **y**: Create a point feature layer with for each occurrence point the predicted probability score. This can be useful to identify discrepancies between the observed and predicted distribution. **b**: Create a vector point layer with predicted probability scores at the background point locations. This is useful to identify discrepancies between the observed and predicted distribution. **g**: Create response curves, which visualize the (marginal) effect of each explanatory variable on the predicted probability.
+10. The first three flags will create extra output that helps you to evaluate the model: **y**: Create a point feature layer with for each occurrence point the predicted probability score. This can be useful to identify discrepancies between the observed and predicted distribution. **b**: Create a vector point layer with predicted probability scores for the background point locations. This is useful to identify discrepancies between the observed and predicted distribution. **g**: Create response curves, which visualize the (marginal) effect of each explanatory variable on the predicted probability.
 
 ## {{< fa regular window-restore >}}
 
@@ -155,9 +155,9 @@ Open the [r.maxent.train]{.style-function} dialog and run the module with the fo
 
 [^4_model_training-3]: The (relative) path to the [background swd]{.style-data} file.
 
-[^4_model_training-4]: The (relative) path to the folder that holds the ascii raster layers of the input environmental variables. If you select these, Maxent will first create the model, and than use the ascii layers as input in the model to create a prediction raster layer. See also point 9.
+[^4_model_training-4]: The (relative) path to the folder that holds the ascii raster layers of the input environmental variables. If you select these, Maxent will first create the model, and then use the ascii layers as input in the model to create a prediction raster layer. See also point 9.
 
-[^4_model_training-5]: The (relative) path to the folder that where Maxent should write the results.
+[^4_model_training-5]: The (relative) path to the folder where Maxent should write the results.
 
 [^4_model_training-6]: The module will create a point layer with the locations of species occurrences used for the model. The attribute table contains the predicted probability scores. With this parameter, you can specify a custom name for this point layer. If left empty, a default name will be used, based on the species name, with as suffix *samplePredictions*
 
@@ -171,7 +171,7 @@ Open the [r.maxent.train]{.style-function} dialog and run the module with the fo
 
 [^4_model_training-11]: Create a point feature layer with for each occurrence point the predicted probability score. This can be useful to identify discrepancies between the observed and predicted distribution.
 
-[^4_model_training-12]: Create a vector point layer with predicted probability scores at the background point locations. This is useful to identify discrepancies between the observed and predicted distribution.
+[^4_model_training-12]: Create a vector point layer with predicted probability scores for the background point locations. This is useful to identify discrepancies between the observed and predicted distribution.
 
 [^4_model_training-13]: Create response curves, which visualize the (marginal) effect of each explanatory variable on the predicted probability.
 
@@ -240,25 +240,25 @@ The [Erebia_alberganus_obs.html]{.style-output} file in the output folder provid
 ::: {.panel-tabset .exercise}
 ## E_alberganus_samplepred
 
-![The [E_alberganus_samplepred]{.style-data} vector layer with the GBIF occurrences. The colors in this layer represent the predicted probability that the species occurs at these locations, based on model_01.](images/E_alberganus_samplepred.png){#fig-samlepred_model_01 group="DMu5ABe7FD"}
+![The [E_alberganus_samplepred]{.style-data} vector layer with the GBIF occurrences. The colors in this layer represent the predicted probability that the species occurs at these locations, based on model_01.](images/E_alberganus_samplepred.png){#fig-samlepredmodel01 group="DMu5ABe7FD"}
 
-The map in @fig-samlepred_model_01 shows the predicted probability that *Erebia alberganus* occurs at each observed location, allowing us to assess where the model accurately predicts suitable conditions and where it incorrectly suggests less or no suitable conditions. Notable examples of the latter include several occurrence points in Bulgaria. A follow up step would be to compare these predictions with maps of relevant environmental data layers or examining the GBIF source data for these observations more closely.
+The map in @fig-samlepredmodel01 shows the predicted probability that *Erebia alberganus* occurs at each observed location, allowing us to assess where the model accurately predicts suitable conditions and where it incorrectly suggests less or no suitable conditions. Notable examples of the latter include several occurrence points in Bulgaria. A follow up step would be to compare these predictions with maps of relevant environmental data layers or examining the GBIF source data for these observations more closely.
 
 ## E_alberganus_bgrdpred
 
-![The [E_alberganus_bgrdpred]{.style-data} vector layer with the locations of the background points. The colors in this layer represent the predicted probability of the occurrence of the species at these locations, based on model_01.](images/E_alberganus_bgrdpred.png){#fig-bgrpred_model_01 group="DMu5ABe7FD"}
+![The [E_alberganus_bgrdpred]{.style-data} vector layer with the locations of the background points. The colors in this layer represent the predicted probability of the occurrence of the species at these locations, based on model_01.](images/E_alberganus_bgrdpred.png){#fig-bgrpredmodel01 group="DMu5ABe7FD"}
 
-The map in @fig-bgrpred_model_01 shows the predicted probability of *Erebia alberganus* to occur at individual background point locations, providing similar information to @fig-probdist_model_01, but with a different presentation. Depending on your needs / preferences, you may want to have the module generate one of these maps.
+The map in @fig-bgrpredmodel01 shows the predicted probability of *Erebia alberganus* to occur at individual background point locations, providing similar information to @fig-probdistmodel01, but with a different presentation. Depending on your needs / preferences, you may want to have the module generate one of these maps.
 
 ## E_alberganus_probability
 
-![The raster layer [E_alberganus_probability]{.style-data} with the predicted probability of occurrences of *Erebia_alberganus*, based on model_01.](images/E_alberganus_probability.png){#fig-probdist_model_01 group="DMu5ABe7FD"}
+![The raster layer [E_alberganus_probability]{.style-data} with the predicted probability of occurrences of *Erebia_alberganus*, based on model_01.](images/E_alberganus_probability.png){#fig-probdistmodel01 group="DMu5ABe7FD"}
 
-The map in @fig-probdist_model_01 shows the predicted probability of presence of *Erebia_alberganus* within the bounds of the study area. As expected, probability scores are high in most areas where the species has been observed. However, there are additional areas where predicted probability scores are also high. We will not attempt to explain these differences here, as that analysis is beyond the scope of this tutorial, but it is clear that these results warrant further investigation.
+The map in @fig-probdistmodel01 shows the predicted probability of presence of *Erebia_alberganus* within the bounds of the study area. As expected, probability scores are high in most areas where the species has been observed. However, there are additional areas where predicted probability scores are also high. We will not attempt to explain these differences here, as that analysis is beyond the scope of this tutorial, but it is clear that these results warrant further investigation.
 
 ## Clamping map
 
-![The values in the E_alberganus_probability_clamping raster layer give the absolute difference in predictions when using clamping vs not using clamping. The map is the second map shown in the Erebia_alberganus_obs.html webpage.](images/E_alberganus_probability_clamping.png){#fig-clamping_model_01 group="DMu5ABe7FD"}
+![The values in the E_alberganus_probability_clamping raster layer give the absolute difference in predictions when using clamping vs not using clamping. The map is the second map shown in the Erebia_alberganus_obs.html webpage.](images/E_alberganus_probability_clamping.png){#fig-clampingmodel01 group="DMu5ABe7FD"}
 
 Clamping restricts environmental variables and features to the range of values found in the training data. For example, if the input raster layer for [bio_1]{.style-variable} (annual mean temperature) has a value of 35°C, but the highest temperature among the training points is 32°C, all [bio_1]{.style-variable} values above 32°C are clamped to 32°C. This prevents the model from extrapolating beyond the conditions observed during training and ensures that predictions remain within the range of known environmental conditions. Higher values on the map indicate areas where clamping is likely to have a greater effect on predicted fitness.
 
@@ -375,7 +375,7 @@ To determine how good the model is at predicting the presence of a species, Maxe
 
 The ROC plot compares the proportion of correctly classified presence points, known as the sensitivity of the model, with the proportion of background points classified as presence. This comparison is made across a range of presence probability cutoff values between 0 and 1. The closer the ROC curve is to the upper left corner, the larger the area under the curve (AUC), and the better the model performance[^4_model_training-16]. In other words, the AUC provides a threshold-independent estimate of the predictive power of the model. As we have seen before, the AUC for our model is 0.866.
 
-![ROC curve and the area under the curve statistics for our model. Because we are dealing with presence-only data, we do not have real absence points. Therefore, on the X-axis, Maxent uses the 1 - fraction of background points predicted to be present instead of the fraction of absence points that are predicted to be present.](images/Erebia_alberganus_obs_roc.png){#fig-roc-auc fig-align="left" group="qmXR1UJHFa"}
+![ROC curve and the area under the curve statistics for our model. Because we are dealing with presence-only data, we do not have real absence points. Therefore, on the X-axis, Maxent uses the 1 - fraction of background points predicted to be present instead of the fraction of absence points that are predicted to be present.](images/Erebia_alberganus_obs_roc.png){#fig-rocauc fig-align="left" group="qmXR1UJHFa"}
 
 A ROC curve below the black line indicates that the model performs worse than a random model would. It is important to reiterate that AUC values tend to be higher for species with narrow ranges, relative to the study area described by the environmental data.
 
@@ -446,7 +446,7 @@ The curves in @fig-responsecurves2 represent different models, where each model 
 
 ![](share/model_01/plots/Erebia_alberganus_obs_bio_15.png){group="hbhHpuMH7S"}
 
-Response curves created by varying the specific variable, while keeping all other variables fixed at their average sample value
+Response curves created by varying the specific variable, while keeping all other variables fixed at their average sample value.
 :::
 
 ## single-variable response curves

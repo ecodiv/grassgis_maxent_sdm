@@ -47,7 +47,7 @@ gs.run_command("g.mapset", mapset="species_data")
 ![To change the mapset, right click on the name of the mapset in the [Data]{.style-menu} panel. In the context menu, select [Switch mapset]{.style-menu}.](images/switchmapset.png){#fig-switchmapset fig-align="left"}
 :::
 
-The extent and resolution of the resulting raster is determined by the bounding box of the mapset. So we set the region's extent to match the extent of the occurrence point layer. We also set the region's resolution to match that of the bioclim layers, which is 0.008333 arc degrees.
+The extent and resolution of the resulting raster is determined by the bounding box of the mapset. In this case, we want the region's *extent* to match the extent of the occurrence point layer. In addition, we want the region's *resolution* to match that of the bioclim layers, which is 0.008333 arc degrees.
 
 ::: {#exm-DzyEuYlZum .hiddendiv}
 :::
@@ -212,7 +212,7 @@ The results of [r.univar]{.style-function} show that the number of observations 
 
 ![The boxplot shows the range, quartiles, outliers of the point densities.](images/pointdensityboxplot.png){#fig-pointdensitiesboxplot fig-align="left"}
 
-If we look at the attribute table, we'll see that where there are many observations, they often span several years and often involve the same observer. This suggests that certain areas have been surveyed more extensively than others, potentially leading to uneven sampling effort across the species' range.
+If we look at the attribute table, we'll see that where there are many observations, they often span several years and often involve the same observer. This suggests that certain areas have been surveyed more extensively than others, potentially leading to uneven sampling effort across the species's range.
 
 ### Spatially thinning
 
@@ -414,7 +414,7 @@ When building a species distribution model using highly correlated explanatory v
 
 Maxent, a commonly used SDM tool, is relatively insensitive to multicollinearity because it selects the most informative variables during model training. Yet, excluding highly redundant variables might still help to get a more parsimonious, robust and interpretable model. And on a practical note, it will reduce the time it takes to train the model.
 
-![The bioclim 6 and bioclim 11 variables are highly correlated (r=0.98). This begs the question of how useful it is to use both as predictor variables in the model. You can explore the relation between any two variables yourself using the bivariate scatterplot tool. Click on the ![](images/layer-raster-analyze.png) in the toolbar of the map display.](images/bio6_bio11_scatterplot.png){#fig-bio6_bio11_scatterplot fig-align="left"}
+![The bioclim 6 and bioclim 11 variables are highly correlated (r=0.98). This begs the question of how useful it is to use both as predictor variables in the model. You can explore the relation between any two variables yourself using the bivariate scatterplot tool. Click on the ![](images/layer-raster-analyze.png) in the toolbar of the map display.](images/bio6_bio11_scatterplot.png){#fig-bio6bio11scatterplot fig-align="left"}
 
 The variance inflation factor (VIF) is a commonly used method to test for collinearity between predictor variables [@graham2003]. In GRASS GIS, the VIF can be calculated for a set of variables using the add-on [r.vif](https://grass.osgeo.org/grass-stable/manuals/addons/r.vif.html). This addon also allows you to select a subset of variables using a stepwise variable selection procedure. In this procedure, the VIF is computed repeatedly. Each time, the variable with the highest VIF is removed until the highest VIF values are less than a user-defined threshold [@craney2002].
 
@@ -557,130 +557,6 @@ Create the folder [dataset01]{.style-db} and sub-folder [envdat]{.style-db} usin
 [^3_data_preparation-8]: [export_rasters]{.style-parameter}: The location to which you want to export [environmental raster layers]{.style-data}. Note that if you save them to a sub-folder of your working directory, you can use the relative path. You can later on use these raster layers as input in Maxent to create prediction raster layers.
 
 [^3_data_preparation-9]: [-t]{.style-parameter}: Select this flag if you want to limit the species and background points to maximum one point per raster cell.
-
-## Code summary
-
-The Python code blocks below combines all steps from this chapter. It mostly is a copy-paste of the code on this page, but note that @exm-udfds5Bwdr and @exm-ddddddwdr are combined, so the whole code can be ran without intermediate user input. And instead of creating a random background point layer in a separate step (@exm-25nmhfEEDF), we let the [v.maxent.swd]{.style-function} do this for us by setting the [nbgp]{.style-parameter} parameter. Input and output layer names are now defined as variables at the beginning, allowing users to easily customize them.
-
-::: panel-tabset
-## {{< fa brands python >}} Examine the data
-
-``` python
-# Define input variables
-working_directory = "replace-with-path-to-working-directory"
-species_mapset = "species_data"
-species_vector = "Erebia_alberganus_obs"
-aoi_mapset = "dataset01"
-resolution = 0.008333
-
-# Define output variables
-density_output = "pointdensities"
-
-# Import necessary libraries
-import grass.script as gs
-import os
-
-# Set the working directory
-os.chdir(working_directory)
-
-# Switch to the mapset containing species data
-gs.run_command("g.mapset", mapset=species_mapset)
-
-# Set the region to match the extent and resolution of the data
-gs.run_command(
-    "g.region",
-    flags="a",
-    res=resolution,
-    vector=species_vector,
-)
-
-# Generate a density map from the species vector data
-gs.run_command(
-    "r.vect.stats",
-    input=species_vector,
-    output=density_output,
-    method="n",  # Count points in each cell
-)
-gs.run_command("r.null", map=density_output, setnull=0)
-
-# Calculate statistics and create a boxplot
-gs.run_command("r.univar", flags="e", map=density_output) 
-gs.run_command("r.boxplot", flags="o", input=density_output) 
-```
-
-## {{< fa brands python >}} Create maxent input data
-
-``` python
-# Define input variables
-working_directory = "replace-with-path-to-working-directory"
-species_mapset = "species_data"
-species_vector = "Erebia_alberganus_obs"
-aoi_mapset = "dataset01"
-climate_mapset = "climate_current"
-country_vector = "countries"
-selected_layers_pattern = "bio*"
-resolution = 0.008333
-vif_seed = 5
-vif_n = 100000
-vif_max = 10
-nbgp = 10000
-
-# Define output variables
-swd_species_output = "dataset01/Erebia_alberganus_obs.swd"
-swd_background_output = "dataset01/background_points.swd"
-swd_export_rasters_dir = "dataset01/envdat"
-
-# Import necessary libraries
-import grass.script as gs
-import os
-
-# Set the working directory
-os.chdir(working_directory)
-
-# Create a directory for exporting environmental data
-os.makedirs(swd_export_rasters_dir, exist_ok=True)
-
-# Create a new mapset for further analysis
-# and add access to necessary mapsets
-gs.run_command("g.mapset", flags="c", mapset=aoi_mapset)
-gs.run_command("g.mapsets", mapset=[climate_mapset, species_mapset], 
-                operation="add")
-
-# Set the region to match the area of interest and apply a mask
-gs.run_command("g.region", region=f"aoi@{climate_mapset}")
-gs.run_command("r.mask", vector=country_vector)
-
-# Identify relevant climate layers using VIF
-# to reduce multicollinearity
-layers = gs.list_strings(
-    pattern=selected_layers_pattern,
-    mapset=climate_mapset,
-    type="raster",
-)
-selected_layers = gs.read_command(
-    "r.vif", flags="v", maps=layers, seed=vif_seed, n=vif_n, maxvif=vif_max  # <1>
-).strip()  # <2>
-
-# Install the addon
-gs.run_command("g.extension", extension="v.maxent.swd")
-
-# Export data for Maxent input
-gs.run_command(
-    "v.maxent.swd",
-    flags="t",
-    species=species_vector,
-    nbgp=nbgp,  # <3>
-    evp_maps=selected_layers,
-    species_output=swd_species_output,
-    bgr_output=swd_background_output,
-    export_rasters=swd_export_rasters_dir,
-)
-```
-
-1.  The [-v]{.style-parameter} results in an list of the finally selected layers.
-2.  The output of the [r.vif]{.style-function} function call is a string that ends with a newline character. The [.strip()]{.style-function} function removes that new line character.
-3.  Instead of creating a random background point layer and using this as input, we use the [nbgp]{.style-parameter}, so the module will create the set of background points within the region's bounds and MASK.
-:::
 
 <br><br>
 

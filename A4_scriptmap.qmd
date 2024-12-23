@@ -2,7 +2,135 @@
 
 Visualizing the results is a key challenge in species distribution modeling. GRASS GIS provides excellent tools for the interactive exploration of spatial data. While it may not offer the advanced cartographic features of software like QGIS, it excels at automating the creation of simple maps. Each section below includes the code used to generate a specific figure in this tutorial. Hover over the paragraph titles to preview the corresponding images.
 
-## Code for @fig-rangemapoccurrences {#sec-rangemapoccurrences .unnumbered}
+## @fig-baselayers {#sec-baselayers}
+
+``` python
+# Import libraries
+import grass.script as gs
+import os
+
+os.chdir("path_to_working_directory")
+
+# Variable
+variable = "E_albergana_futprob"
+name = "reference_layers"
+
+# Set region
+gs.run_command("g.region", raster=variable)
+
+# Output settings
+width_image = 5200
+title = "-"
+
+# Get width/height ratio of image
+region_settings = gs.region()
+height = float(region_settings["n"]) - float(region_settings["s"])
+width = float(region_settings["e"]) - float(region_settings["w"])
+height_image = width_image / (width / height)
+
+# Set environmental variables
+os.environ["GRASS_RENDER_IMMEDIATE"] = "cairo"
+os.environ["GRASS_RENDER_HEIGHT"] = str(height_image)
+os.environ["GRASS_RENDER_WIDTH"] = str(width_image)
+os.environ["GRASS_RENDER_BACKGROUNDCOLOR"] = "#e7f7fe"
+os.environ["GRASS_RENDER_FILE_READ"] = "TRUE"
+os.environ["GRASS_FONT"] = "DejaVuSansCondensed"
+outputfile = f"{name}.png"
+os.remove(outputfile)
+os.environ["GRASS_RENDER_FILE"] = outputfile
+
+# Set mask, define color and add to map
+gs.run_command("r.mask", vector="countries")
+COLORS = "1 250:250:250"
+gs.write_command(
+    "r.colors",
+    map="MASK",
+    rules="-",
+    stdin=COLORS,
+)
+gs.run_command(
+    "d.rast",
+    map="MASK",
+)
+
+# Reclass the LUC in urban and non-urban categories
+RULES = "1 2 3 4 10 = 1\n11 thru 43 = 2\n44 = NULL"
+gs.write_command(
+    "r.reclass",
+    input="CLC2018@PERMANENT",
+    output="GLC2018_urban",
+    rules="-",
+    stdin=RULES,
+)
+
+# Assign value 2 to areas not covered by LUC
+gs.run_command(
+    "r.mapcalc",
+    expression="GLC2018_urban = if(isnull(CLC2018 ),2,GLC2018_urban)",
+    overwrite=True,
+)
+
+# Assign color table to urban layer
+COLORS = "1 red\n2 250:250:250"
+gs.write_command(
+    "r.colors",
+    map="GLC2018_urban",
+    rules="-",
+    stdin=COLORS,
+)
+
+# Combine urban and shade layers
+gs.run_command(
+    "r.shade",
+    shade="shaded_relief_NE",
+    color="GLC2018_urban",
+    output="urban_shade",
+    brighten=30,
+)
+
+# Add urban shade layer to map
+gs.run_command(
+    "d.rast",
+    map="urban_shade",
+)
+
+# Add latlon grid
+gs.run_command(
+    "d.grid",
+    size=5,
+    color="190:190:190",
+    text_color="100:100:100",
+    border_color="160:160:160",
+    fontsize=24,
+    width=0.5,
+)
+
+# Add country boundaries to map
+gs.run_command(
+    "d.vect",
+    map="countries",
+    type="area",
+    color="black",
+    fill_color="none",
+    width=2,
+)
+
+# Add road vector layer to map
+gs.run_command(
+    "d.vect",
+    map="roads",
+    type="line",
+    color="198:0:0",
+    width=0.1,
+)
+
+# Clean up
+gs.run_command("g.remove", flags="f", type="raster", name="GLC2018_urban")
+gs.run_command("g.remove", type="raster", name="urban_shade", flags="f")
+gs.run_command("r.mask", flags="r")
+```
+
+## @fig-rangemapoccurrences {#sec-rangemapoccurrences}
 
 ``` python
 # Import libraries
@@ -32,7 +160,8 @@ os.environ["GRASS_RENDER_WIDTH"] = str(width_image)
 os.environ["GRASS_RENDER_FILE_READ"] = "TRUE"
 os.environ["GRASS_FONT"] = "DejaVuSansCondensed"
 
-# Render image
+# Add AOI (provides the blue background)
+
 gs.run_command(
     "d.vect",
     map="aoi",
@@ -41,6 +170,8 @@ gs.run_command(
     fill_color="199:226:234",
     width=1,
 )
+
+# Add country boundaries to map
 gs.run_command(
     "d.vect",
     map="countries",
@@ -49,6 +180,8 @@ gs.run_command(
     fill_color="236:236:236",
     width=1,
 )
+
+# Add occurrence layer to map
 gs.run_command(
     "d.vect",
     map="occurrences",
@@ -57,6 +190,8 @@ gs.run_command(
     fill_color="211:24:24:100",
     width=10,
 )
+
+# Add range map using white + groen boundary
 gs.run_command(
     "d.vect",
     map="rangemap",
@@ -73,6 +208,8 @@ gs.run_command(
     fill_color="none",
     width=3,
 )
+
+# Add latlon grid to map
 gs.run_command(
     "d.grid",
     size=5,
@@ -84,7 +221,7 @@ gs.run_command(
 )
 ```
 
-## Code for @fig-bioclimvars {#sec-bioclimvars .unnumbered}
+## @fig-bioclimvars {#sec-bioclimvars}
 
 ``` python
 # Import libraries
@@ -172,7 +309,7 @@ for i, variable in enumerate(variables):
     )
 ```
 
-## Code for @fig-futbioclimvars {#sec-futbioclimvars .unnumbered}
+## @fig-futbioclimvars {#sec-futbioclimvars}
 
 ``` python
 # Import libraries
@@ -265,14 +402,14 @@ for i, variable in enumerate(variables):
     )
 ```
 
-## Code for @fig-probdist_model_01 {#sec-probmapmodel1 .unnumbered}
+## @fig-probdistmodel01 {#sec-probmapmodel1}
 
 ``` python
 # Import libraries
 import grass.script as gs
 import os
 
-os.chdir("/home/paulo/Desktop")
+os.chdir("path_to_working_directory")
 
 # Variable
 variable = "Erebia_albergana_obs_envdat@model_01"
@@ -328,14 +465,14 @@ gs.run_command(
 )
 ```
 
-## Code for @fig-samlepred_model_01 {#sec-samlepred_model_01 .unnumbered}
+## @fig-samlepredmodel01 {#sec-samlepredmodel01}
 
 ``` python
 # Import libraries
 import grass.script as gs
 import os
 
-os.chdir("/home/paulo/Desktop")
+os.chdir("path_to_working_directory")
 
 # Variable
 variable = "E_albergana_samplepred"
@@ -403,14 +540,14 @@ gs.run_command(
 )
 ```
 
-## Code for @fig-bgrpred_model_01 {#sec-bgrpred_model_011 .unnumbered}
+## @fig-bgrpredmodel01 {#sec-bgrpredmodel011}
 
 ``` python
 # Import libraries
 import grass.script as gs
 import os
 
-os.chdir("/home/paulo/Desktop")
+os.chdir("path_to_working_directory")
 
 # Variable
 variable = "E_albergana_bgrdpred@model_01"
@@ -478,14 +615,14 @@ gs.run_command(
 )
 ```
 
-## Code for @fig-futdistr_01 {#sec-futdistr_01 .unnumbered}
+## @fig-futdistr01 {#sec-futdistr01}
 
 ``` python
 # Import libraries
 import grass.script as gs
 import os
 
-os.chdir("/home/paulo/Desktop")
+os.chdir("path_to_working_directory")
 
 # Variable
 variable = "E_albergana_futprob"
@@ -541,14 +678,14 @@ gs.run_command(
 )
 ```
 
-## Code for @fig-changemap01 {#sec-changemap01 .unnumbered}
+## @fig-changemap01 {#sec-changemap01}
 
 ``` python
 # Import libraries
 import grass.script as gs
 import os
 
-os.chdir("/home/paulo/Desktop")
+os.chdir("path_to_working_directory")
 
 # Variable
 variable = "E_alb_diff"
@@ -612,14 +749,14 @@ gs.run_command(
 )
 ```
 
-## Code for @fig-change_map_02 {#sec-change_map_02 .unnumbered}
+## @fig-changemap02 {#sec-changemap02}
 
 ``` python
 # Import libraries
 import grass.script as gs
 import os
 
-os.chdir("/home/paulo/Desktop")
+os.chdir("path_to_working_directory")
 
 # Variable
 variable = "E_alberganus_presabschange"
@@ -665,14 +802,14 @@ gs.run_command(
 )
 ```
 
-## Code for @fig-samlepred_model_03a {#sec-samlepred_model_03a .unnumbered}
+## @fig-samlepredmodel03a {#sec-samlepredmodel03a}
 
 ``` python
 # Import libraries
 import grass.script as gs
 import os
 
-os.chdir("/home/paulo/Desktop")
+os.chdir("path_to_working_directory")
 
 # Variable
 variable = "Erebia_alberganus_obs_samplePredictions"
@@ -753,14 +890,14 @@ gs.run_command(
 gs.run_command("g.remove", flags="f", type="raster", name="tmp01")
 ```
 
-## Code for @fig-samlepred_model_03b {#sec-samlepred_model_03b .unnumbered}
+## @fig-samlepredmodel03b {#sec-samlepredmodel03b}
 
 ``` python
 # Import libraries
 import grass.script as gs
 import os
 
-os.chdir("/home/paulo/Desktop")
+os.chdir("path_to_working_directory")
 
 # Variable
 variable = "Erebia_alberganus_obs_samplePredictions"
@@ -851,14 +988,14 @@ gs.run_command(
 gs.run_command("g.remove", flags="f", type="raster", name="tmp01")
 ```
 
-## Code for @fig-messmap {#sec-mess01 .unnumbered}
+## @fig-messmap {#sec-mess01}
 
 ``` python
 # Import libraries
 import grass.script as gs
 import os
 
-os.chdir("/home/paulo/Desktop")
+os.chdir("path_to_working_directory")
 
 # Variable
 variable = "mess_MES"
@@ -915,7 +1052,7 @@ gs.run_command(
 )
 ```
 
-## Code for @fig-modmap {#sec-mess02 .unnumbered}
+## @fig-modmap {#sec-mess02}
 
 ``` python
 # Import libraries
@@ -923,7 +1060,7 @@ import grass.script as gs
 import os
 
 # Set working directory
-os.chdir("/home/paulo/Desktop")
+os.chdir("path_to_working_directory")
 
 # Variable
 variable = "mess_MoD"
@@ -991,14 +1128,14 @@ gs.run_command(
 )
 ```
 
-## Code for @fig-countneg {#sec-mess03 .unnumbered}
+## @fig-countneg {#sec-mess03}
 
 ``` python
 # Import libraries
 import grass.script as gs
 import os
 
-os.chdir("/home/paulo/Desktop")
+os.chdir("path_to_working_directory")
 
 # Variable
 variable = "mess_CountNeg"
@@ -1063,4 +1200,220 @@ gs.run_command(
     at=[50, 88, 93, 95],
     range="1,4",
 )
+```
+
+## @fig-Erealbavm4a - [-@fig-Erealbavm4a] {#sec-adferdf}
+
+``` python
+# Import libraries
+import grass.script as gs
+import os
+
+# Set working directory
+os.chdir("/home/paulo/Desktop")
+
+# Variable
+variables = [
+    "Erealb_avg_m4a@model_04",
+    "Erealb_avg_m4b@model_04",
+    "Erebia_alberganus_obs_envdat_avg@model_03",
+]
+
+# Set region
+gs.run_command("g.region", region="aoi")
+
+# Output settings
+width_image = 1200
+title = "-"
+
+# Get width/height ratio of image
+region_settings = gs.region()
+height = float(region_settings["n"]) - float(region_settings["s"])
+width = float(region_settings["e"]) - float(region_settings["w"])
+height_image = width_image / (width / height)
+
+# Set environmental variables
+os.environ["GRASS_RENDER_IMMEDIATE"] = "cairo"
+os.environ["GRASS_RENDER_HEIGHT"] = str(height_image)
+os.environ["GRASS_RENDER_WIDTH"] = str(width_image)
+os.environ["GRASS_RENDER_BACKGROUNDCOLOR"] = "#e7f7fe"
+os.environ["GRASS_RENDER_FILE_READ"] = "TRUE"
+os.environ["GRASS_FONT"] = "DejaVuSansCondensed"
+
+for i, variable in enumerate(variables):
+    maplayer, mapset = variable.split("@")
+    outputfile = f"{maplayer}.png"
+    os.environ["GRASS_RENDER_FILE"] = outputfile
+
+    # Render raster layer
+    gs.run_command(
+        "d.rast",
+        map=variable,
+    )
+    gs.run_command(
+        "d.vect",
+        map="countries",
+        type="area",
+        color="white",
+        fill_color="none",
+        width=0.5,
+    )
+    gs.run_command(
+        "d.legend",
+        flags="bt",
+        raster=variable,
+        font="Arial:Regular",
+        fontsize=16,
+        at=[6, 94, 92, 94],
+        digits=1,
+        label_step=0.2,
+        range = [0,1]
+    )
+```
+
+## @fig-stddevmodel4a - [-@fig-stddevmodel4b] {#sec-ws4FDpBcUr}
+
+``` python
+# Import libraries
+import grass.script as gs
+import os
+
+# Set working directory
+os.chdir("/home/paulo/Desktop")
+
+# Variable
+variables = [
+    "Erealb_stddev_m4a@model_04",
+    "Erealb_stddev_m4b@model_04",
+    "Erebia_alberganus_obs_envdat_stddev@model_03",
+]
+
+# Set color table for stdev maps
+COLORS = """\
+0 0:0:255
+0.02 0:255:255
+0.04 255:255:0
+0.06 255:0:0
+0.1 100:0:0
+0.490618 100:0:0
+nv 255:255:255
+default 255:255:255
+"""
+gs.write_command("r.colors", map=variables, rules="-", stdin=COLORS)
+
+# Set region
+gs.run_command("g.region", region="aoi")
+
+# Output settings
+width_image = 1200
+title = "-"
+
+# Get width/height ratio of image
+region_settings = gs.region()
+height = float(region_settings["n"]) - float(region_settings["s"])
+width = float(region_settings["e"]) - float(region_settings["w"])
+height_image = width_image / (width / height)
+
+# Set environmental variables
+os.environ["GRASS_RENDER_IMMEDIATE"] = "cairo"
+os.environ["GRASS_RENDER_HEIGHT"] = str(height_image)
+os.environ["GRASS_RENDER_WIDTH"] = str(width_image)
+os.environ["GRASS_RENDER_BACKGROUNDCOLOR"] = "#e7f7fe"
+os.environ["GRASS_RENDER_FILE_READ"] = "TRUE"
+os.environ["GRASS_FONT"] = "DejaVuSansCondensed"
+
+for i, variable in enumerate(variables):
+    maplayer, mapset = variable.split("@")
+    outputfile = f"{maplayer}.png"
+    os.environ["GRASS_RENDER_FILE"] = outputfile
+
+    # Render raster layer
+    gs.run_command(
+        "d.rast",
+        map=variable,
+    )
+    gs.run_command(
+        "d.vect",
+        map="countries",
+        type="area",
+        color="white",
+        fill_color="none",
+        width=0.5,
+    )
+    gs.run_command(
+        "d.legend",
+        flags="bt",
+        raster=variable,
+        font="Arial:Regular",
+        fontsize=16,
+        at=[6, 94, 92, 94],
+        digits=2,
+        label_step=0.02,
+        range=[0, 0.1],
+    )
+```
+
+## boxplots
+
+``` python
+# Import library
+import os
+import grass.script as gs
+
+# Combine the background and occurrence point layers
+gs.run_command(
+    "v.patch",
+    flags="e",
+    input=["Erealb_bg_m4a@model_04", "Erealb_sp_m4a@model_04"],
+    output="Erealb_m4a",
+)
+gs.run_command(
+    "v.patch",
+    flags="e",
+    input=["Erealb_bg_m4b@model_04", "Erealb_sp_m4b@model_04"],
+    output="Erealb_m4b",
+)
+gs.run_command(
+    "v.patch",
+    flags="e",
+    input=[
+        "Erebia_alberganus_obs@model_03",
+        "Erebia_alberganus_obs_samplePredictions@model_03",
+    ],
+    output="Erealb_m3",
+)
+
+# Set working directory
+os.chdir("path_to_working_directory")
+
+# Create list of combinations of inputs
+columns = ["Cloglog_mean", "CLoglog_range"]
+maps = ["Erealb_m3@model_03", "Erealb_m4a@model_04", "Erealb_m4b@model_04"]
+inputs = [(x, y) for x in maps for y in columns]
+
+# Print boxplot figures
+for vectorlayer, column in inputs:
+    if column == "Cloglog_mean":
+        axlim = "0,1"
+    else:
+        axlim = "0,0.15"
+    vectlay = vectorlayer.split("@")[0]
+    gs.run_command(
+        "v.boxplot",
+        flags="hog",
+        map=vectorlayer,
+        column=column,
+        group_by="pointlocations",
+        output=f"{vectlay}_{column}.png",
+        plot_dimensions="6,1.5",
+        order="ascending",
+        axis_limits=axlim,
+        bx_color="231:238:231",
+        bx_blcolor="127:127:127",
+        bx_width=0.9,
+        median_lw=2,
+        median_color="92:142:92",
+        flier_color="211:225:211",
+        overwrite=True,
+    )
 ```

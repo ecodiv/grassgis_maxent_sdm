@@ -25,13 +25,13 @@ The following typographical conventions are used in this reader:
 -   [Parameter settings, user-supplied values]{.style-parameter}
 :::
 
-Throughout the text you'll find literature references and footnotes. You are encouraged to check them out. Simply hoover over the link with your mouse. You'll also find that some code includes explanatory notes. You can read these notes by clicking on the number next to the code.
+Throughout the text you'll find literature references and footnotes. You are encouraged to check them out. Simply hover over the link with your mouse. You'll also find that some code includes explanatory notes. You can read these notes by clicking on the number next to the code.
 
-If you find some errors or have suggestions for improvements, you can create an so-called issue at Github. To do so, click on {{< fa brands github >}} [Report an issue]{.style-menu} in the upper right corner of the page (you'll need a Github account). You can also send me a message using the form (see the green button in the lower right corner of this page).
+If you find some errors or have suggestions for improvements, you can create an so-called issue at GitHub. To do so, click on {{< fa brands github >}} [Report an issue]{.style-menu} in the upper right corner of the page (you'll need a GitHub account). You can also send me a message using the form (see the green button in the lower right corner of this page).
 
 ## Install the software
 
-Before diving into this reader, make sure to install GRASS GIS, Maxent, and Java. Below, you'll find a brief guide on where to download the software and how to install it. Later on, you'll also install a number of GRASS GIS addons. These provide additional functionality not (yet) available in the core software package.
+Before diving into this reader, make sure to install GRASS GIS, Maxent, and Java. Below, you'll find a brief guide on where to download the software and how to install it. Later on, you'll also install a number of GRASS GIS addons. These provide additional functionality not yet available in the core software package.
 
 ### GRASS GIS
 
@@ -65,7 +65,7 @@ g.extension extension=r.mess
 g.extension extension=r.vect.stats
 g.extension extension=v.db.pyupdate
 
-# Stats and data visualisation
+# Stats and data visualization
 g.extension extension=r.vect.stats
 g.extension extension=r.boxplot
 g.extension extension=v.scatterplot
@@ -87,7 +87,7 @@ gs.run_command("g.extension", extension="r.mess")
 gs.run_command("g.extension", extension="r.vect.stats")
 gs.run_command("g.extension", extension="v.db.pyupdate")
 
-# Stats and data visualisation
+# Stats and data visualization
 gs.run_command("g.extension", extension="r.vect.stats")
 gs.run_command("g.extension", extension="r.boxplot")
 gs.run_command("g.extension", extension="v.scatterplot")
@@ -139,7 +139,7 @@ Note that you only have to do this once. If you already installed the Maxent.jar
 
 ### Java OpenJDK
 
-The [Maxent]{.style-apps} software requires [Java]{.style-apps} or the [Java Runtime Environment]{.style-apps} (JRE) version 1.4 or later to be installed on your computer. There is a good change you already have [Java]{.style-apps} installed. You can check this using the step below.
+The [Maxent]{.style-apps} software requires [Java]{.style-apps} or the [Java Runtime Environment]{.style-apps} (JRE) version 1.4 or later to be installed on your computer. There is a good chance you already have [Java]{.style-apps} installed. You can check this using the step below.
 
 ::: {.panel-tabset group="os"}
 ## {{< fa brands linux >}}
@@ -165,7 +165,7 @@ I have no access to an Apple computer, but perhaps [this page](https://javaforge
 
 If you have [Java]{.style-apps} on your computer, it should show you the version. If not, you'll get the message that it cannot be found. In that case, download it from e.g., [here](https://www.azul.com/downloads/#zulu) or [here](https://openjdk.org/) and install it.
 
-Now we need to ensures that [GRASS GIS]{.style-apps} can locate the [Java]{.style-apps} executable, a prerequisite for running [Maxent]{.style-apps}. On Linux, and in some cases on Windows, GRASS may have access to [Java]{.style-apps} without further steps. You can check this using the following command.
+Now we need to ensure that [GRASS GIS]{.style-apps} can locate the [Java]{.style-apps} executable, a prerequisite for running [Maxent]{.style-apps}. On Linux, and in some cases on Windows, GRASS may have access to [Java]{.style-apps} without further steps. You can check this using the following command.
 
 ::: {#exm-eUGszZQwy4 .hiddendiv}
 :::

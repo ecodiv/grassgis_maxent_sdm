@@ -1,8 +1,8 @@
 # Model prediction {#sec-modelprediction}
 
-A species distribution model trained on one set of environmental variables can be projected onto future climate scenarios to forecast potential shifts in habitat suitability over time (@fig-Flowchart_model_predict2). Similarly, models based on a species' native distribution can help predict its potential range in new areas outside its current habitat. This approach is valuable for assessing the potential risk of species becoming invasive in new regions.
+A species distribution model trained on one set of environmental variables can be projected onto future climate scenarios to forecast potential shifts in habitat suitability over time (@fig-Flowchartmodelpredict2). Similarly, models based on a species' native distribution can help predict its potential range in new areas outside its current habitat. This approach is valuable for assessing the potential risk of species becoming invasive in new regions.
 
-![A) The developing of a species distribution model. B) Usig the model to predict the potential distribution of a species under future climate conditions. Step B is the focus of this chapter.](images/Flowchart_model_predict2.png){#fig-Flowchart_model_predict2 width="450" fig-align="left"}
+![A) The developing of a species distribution model. B) Using the model to predict the potential distribution of a species under future climate conditions. Step B is the focus of this chapter.](images/Flowchart_model_predict2.png){#fig-Flowchartmodelpredict2 width="450" fig-align="left"}
 
 In this section, we’ll use the model developed in @sec-4trainthemodel to project the current and the future potential distribution of the Almond-eyed Ringlet.
 
@@ -145,7 +145,7 @@ variables=bio_1,bio_13,bio_14,bio_15,bio_19,bio_2,bio_4,bio_8,bio_9 \ # <1>
 output=E_alberganus_futprob
 ```
 
-1.  The names of the future bioclim layers differ from the variables, so we need to provided the variable names. Be careful, they need to be given in the same order as the corresponding raster layers.
+1.  The names of the future bioclim layers differ from the variables, so we need to provide the variable names. Note that they must be provided in the same order as the corresponding raster layers.
 
 ## {{< fa brands python >}}
 
@@ -163,7 +163,7 @@ gs.run_command(
 )
 ```
 
-1.  The names of the future bioclim layers differ from the variables, so we need to provided the variable names. Be careful, they need to be given in the same order as the corresponding raster layers.
+1.  The names of the future bioclim layers differ from the variables, so we need to provide the variable names. Note that they must be provided in the same order as the corresponding raster layers.
 
 ## {{< fa regular window-restore >}}
 
@@ -179,7 +179,7 @@ Open the [r.maxent.predict]{.style-function} dialog and run it with the followin
 : {tbl-colwidths="\[35,65\]"}
 :::
 
-[^5_model_prediction-2]: The names of the future bioclim layers differ from the variables, so we need to provided the variable names. Be careful, they need to be given in the same order as the corresponding raster layers.
+[^5_model_prediction-2]: The names of the future bioclim layers differ from the variables, so we need to provide the variable names. Note that they must be provided in the same order as the corresponding raster layers.
 
 We have now projected both the current and future potential distribution of the Almond-eyed Ringlet butterfly under different climate scenarios. Next step is to compare them.
 
@@ -219,16 +219,16 @@ Open the [r.colors]{.style-function} dialog and run it with the following parame
 : {tbl-colwidths="\[35,65\]"}
 :::
 
-Examining the resulting map reveals that by 2081, the potential distribution area of the Almond-eyed Ringlet is projected to decrease significantly under SSP585 (@fig-futdistr_01). In the Alps, its range is expected to shift to higher altitudes, while in other areas, the species may dissapear entirely.
+Examining the resulting map reveals that by 2081, the potential distribution area of the Almond-eyed Ringlet is projected to decrease significantly under SSP585 (compare @fig-probdistmodel01b with @fig-futdistr01). In the Alps, its range is expected to shift to higher altitudes, while in other areas, the species may dissapear entirely.
 
 ::: {.panel-tabset .exercise}
 ## Future climate conditions
 
-![The raster layer [E_alberganus_futprob]{.style-data} with the predicted probability of occurrences of *Erebia alberganus* in 2081-2100 under the SSP585 climate scenario, based on model_01.](images/E_alberganus_futprob.png){#fig-futdistr_01 group="presfut"}
+![The raster layer [E_alberganus_futprob]{.style-data} with the predicted probability of occurrences of *Erebia alberganus* in 2081-2100 under the SSP585 climate scenario, based on model_01.](images/E_alberganus_futprob.png){#fig-futdistr01 group="presfut"}
 
 ## Current climate conditions
 
-![The raster layer [E_alberganus_probability]{.style-data} with the predicted probability of occurrences of *Erebia alberganus*, based on model_01.](images/E_alberganus_probability.png){#fig-probdist_model_01b group="presfut"}
+![The raster layer [E_alberganus_probability]{.style-data} with the predicted probability of occurrences of *Erebia alberganus*, based on model_01.](images/E_alberganus_probability.png){#fig-probdistmodel01b group="presfut"}
 :::
 
 To highlight areas where the changes are expected to happen, we can create a change map by calculating the differences in habitat suitability scores between current and future distributions.
@@ -356,9 +356,9 @@ gs.write_command(
 Open the [raster map calculator]{.style-menu} in the menu [raster → raster map calculator → raster map calculator]{.style-menu}
 
 ::: {#fig-catcross layout-ncol="2"}
-![Current conditions](images/presabs_current_bal.png){#fig-presabs_current_bal fig-align="left" group="rmapcalc"}
+![Current conditions](images/presabs_current_bal.png){#fig-presabscurrentbal fig-align="left" group="rmapcalc"}
 
-![Future conditions](images/presabs_future_bal.png){#fig-presabs_future_bal fig-align="left" group="rmapcalc"}
+![Future conditions](images/presabs_future_bal.png){#fig-presabsfuturebal fig-align="left" group="rmapcalc"}
 
 Convert current and future probability maps to binary maps using the r.mapcalc module.
 :::
@@ -412,7 +412,7 @@ Open the [r.cross]{.style-menu} module and run it with the following parameters.
 
 [^5_model_prediction-6]: The [-z]{.style-parameter} flag tells r.cross to ignore raster cells with no data.
 
-To gain a more quantitative perspective on the predicted changes, we can use the [r.report](https://grass.osgeo.org/grass-stable/manuals/r.report.html) module, which provides area statistics for each category (@fig-r_cross_report_01).
+To gain a more quantitative perspective on the predicted changes, we can use the [r.report](https://grass.osgeo.org/grass-stable/manuals/r.report.html) module, which provides area statistics for each category (@fig-rcrossreport01).
 
 ::: {#exm-fY8ZAeGbFo .hiddendiv}
 :::
@@ -459,16 +459,16 @@ Open the [r.report]{.style-menu} module and run it with the following parameters
 
 [^5_model_prediction-8]: The [-n]{.style-parameter} flag tells r.report to not report on no data values.
 
-The map we created in @exm-ZRtKwPOjl3 shows the predicted presence and absence of *Erebia_alberganus* under current and future conditions (@fig-r_cross_01). According to the statistics we calculated in @exm-fY8ZAeGbFo, about 98% of the study area is and will remain unsuitable for our species. Currently, 2.15% of the area is classified as suitable for the species. However, projections suggest that the surface area with suitable conditions will significantly decrease, with only 0.1% remaining suitable by 2081-2100. Additionally, 0.07% of the area may become newly suitable for the species over this period (@fig-r_cross_report_01).
+The map we created in @exm-ZRtKwPOjl3 shows the predicted presence and absence of *Erebia_alberganus* under current and future conditions (@fig-rcross01). According to the statistics we calculated in @exm-fY8ZAeGbFo, about 98% of the study area is and will remain unsuitable for our species. Currently, 2.15% of the area is classified as suitable for the species. However, projections suggest that the surface area with suitable conditions will significantly decrease, with only 0.1% remaining suitable by 2081-2100. Additionally, 0.07% of the area may become newly suitable for the species over this period (@fig-rcrossreport01).
 
 ::: {.panel-tabset .exercise}
 ## The map
 
-![The raster layer [E_alberganus_presabschange]{.style-data} with four categories: Category 0 shows areas where the species is predicted to be absent under both current and future conditions; category 1 represents areas where the species is absent now but predicted to be present in the future; category 2 highlights areas where the species is present now but predicted to be absent in the future; and category 3 indicates areas where the species is predicted to be present under both current and future conditions](images/E_alberganus_presabschange.png){#fig-r_cross_01}
+![The raster layer [E_alberganus_presabschange]{.style-data} with four categories: Category 0 shows areas where the species is predicted to be absent under both current and future conditions; category 1 represents areas where the species is absent now but predicted to be present in the future; category 2 highlights areas where the species is present now but predicted to be absent in the future; and category 3 indicates areas where the species is predicted to be present under both current and future conditions](images/E_alberganus_presabschange.png){#fig-rcross01}
 
 ## Statistics
 
-![The area statistics for the categorical layer [E_alberganus_binchange]{.style-data}.](images/r_cross_report_01.png){#fig-r_cross_report_01 fig-align="left"}
+![The area statistics for the categorical layer [E_alberganus_binchange]{.style-data}.](images/r_cross_report_01.png){#fig-rcrossreport01 fig-align="left"}
 :::
 
 The categories aren't easy to read, and the colors of the map aren't necessarily the best to bring out the different categories. We can therefore assign a different color table to the map using [r.colors](https://grass.osgeo.org/grass-stable/manuals/r.colors.html) and rename the categories using [r.category](https://grass.osgeo.org/grass-stable/manuals/r.category.html).
@@ -546,11 +546,11 @@ Now we can create the map and report with area statistics again by repeating @ex
 ::: {.panel-tabset .exercise}
 ## The map
 
-![The raster layer [E_alberganus_presabschange]{.style-data} with four categories: Category 0 shows areas where the species is predicted to be absent under both current and future conditions; category 1 represents areas where the species is absent now but predicted to be present in the future; category 2 highlights areas where the species is present now but predicted to be absent in the future; and category 3 indicates areas where the species is predicted to be present under both current and future conditions](images/change_map_02.png){#fig-change_map_02}
+![The raster layer [E_alberganus_presabschange]{.style-data} with four categories: Category 0 shows areas where the species is predicted to be absent under both current and future conditions; category 1 represents areas where the species is absent now but predicted to be present in the future; category 2 highlights areas where the species is present now but predicted to be absent in the future; and category 3 indicates areas where the species is predicted to be present under both current and future conditions](images/change_map_02.png){#fig-changemap02}
 
 ## Statistics
 
-![The area statistics for the categorical layer [E_alberganus_binchange]{.style-data}.](images/r_cross_report_02.png){#fig-r_cross_report_01 fig-align="left"}
+![The area statistics for the categorical layer [E_alberganus_binchange]{.style-data}.](images/r_cross_report_02.png){#fig-rcrossreport01 fig-align="left"}
 :::
 
 GRASS GIS includes various other modules that compute and visualize different (change) statistics. A good starting point is to explore the [toolbox](https://grass.osgeo.org/grass-stable/manuals/index.html) and the [list of addons](https://grass.osgeo.org/grass-stable/manuals/addons/). You have now completed the basic steps to create and use a species distribution model using Maxent in GRASS GIS. In subsequent sections we’ll dive deeper into the options, choices, and parameter settings to validate and fine-tune the model.

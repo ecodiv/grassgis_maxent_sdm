@@ -2,7 +2,7 @@
 
 GRASS (Geographic Resources Analysis Support System) offers a wide range of tools for terrain and ecosystem modeling, hydrology, management and analysis of geospatial data, and the processing of satellite and aerial imagery. It comes with a temporal framework for advanced time series processing and a Python API for rapid geospatial programming. [Read more here…](https://grass.osgeo.org/learn/overview/)
 
-The functionality of GRASS can be used from its Graphical User Interface (GUI, @fig-startup_firsttime_users), from command line (CLI), from a Python IDE or Jupyter Notebook via the [grass.script](https://grass.osgeo.org/grass-stable/manuals/libpython/script_intro.html), [pygrass](https://grass.osgeo.org/grass-stable/manuals/libpython/pygrass_index.html) or [grass.jupyter packages](https://grass.osgeo.org/grass84/manuals/libpython/grass.jupyter.html), from R IDEs like RStudio via the [rgrass](https://github.com/rsbivand/rgrass/) package, from REST APIs like [Actinia](https://actinia.mundialis.de/) and also via web processes like WPS. GRASS GIS is a versatile and robust software package.
+The functionality of GRASS can be used from its Graphical User Interface (GUI, @fig-startupfirsttimeusers), from command line (CLI), from a Python IDE or Jupyter Notebook via the [grass.script](https://grass.osgeo.org/grass-stable/manuals/libpython/script_intro.html), [pygrass](https://grass.osgeo.org/grass-stable/manuals/libpython/pygrass_index.html) or [grass.jupyter packages](https://grass.osgeo.org/grass84/manuals/libpython/grass.jupyter.html), from R IDEs like RStudio via the [rgrass](https://github.com/rsbivand/rgrass/) package, from REST APIs like [Actinia](https://actinia.mundialis.de/) and also via web processes like WPS. GRASS GIS is a versatile and robust software package.
 
 For users not familiar with GRASS, start with this page, and next, check out the [First time users](https://grass.osgeo.org/learn/newcomers/) page. For those who are well versed in GIS, but new to GRASS, have a look at these [tips](https://grasswiki.osgeo.org/wiki/GRASS_migration_hints). And if you are more familiar with ArcGIS, check out the page [GRASS for ArcGIS users](https://grasswiki.osgeo.org/wiki/GRASS_GIS_for_ArcGIS_users) to get a grasp of the main GRASS concepts you should know about. QGIS users should note that most grass functions used in this tutorial are also [available in QGIS](https://docs.qgis.org/3.34/en/docs/user_manual/grass_integration/grass_integration.html).
 
@@ -10,7 +10,7 @@ For users not familiar with GRASS, start with this page, and next, check out the
 
 To run GRASS, click on the GRASS link on the desktop or from the system menu. Alternatively, open the command line window and type [grass]{.style-apps}. When [launching](https://grass.osgeo.org/grass-stable/manuals/grass.html) GRASS for the first time, you will open a default project called [world_latlog_wgs84]{.style-db} where you can find a map layer called [country_boundaries]{.style-data} showing a world map in the [WGS84 coordinate system](https://epsg.io/4326).
 
-![Start-up screen for first time users. On the left, you can find the data browser which allows you to navigate through your projects and data, and the layers panel showing displayed layers. The panel in the middle is the map display. You can add additional ones if you need using ![](images/newwindow.png). On the right there are multiple tabs where you can find a searchable tools' tree similar to the Processing toolbox in QGIS, a console where you can type GRASS commands, the history of executed commands in case you want to re-run a task and a simple Python console where you can use the GRASS Python API.](images/startup_firsttime_users.png){#fig-startup_firsttime_users}
+![Start-up screen for first time users. On the left, you can find the data browser which allows you to navigate through your projects and data, and the layers panel showing displayed layers. The panel in the middle is the map display. You can add additional ones if you need using ![](images/newwindow.png). On the right there are multiple tabs where you can find a searchable tools' tree similar to the Processing toolbox in QGIS, a console where you can type GRASS commands, the history of executed commands in case you want to re-run a task and a simple Python console where you can use the GRASS Python API.](images/startup_firsttime_users.png){#fig-startupfirsttimeusers}
 
 To practice, you can download various sample datasets. For example, the [North Carolina]{.style-db} dataset is often used in tutorials. You can simply reach them through [Download sample project to current database]{.style-menu} icon ![](images/location-download.png) in the [Data]{.style-menu} panel. The sample data will be downloaded and imported as a new project in the current GRASS database.
 
@@ -112,15 +112,15 @@ When processing spatial data in GRASS GIS, the first step is to import the datas
 ::: panel-tabset
 ## {{< fa regular window-restore >}} Import raster data
 
-![Import raster data using the GUI or command line/console. Make sure to check the options under [import settings]{.style-menu} tab.](images/import_rasterdata.png){#fig-import_rasterdata fig-align="left" group="importdata"}
+![Import raster data using the GUI or command line/console. Make sure to check the options under [import settings]{.style-menu} tab.](images/import_rasterdata.png){#fig-importrasterdata fig-align="left" group="importdata"}
 
 ## {{< fa regular window-restore >}} Import vector data
 
-![Import vector data using the GUI or command line/console. Make sure to check the options under [import settings]{.style-menu} tab.](images/import_vectordata.png){#fig-import_vectordata fig-align="left" group="importdata"}
+![Import vector data using the GUI or command line/console. Make sure to check the options under [import settings]{.style-menu} tab.](images/import_vectordata.png){#fig-importvectordata fig-align="left" group="importdata"}
 
 ## {{< fa regular window-restore >}} Import other data
 
-![GRASS can handle many different data types. Most types of raster can be imported using [r.in.gdal]{.style-function}, but you'll find more options in the [Raster import]{.style-menu} menu. Similarly, you'll find more options for the import of vector, 3D and tabular data under the [File]{.style-menu} menu.](images/import_otherdata.png){#fig-import_otherdata fig-align="left" group="importdata"}
+![GRASS can handle many different data types. Most types of raster can be imported using [r.in.gdal]{.style-function}, but you'll find more options in the [Raster import]{.style-menu} menu. Similarly, you'll find more options for the import of vector, 3D and tabular data under the [File]{.style-menu} menu.](images/import_otherdata.png){#fig-importotherdata fig-align="left" group="importdata"}
 :::
 
 GRASS can handle many different data types, and offers various tools to import e.g., temporal data sets and satellite images as well. [This page](https://grass.osgeo.org/grass-stable/manuals/topic_import.html) provides a list of core import modules. And for more specialized data import tools, check out the list of addons (@sec-usingaddons).

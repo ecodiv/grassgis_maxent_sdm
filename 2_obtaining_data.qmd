@@ -45,9 +45,9 @@ Now that you have your database ready, you can start with the next step, which i
 
 ## Working directory {#sec-workingdirectory}
 
-Certain modules require a file as input or output. You can use the full path to the file. However, if you also define a working directory and you put your files in that working directory, you only need to provide the path relative to the working directory[^2_obtaining_data-1]. For this section, create your own working directory where you will store the downloaded data.
+Certain modules require a file as input or output. You can use the full path to the file. However, if you define a working directory and you put your files in that working directory, you only need to provide the path relative to the working directory[^2_obtaining_data-1]. For this section, create your own working directory where you will store the downloaded data.
 
-[^2_obtaining_data-1]: The working directory is a directory where GRASS would look for or output files to if the full path is not specified.
+[^2_obtaining_data-1]: The working directory is a directory where GRASS will look for or output files to if the full path is not specified.
 
 ::: {#exm-qpbGaVxfYh .hiddendiv}
 :::
@@ -83,9 +83,9 @@ We'll download and import a few base layers, including maps of the national boun
 
 [^2_obtaining_data-2]: *Reference layers* are datasets that provide context and help you to visually navigate the map and understand the geographic setting of the area being analyzed. One of the key advantages of modeling in a GIS environment is the ability to seamlessly integrate and compare model outcomes with these reference layers, and thus to explore and interpret results in their geographic context.
 
-![The study area with the national boundaries, main roads, rivers and urban areas and shaded relief. Source: [Natural Earth](https://www.naturalearthdata.com/).](images/aoi.png){#fig-baselayers}
+![The study area with the national boundaries, main roads and shaded relief (source: [Natural Earth](https://www.naturalearthdata.com/)) and the urban areas (source: [GLC](https://land.copernicus.eu/en/products/corine-land-cover)).](images/reference_layers.png){#fig-baselayers}
 
-For an effective workflow, it is a good idea to organize your data well. For this tutorial, we'll keep the base layers in the [PERMANENT]{.style-db} mapset. For input data for our modeling and the modeling results, we'll use separate mapsets.
+For an effective workflow, it is a good idea to organize your data well. For this tutorial, we'll keep the base layers in the [PERMANENT]{.style-db} mapset. We'll use separate mapsets for the input data for our modelling and the modelling results.
 
 ### Boundaries {#sec-nationalboundaries}
 
@@ -855,7 +855,7 @@ Although there are some noticeable discrepancies between the range map and the o
 
 ## Current climate {#sec-climatedata}
 
-As explanatory variables for the species distribution modeling, we'll use the 19 [bioclimatic variables](https://www.worldclim.org/data/bioclim.html) from Worldclim[@fick2017]. Bioclimatic (or bioclim in short) variables are derived from the monthly temperature and rainfall values in order to generate more biologically meaningful variables[^2_obtaining_data-8]. They are available in raster format at different resolutions for historical[^2_obtaining_data-9] and future conditions. [Download](https://www.worldclim.org/data/worldclim21.html#) the 30 arc seconds[^2_obtaining_data-10] historical bioclim data (@fig-worldclim_historic_bioclim) and unzip the GeoTiff files to your working directory.
+As explanatory variables for the species distribution modeling, we'll use the 19 [bioclimatic variables](https://www.worldclim.org/data/bioclim.html) from Worldclim[@fick2017]. Bioclimatic (or bioclim in short) variables are derived from the monthly temperature and rainfall values in order to generate more biologically meaningful variables[^2_obtaining_data-8]. They are available in raster format at different resolutions for historical[^2_obtaining_data-9] and future conditions. [Download](https://www.worldclim.org/data/worldclim21.html#) the 30 arc seconds[^2_obtaining_data-10] historical bioclim data (@fig-worldclimhistoricbioclim) and unzip the GeoTiff files to your working directory.
 
 [^2_obtaining_data-8]: The bioclimatic variables represent annual trends (e.g., mean annual temperature, annual precipitation) seasonality (e.g., annual range in temperature and precipitation) and extreme or limiting environmental factors (e.g., temperature of the coldest and warmest month, and precipitation of the wet and dry quarters).
 
@@ -863,7 +863,7 @@ As explanatory variables for the species distribution modeling, we'll use the 19
 
 [^2_obtaining_data-10]: You can download the data at another resolution as well. If you do, make sure to to adapt the relevant code examples accordingly.
 
-![The Worldclim download page for the version 2.1 historical climate data, with the download link for the 30 arc-second bioclim variables.](images/worldclim_historic_bioclim.png){#fig-worldclim_historic_bioclim fig-align="left"}
+![The Worldclim download page for the version 2.1 historical climate data, with the download link for the 30 arc-second bioclim variables.](images/worldclim_historic_bioclim.png){#fig-worldclimhistoricbioclim fig-align="left"}
 
 We'll create a new mapset [climate]{.style-db} to store the climate data, using the [g.mapset](https://grass.osgeo.org/grass-stable/manuals/g.mapset.html) module with the [-c]{.style-parameter} flag. Next, we use the [ ](https://grass.osgeo.org/grass-stable/manuals/.html) module to set the boundaries of the region for which we want to import the data. One option is to use the region extent we defined earlier. Or, now that we know more precisely where our species has been observed, we can defined new bounds using the module with the [n]{.style-parameter}, [s]{.style-parameter}, [e]{.style-parameter}, and [w]{.style-parameter} parameters. We'll do the latter, and set the extent of the computational region to *54N*, *36S*, *-10w* and *32E*.
 
@@ -1037,8 +1037,9 @@ Open the dialog of the [g.region]{.style-function} module, and run it with the f
 
 Run the module again, but now with the following parameter settings:
 
-| Parameter \| Value \|
-| Save current region settings in named region file (save) \| aoi \|
+| Parameter                                                | Value |
+|----------------------------------------------------------|-------|
+| Save current region settings in named region file (save) | aoi   |
 
 : {tbl-colwidths="\[50,50\]"}
 :::
@@ -1198,7 +1199,7 @@ Unlike the data for current climate conditions, the data consists of one geoTIF 
 gdalinfo wc2.1_30s_bioc_EC-Earth3-Veg_ssp585_2081-2100.tif 
 ```
 
-![[gdalifo]{.style-function} prints the names and some basic information about each of the bands in the GeoTiff file. The names of the first two bands are marked with a red outline.](images/gdalinfo_futclim.png){#fig-gdalinfo_futclim}
+![[gdalifo]{.style-function} prints the names and some basic information about each of the bands in the GeoTiff file. The names of the first two bands are marked with a red outline.](images/gdalinfo_futclim.png){#fig-gdalinfofutclim}
 :::
 
 The [r.in.gdal](https://grass.osgeo.org/grass-stable/manuals/r.in.gdal.html) module conveniently imports each band as a separate layer. The value of the [output]{.style-parameter} parameter will be used as prefix for the name of the imported raster layers, followed by the band number. If possible, use the [memory]{.style-parameter} parameter to increase the memory to be used by the module as this can speed up the import considerably.
@@ -1280,218 +1281,6 @@ Type in [r.in.gdal]{.style-function} in the console to open the dialog, and use 
 ![](images/futbio_19.png){group="NsFOs6E8BO"}
 
 Projected bioclimatic conditions for the period 2081-2100 based on the SSP585 from the GCM EC-Earth3-Veg. Source: [Worldclim version 2.0](https://www.worldclim.org/data/bioclim.html). The red outlines show the distribution of the Almond-eyed Ringlet butterfly according to the [IUCN Red List](https://www.iucnredlist.org/species/173278/6984115). Click on the image to enlarge and view the maps in detail.
-:::
-
-## Code summary
-
-The following code blocks consolidate all the Python code from this chapter. In the first block, the base layers are imported. The second block handles the import of species data, and the third block imports the climate layers. Input and output layer names are now defined as variables at the beginning, allowing users to easily customize them. This setup simplifies automating the workflow.
-
-::: panel-tabset
-## {{< fa brands python >}} Base layers
-
-``` python
-# Define input variables
-working_directory = "replace-with-path-to-working-directory"
-admin_boundary_file = "ne_10m_admin_0_countries.shp"
-urban_areas_file = "ne_10m_urban_areas.shp"
-roads_file = "ne_10m_roads.shp"
-rivers_centerlines_file = "ne_10m_rivers_lake_centerlines.shp"
-rivers_europe_file = "ne_10m_rivers_europe.shp"
-
-# Define output layer names
-admin_layer = "admin0"
-aoi_layer = "aoi"
-clipped_countries_layer = "countries"
-urban_layer = "urban"
-roads_layer = "roads"
-rivers_layer = "rivers"
-
-# Set working directory
-import os
-import grass.script as gs
-
-os.chdir(working_directory)
-
-# Import national boundaries
-gs.run_command(
-    "v.in.ogr",
-    input=admin_boundary_file,
-    output=admin_layer,
-)
-
-# Set the region and create a vector layer 'aoi_layer' for the region boundaries
-gs.run_command("g.region", n=55, s=35, w=-10, e=33)
-gs.run_command("v.in.region", output=aoi_layer)
-
-# Clip the national boundaries layer to the region boundaries
-gs.run_command(
-    "v.clip", input=admin_layer, clip=aoi_layer, output=clipped_countries_layer
-)
-gs.run_command("g.remove", flags="f", type="vector", name=admin_layer)
-
-# Import and clip urban areas to the region
-gs.run_command(
-    "v.in.ogr",
-    flags="r",
-    input=urban_areas_file,
-    output="tmp",
-)
-gs.run_command("v.clip", input="tmp", clip=aoi_layer, output=urban_layer)
-gs.run_command("g.remove", flags="f", type="vector", name="tmp")
-
-# Import and clip roads to the region
-gs.run_command(
-    "v.in.ogr",
-    flags="r",
-    input=roads_file,
-    where="featurecla='Road'",
-    output="tmp",
-)
-gs.run_command("v.db.dropcolumn", map="tmp", columns="add")
-gs.run_command("v.clip", input="tmp", clip=aoi_layer, output=roads_layer)
-gs.run_command("g.remove", flags="f", type="vector", name="tmp")
-
-# Import and clip rivers layers to the region
-gs.run_command(
-    "v.in.ogr",
-    flags="r",
-    input=rivers_centerlines_file,
-    output="tmp1",
-)
-gs.run_command(
-    "v.in.ogr",
-    flags="r",
-    input=rivers_europe_file,
-    output="tmp2",
-)
-gs.run_command("v.clip", input="tmp1", clip=aoi_layer, output="tmp3")
-gs.run_command("v.clip", input="tmp2", clip=aoi_layer, output="tmp4")
-
-# Prepare and merge the rivers layers into one
-gs.run_command(
-    "db.execute",
-    sql="ALTER TABLE tmp3 RENAME TO tmp3old;",
-)
-gs.run_command(
-    "db.execute",
-    sql="ALTER TABLE tmp4 RENAME TO tmp4old;",
-)
-gs.run_command(
-    "db.execute",
-    sql=(
-        "CREATE TABLE tmp3 AS "
-        "SELECT cat,scalerank,featurecla,name,label,min_zoom,min_label "
-        "FROM tmp3old"
-    ),
-)
-gs.run_command(
-    "db.execute",
-    sql=(
-        "CREATE TABLE tmp4 AS "
-        "SELECT cat,scalerank,featurecla,name,label,min_zoom,min_label "
-        "FROM tmp4old"
-    ),
-)
-gs.run_command("v.patch", input=["tmp3", "tmp4"], output=rivers_layer)
-gs.run_command("db.droptable", flags="f", table="tmp3old")
-gs.run_command("db.droptable", flags="f", table="tmp4old")
-gs.run_command("g.remove", flags="f", type="vector", pattern="tmp*")
-```
-
-## {{< fa brands python >}} Species data
-
-``` python
-# Define input variables
-working_directory = "replace-with-path-to-working-directory"
-species_rangemap_file = "data_0.shp"
-species_occurrence_file = "0104058-240626123714530.csv"
-
-# Define output layer names
-species_rangemap_layer = "Erebia_alberganus_rangemap"
-species_obs_layer = "Erebia_alberganus_obs"
-
-# Set working directory
-import os
-import grass.script as gs
-
-os.chdir(working_directory)
-
-# Create new mapset for species data
-gs.run_command("g.mapset", flags="c", mapset="species_data")
-
-# Import species range map and GBIF occurrence data
-gs.run_command(
-    "v.in.ogr",
-    input=species_rangemap_file,
-    output=species_rangemap_layer,
-)
-gs.run_command("g.extension", extension="v.in.gbif")
-gs.run_command(
-    "v.in.gbif",
-    input=species_occurrence_file,
-    output=species_obs_layer,
-)
-```
-
-## {{< fa brands python >}} Climate data
-
-``` python
-# Define input variables
-working_directory = "replace-with-path-to-working-directory"
-future_bioclim_file = "wc2.1_30s_bioc_EC-Earth3-Veg_ssp585_2081-2100.tif"
-bioclim_base = "wc2.1_30s_bio_"
-bioclim_count = 19
-
-# Define output layer names
-aoi_layer = "aoi"
-clipped_countries_layer = "countries"
-rivers_layer = "rivers"
-bioclim_layer_prefix = "bio_"
-future_bioclim_output = "bio"
-
-# Set working directory
-import os
-import grass.script as gs
-
-os.chdir(working_directory)
-
-# Create new mapset for current climate data and set the region
-gs.run_command("g.mapset", flags="c", mapset="climate_current")
-gs.run_command("g.region", n=54, s=36, w=-10, e=32, res=0.0083)
-
-# Import bioclim layers
-for n in range(1, bioclim_count + 1):
-    input_file = f"{bioclim_base}{n}.tif"
-    output_file = f"{bioclim_layer_prefix}{n}"
-    gs.run_command(
-        "r.in.gdal",
-        flags="r",
-        input=input_file,
-        output=output_file,
-        memory=1000,
-    )
-
-# Align region to bioclim layers
-gs.run_command("g.region raster=bio_1", save=aoi_layer)
-
-# Update aoi vector layer in PERMANENT mapset
-gs.run_command("g.mapset", mapset="PERMANENT")
-gs.run_command("g.region", region=f"{aoi_layer}@climate_current")
-gs.run_command("v.in.region", output=aoi_layer, overwrite=True)
-
-# Create new mapset for future climate data and set region
-gs.run_command("g.mapset", flags="c", mapset="climate_EC_Earth3_Veg")
-gs.run_command("g.region", region=f"{aoi_layer}@climate_current")
-
-# Import future bioclim layers
-gs.run_command(
-    "r.in.gdal",
-    flags="r",
-    input=future_bioclim_file,
-    output=future_bioclim_output,
-    memory=1000,
-)
-```
 :::
 
 <br><br>
