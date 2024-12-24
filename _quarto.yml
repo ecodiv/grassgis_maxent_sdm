@@ -121,15 +121,15 @@ format:
     mainfont: Helvetica
     number-sections: true
     crossref:
-      sec-prefix: chapter
+      sec-prefix: Chapter
       fig-title: Figure
       tbl-title: Table
-      fig-prefix: figure
-      tbl-prefix: table
+      fig-prefix: Figure
+      tbl-prefix: Table
       exr-title: Q
       exr-prefix: Q
       exm-title: Step
-      exm-prefix: step
+      exm-prefix: Step
       appendix-title: ""
       appendix-delim: ". "
     smooth-scroll: true

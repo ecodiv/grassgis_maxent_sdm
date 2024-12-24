@@ -241,6 +241,9 @@ a:hover {
 .column-margin figcaption .style-data,
 .column-margin figcaption .style-menu,
 .column-margin figcaption .style-parameter
+.column-margin figcaption .style-apps,
+.column-margin figcaption .style-file,
+.column-margin figcaption .style-folder
 {
   color: #6d7a86 !important;
 }
@@ -444,6 +447,9 @@ $progress-height:               .5rem !default;
   font-size: 0.95rem !important;
 }
 
+.callout-body .style-file,
+.callout-body .style-apps,
+.callout-body .style-folder,
 .callout-body .style-parameter,
 .callout-body .style-function,
 .callout-body .style-data,
@@ -512,6 +518,17 @@ div.callout-note.callout-style-default > .callout-header {
   border-bottom: 1px solid $grass-color-light-borders !important;
   border-top: 0px solid $grass-color-light-borders !important;
 }
+
+.panel-tabset .style-parameter,
+.panel-tabset .style-function,
+.panel-tabset .style-data,
+.panel-tabset .style-file,
+.panel-tabset .style-apps,
+.panel-tabset .style-folder,
+.panel-tabset .style-menu {
+  font-size: .95rem !important;
+}
+
 
 .tab-content th{
   font-weight: 600;
@@ -604,6 +621,16 @@ div.sourceCode + p {
   margin-bottom: 1rem;
 }
 
+.panel-tabset.exercise .style-parameter,
+.panel-tabset.exercise .style-function,
+.panel-tabset.exercise .style-data,
+.panel-tabset.exercise .style-file,
+.panel-tabset.exercise .style-apps,
+.panel-tabset.exercise .style-folder,
+.panel-tabset.exercise .style-menu {
+  font-size: .9rem !important;
+}
+
 // ------------- Variables -----------------------------------------------------
 
 $web-font-path: "https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;700&display=swap" !default;
@@ -651,6 +678,8 @@ figure > figcaption.quarto-float-caption-bottom {
 .code-annotation-tip-content .style-function,
 .code-annotation-tip-content .style-data,
 .code-annotation-tip-content .style-file,
+.code-annotation-tip-content .style-apps,
+.code-annotation-tip-content .style-folder,
 .code-annotation-tip-content .style-menu {
   font-size: 0.92rem !important;
 }
@@ -814,4 +843,58 @@ Hacks
     padding-top: 0;
   }
 
+}
+
+/*==============================================================================
+Floating images
+==============================================================================*/
+
+/* For mobile phones: */
+.floatleft {
+}
+
+.floatleft .caption {
+	margin-bottom: 0px;
+}
+
+.floatright {
+}
+
+.floatright30 {
+}
+
+@media only screen and (min-width: 599px) {
+  /* For desktop: */
+  .floatleft {
+  	float:left;
+  	width: 50%;
+  	height: auto;
+  	margin: 2px 20px 2px 2px;
+  }
+
+  .floatleft .caption {
+  	margin-bottom: 0px;
+  }
+
+  .floatright {
+  	float:right;
+  	width: 50%;
+  	height: auto;
+  	margin: 2px 2px 2px 20px;
+  }
+
+  .floatright30 {
+  	float:right;
+  	width: 30%;
+  	height: auto;
+  	margin: 2px 2px 2px 20px;
+  }
+}
+
+.figure-caption.margin-caption{
+  font-size: 0.9rem;
+  text-align: left;
+  color: #747a7f;
+  margin-top: auto;
+  margin-bottom: auto;
 }

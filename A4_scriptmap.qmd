@@ -1210,7 +1210,7 @@ import grass.script as gs
 import os
 
 # Set working directory
-os.chdir("/home/paulo/Desktop")
+os.chdir("path-to-working-directory")
 
 # Variable
 variables = [
@@ -1279,7 +1279,7 @@ import grass.script as gs
 import os
 
 # Set working directory
-os.chdir("/home/paulo/Desktop")
+os.chdir("path-to-working-directory")
 
 # Variable
 variables = [
@@ -1353,7 +1353,7 @@ for i, variable in enumerate(variables):
     )
 ```
 
-## boxplots
+## @fig-q72ESFIpd2 - [-@fig-nZ6IUl9J5Z] {#sec-gbpRIXfZKJ}
 
 ``` python
 # Import library
